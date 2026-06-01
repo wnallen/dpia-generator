@@ -2,6 +2,12 @@
 
 A Claude skill that produces Data Protection Impact Assessments (DPIAs) under GDPR Article 35, anchored in supervisory authority guidance and structured to withstand DPO, regulator, and litigation review.
 
+# Important
+
+Every output from this Skill is a draft for attorney review — not legal advice, not a legal conclusion, not a substitute for a lawyer. This Skill may make review faster; it does not replace it.
+
+This Skill does not represent the creator's legal positions: it is a tool. Where a Skill includes a checklist item, a suggested framework, a risk flag, or a characterization of case law or regulatory guidance, that is an aid to the reviewing attorney's own analysis, not a statement of the author's view of the law. The law in many of these areas is unsettled and evolving. The attorney using the Skill — not the Skill, and not the author — is responsible for the legal positions taken in their work product.
+
 -----
 
 ## What It Does
