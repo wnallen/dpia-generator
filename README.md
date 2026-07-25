@@ -59,4 +59,4 @@ dpia-generator/
 
 ## License
 
-No license specified. Add one before distributing.
+Review License file
