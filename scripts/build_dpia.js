@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v1.0)
+ * build_dpia.js — dpia-generator document assembler (v1.1)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -18,13 +18,20 @@
  *
  * RISK-RATING GATE (why this script owns the matrix)
  * The likelihood x severity -> rating mapping in references/risk-matrix.md is
- * deterministic and asymmetric in the upper-right. A model scoring it inline
- * gets it wrong silently, and a mis-stated residual rating is the single defect
- * most likely to survive review into a filed DPIA. So: the manifest states
- * likelihood and severity; this script derives the rating. If the manifest also
- * states a rating and it disagrees with the derived value, the build stops with
- * exit 3 and names the row. Never "fix" a disagreement by editing the stated
- * rating to match — re-examine the likelihood and severity scores.
+ * deterministic and severity-weighted: no cell in which either dimension is
+ * High rates Low. A model scoring it inline gets it wrong silently, and a
+ * mis-stated residual rating is the single defect most likely to survive review
+ * into a filed DPIA. So: the manifest states likelihood and severity; this
+ * script derives the rating. If the manifest also states a rating and it
+ * disagrees with the derived value, the build stops with exit 3 and names the
+ * row. Never "fix" a disagreement by editing the stated rating to match —
+ * re-examine the likelihood and severity scores.
+ *
+ * ARTICLE 36 FLAG
+ * Art. 36(1) GDPR engages on residual high risk, however that rating is
+ * reached. Any row whose *derived residual rating* is High is marked, not only
+ * High likelihood x High severity — a Medium x High residual rates High and
+ * engages prior consultation just the same.
  *
  * MANIFEST SCHEMA
  * {
@@ -46,7 +53,8 @@
  *   {"type":"para","text":"...","italic":false}
  *   {"type":"bullets","items":["...","..."]}
  *   {"type":"table","columns":["A","B"],"rows":[["1","2"]],"widths":[40,60]}
- *   {"type":"riskRegister","rows":[
+ *   {"type":"riskRegister","id":"main",                     // id optional (default "default");
+ *    "rows":[                                              //   referenced by a matrix block's "source"
  *       {"id":"R1","risk":"...","likelihood":"High","severity":"Medium",
  *        "controls":"...","residualLikelihood":"Low","residualSeverity":"Medium",
  *        "inherentRating":"High","residualRating":"Low"}   // ratings optional; checked if present
@@ -106,7 +114,9 @@ function norm(v, field, ctx) {
 }
 
 function rate(likelihood, severity) { return MATRIX[likelihood][severity]; }
-function isArt36(likelihood, severity) { return likelihood === 'High' && severity === 'High'; }
+// Art. 36(1) engages on residual HIGH RISK, however the rating is reached —
+// not only on High x High. Keep this keyed to the derived rating.
+function isArt36(likelihood, severity) { return rate(likelihood, severity) === 'High'; }
 
 /** Derives ratings and enforces the rating gate. Returns enriched rows. */
 function resolveRegister(rows) {
@@ -179,7 +189,7 @@ function cell(text, opts = {}) {
   });
 }
 
-function table(rows, widths) {
+function table(rows) {
   return new Table({
     width: { size: 100, type: WidthType.PERCENTAGE },
     borders: ['top', 'bottom', 'left', 'right', 'insideHorizontal', 'insideVertical']
@@ -282,7 +292,7 @@ function coverPage(m) {
 }
 
 // ---------------------------------------------------------------- build
-function build(manifest) {
+function build(manifest, state) {
   const registers = {};
   const children = coverPage(manifest);
 
@@ -310,7 +320,8 @@ function build(manifest) {
         registers[b.id || 'default'] = resolved;
         children.push(registerTable(resolved));
         if (resolved.some(r => r.art36)) {
-          children.push(p('* Residual High likelihood x High severity \u2014 Article 36 prior consultation is engaged for this risk.',
+          state.art36 = true;
+          children.push(p('* Residual risk rated High \u2014 Article 36 prior consultation with the competent supervisory authority is engaged for this risk, and the processing may not commence until that consultation has concluded.',
             { italic: true, size: 18 }));
         }
         children.push(p('', { after: 120 }));
@@ -343,7 +354,13 @@ function build(manifest) {
     description: 'Privileged & Confidential \u2014 Attorney Work Product',
     styles: { default: { document: { run: { font: FONT, size: 22 } } } },
     sections: [{
-      properties: { page: { margin: { top: 1100, bottom: 1100, left: 1100, right: 1100 } } },
+      properties: {
+        page: {
+          // A4 portrait — the DPIA's audience is EU/UK (DPO, ICO, CNIL, lead authority).
+          size: { width: 11906, height: 16838 },
+          margin: { top: 1100, bottom: 1100, left: 1100, right: 1100 },
+        },
+      },
       headers: {
         default: new Header({
           children: [p('PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT',
@@ -386,14 +403,30 @@ function main() {
   const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '');
   const outPath = path.join(outDir, m.outputFilename || `DPIA_${safe}_${m.date}.docx`);
 
-  const doc = build(m);
+  const state = { art36: false };
+  const doc = build(m, state);
+
+  // Coherence check, not a gate: a residual High rating engages Art. 36, so the
+  // cover-page status usually should say so. The controller may still be
+  // circulating a draft, hence a warning rather than a hard stop.
+  const art36Status = 'requires art. 36 prior consultation';
+  if (state.art36 && String(m.status || 'Draft').trim().toLowerCase() !== art36Status) {
+    process.stderr.write(
+      'build_dpia: WARNING — a residual risk rates High (Art. 36 prior consultation engaged) but manifest ' +
+      `"status" is "${m.status || 'Draft'}". Confirm the cover page and executive summary carry the Art. 36 flag.\n`);
+  }
+
   Packer.toBuffer(doc).then(buf => {
     fs.writeFileSync(outPath, buf);
     if (!noValidate) {
       const v = '/mnt/skills/public/docx/scripts/office/validate.py';
       if (fs.existsSync(v)) {
         try { execFileSync('python3', [v, outPath], { stdio: 'inherit' }); }
-        catch (e) { fail(2, 'OOXML validation failed for ' + outPath); }
+        catch (e) {
+          fail(2, 'validation did not pass for ' + outPath +
+            ' — if the output above is a Python traceback the validator itself failed to run ' +
+            '(missing dependency), which is not a defect in the document; otherwise the OOXML is invalid.');
+        }
       } else {
         process.stderr.write('build_dpia: validate.py not found; skipped validation\n');
       }

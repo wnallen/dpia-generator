@@ -58,7 +58,7 @@ State the exception clearly: where the controller wants the benefit of UK diverg
 
 ## Source Notes
 
-- Data (Use and Access) Act 2025 — UK Parliament, https://www.legislation.gov.uk/ukpga/2025
+- Data (Use and Access) Act 2025 — UK Parliament. `[model knowledge — verify]` The link previously recorded here, `https://www.legislation.gov.uk/ukpga/2025`, cannot resolve to a specific Act: legislation.gov.uk addresses take the form `/ukpga/{year}/{chapter}`, and no chapter number was captured. Look the Act up on legislation.gov.uk and cite the full URL with its chapter number; do not reproduce a bare year path in a DPIA.
 - ICO published guidance on DUAA changes — refresh from https://ico.org.uk before each material DPIA touching UK scope, as ICO's interpretation continues to evolve
 - ICO's "When do we need to do a DPIA?" page — the UK-specific Art. 35(4) list of mandatory DPIA triggers
 - ICO Transfer Risk Assessment Tool — the UK equivalent of the EDPB TIA methodology
