@@ -48,13 +48,24 @@ dpia-generator/
 ├── references/
 │   ├── legal-framework.md            # Art. 35/36 text, recitals, WP248rev01 nine criteria, mandatory lists
 │   ├── risk-matrix.md                # 3×3 matrix, scoring rubrics, inherent → residual transition
+│   ├── authorities.md                # Citation register: settled statutory cites vs. unverified guidance
 │   ├── published-dpias.md            # Curated catalog of real DPIAs and DPA decisions with URLs
 │   ├── uk-divergence.md              # Where UK GDPR diverges from EU GDPR (incl. DUAA 2025)
 │   └── output-template.md            # Section structure, table layouts, template → manifest mapping
-└── scripts/
-    └── build_dpia.js                 # Manifest-driven .docx assembler; owns the matrix mapping,
-                                      #   the Article 36 mark, and the risk-rating gate
+├── scripts/
+│   ├── build_dpia.js                 # Manifest-driven .docx assembler; owns the matrix mapping,
+│   │                                 #   the Article 36 mark, and both exit-3 gates
+│   └── run_regression.js             # Regression suite over the builder
+└── tests/fixtures/                   # Thirteen manifests, one per regression case
 ```
+
+## Testing
+
+```bash
+node scripts/run_regression.js          # 13 cases; exit 0 if all pass, --keep to inspect the .docx files
+```
+
+Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
 
 `dpia-generator.skill.zip` at the repo root is the packaged build of the above, regenerated whenever the skill changes.
 
@@ -68,6 +79,16 @@ dpia-generator/
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v2.0** — Extends the gate philosophy from the ratings to the conclusion, and adds the means to keep it honest.
+
+  **Article 36 conclusion gate.** The v1.1 rating gate stopped the register contradicting the matrix. It did nothing about the prose: a DPIA could carry a High residual in its table and a sentence in its executive summary saying prior consultation was not required, and nothing would object. A manifest with a risk register must now declare `"art36": true|false`, checked against the register, exit 3 on disagreement, exit 1 if undeclared — a DPIA that has not formed a view on prior consultation is not finished. A narrative scan additionally warns where the text appears to assert the opposite of the derived answer. This breaks existing manifests, hence the major version.
+
+  **Regression suite.** `scripts/run_regression.js` with thirteen fixtures covering both gates, the Article 36 positive and negative paths, XML escaping of untrusted vendor text, path traversal, and the manifest error cases. Mutation-tested: reverting the v1.1 Article 36 bug turns it red, as does corrupting a single cell of the matrix. Previously every change to this skill was verified by hand.
+
+  **Citation register.** `references/authorities.md` separates the recurring authorities that can be cited from stable identifiers from the guidance and case law that must be fetched first. It ships with the second category marked UNVERIFIED, and says what to capture on verification rather than inventing pinpoints — a precise citation that is wrong is worse than an approximate one honestly labelled.
+
+  **Tool-unavailable fallbacks.** Steps 0.5 and 1 now distinguish "checked and found nothing" from "could not check." The prior-work reconciliation no longer records a cold start when `conversation_search` was simply unavailable, and a run with no web access says in Appendix A that nothing was fetched rather than presenting an unreachable analog as an absent one.
 
 - **v1.2.1** — Two items found by running the skill end to end against a full DPIA. A manifest `outputFilename` containing a path could write outside `outputDir`; it is now reduced to a basename, with a note on stderr when that happens. Step 5 now cites the script header's line range so the manifest schema can be read without loading the whole builder.
 

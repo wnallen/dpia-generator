@@ -1,0 +1,37 @@
+{
+  "systemName": "Conclusion Gate",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Residual High reached via Medium x High, not the corner cell.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "stage": "inherent",
+      "source": "main"
+    },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    }
+  ],
+  "art36": false
+}

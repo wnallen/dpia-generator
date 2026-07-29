@@ -179,6 +179,8 @@ Bulleted list of:
 - Published DPIA(s) used as analog, with URL and what they were used for
 - Standards (ISO 31000, ISO 27701, NIST Privacy Framework) cited
 
+Every entry carries its source-attribution tag; see `references/authorities.md` for which of the recurring authorities may go out as `[official publication]` and which ship UNVERIFIED. Where a run could not fetch anything, say so here in terms that distinguish it from having searched and found nothing.
+
 ## Appendix B — Open Questions and Follow-Up Items
 
 Anything the user could not answer in intake, anything that materially affected the analysis, anything that requires further investigation before the DPIA is finalized.
@@ -198,6 +200,7 @@ Author the manifest against this table, then run the builder:
 | Template section | Manifest blocks |
 |---|---|
 | Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. |
+| Article 36 conclusion | Top-level `art36` — `true` or `false`. **Required** wherever a `riskRegister` block exists. Checked against the register; exit 3 on disagreement. |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
 | §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |

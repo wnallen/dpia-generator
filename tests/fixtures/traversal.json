@@ -1,0 +1,38 @@
+{
+  "systemName": "Traversal",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R2",
+          "risk": "Reduces to Low on controls.",
+          "likelihood": "Medium",
+          "severity": "Medium",
+          "controls": "RBAC and logging.",
+          "residualLikelihood": "Low",
+          "residualSeverity": "Medium"
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "stage": "inherent",
+      "source": "main"
+    },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    }
+  ],
+  "art36": false,
+  "outputFilename": "../ESCAPED.docx"
+}

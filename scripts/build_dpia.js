@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v1.2)
+ * build_dpia.js — dpia-generator document assembler (v2.0)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -33,6 +33,22 @@
  * High likelihood x High severity — a Medium x High residual rates High and
  * engages prior consultation just the same.
  *
+ * ARTICLE 36 CONCLUSION GATE (v2.0, exit 3)
+ * The rating gate stops the register from contradicting the matrix. It does
+ * not stop the *prose* from contradicting the register — a DPIA whose table
+ * carries a High residual while its executive summary says prior consultation
+ * is not required is the same class of defect, in the sentence a regulator
+ * actually reads. So the manifest must now declare its conclusion:
+ *
+ *   "art36": true | false     // REQUIRED whenever a riskRegister block exists
+ *
+ * The script derives the answer from the register and stops with exit 3 if the
+ * declaration disagrees. As with the rating gate, do not resolve a failure by
+ * flipping the declaration to match: decide which is wrong, the conclusion or
+ * the scores, and fix that. The script also scans narrative blocks for a
+ * sentence asserting the opposite of the derived answer and warns on stderr —
+ * a warning, not a stop, because phrasing is too varied to gate on.
+ *
  * MANIFEST SCHEMA
  * {
  *   "systemName": "Vendor Sentiment Engine",   // required
@@ -42,6 +58,7 @@
  *   "dpo": "...", "counsel": "...",            // optional
  *   "reference": "[DPIA-2026-001]",            // optional
  *   "status": "Draft",                         // Draft|Under DPO Review|Approved|Requires Art. 36 Prior Consultation
+ *   "art36": false,                            // REQUIRED if any riskRegister block; see conclusion gate
  *   "outputDir": "/mnt/user-data/outputs",     // default shown
  *   "outputFilename": null,                    // default DPIA_<System>_<date>.docx
  *   "blocks": [ ... ]                          // required, ordered content
@@ -114,6 +131,37 @@ function norm(v, field, ctx) {
 }
 
 function rate(likelihood, severity) { return MATRIX[likelihood][severity]; }
+
+// Narrative contradiction scan. Deliberately loose on the Art. 36 reference and
+// tight on the assertion, so it catches the sentence a reviewer would read
+// without firing on every mention of the Article.
+const ART36_REF = /\b(article|art\.?)\s*36\b/i;
+const SAYS_NO = /\b(does not|doesn't|not)\s+(require|engage|trigger)|\bno\s+(prior\s+)?consultation|\bis not (required|engaged|triggered)\b/i;
+const SAYS_YES = /\b(does|is|must|shall)\s+(require|engaged?|triggered?|consult)|\bis (required|engaged|triggered)\b|\brequires prior consultation\b/i;
+
+function scanNarrative(blocks) {
+  const hits = { asserts: [], denies: [] };
+  // Sentence-level, not block-level. A paragraph that correctly asserts the
+  // obligation often also contains a negation about something else — "engaged by
+  // the rating itself; it does not require that both dimensions be High" — and
+  // matching across the whole block reads that as a denial. The Article 36
+  // reference and the assertion have to sit in the same sentence to count.
+  const visit = (text, where) => {
+    if (!ART36_REF.test(text)) return;
+    String(text).split(/(?<=[.;:!?])\s+/).forEach(s => {
+      if (!ART36_REF.test(s)) return;
+      if (SAYS_NO.test(s)) hits.denies.push(where);
+      else if (SAYS_YES.test(s)) hits.asserts.push(where);
+    });
+  };
+  (blocks || []).forEach((b, i) => {
+    if (b.type === 'para' && b.text) visit(String(b.text), `block ${i + 1} (para)`);
+    if (b.type === 'bullets') (b.items || []).forEach((it, j) => visit(String(it), `block ${i + 1} bullet ${j + 1}`));
+    if (b.type === 'table') (b.rows || []).forEach((r, j) =>
+      (r || []).forEach(c => visit(String(c == null ? '' : c), `block ${i + 1} table row ${j + 1}`)));
+  });
+  return hits;
+}
 // Art. 36(1) engages on residual HIGH RISK, however the rating is reached —
 // not only on High x High. Keep this keyed to the derived rating.
 function isArt36(likelihood, severity) { return rate(likelihood, severity) === 'High'; }
@@ -411,9 +459,39 @@ function main() {
   const state = { art36: false };
   const doc = build(m, state);
 
-  // Coherence check, not a gate: a residual High rating engages Art. 36, so the
-  // cover-page status usually should say so. The controller may still be
-  // circulating a draft, hence a warning rather than a hard stop.
+  const hasRegister = (m.blocks || []).some(b => b && b.type === 'riskRegister');
+
+  // ---- Article 36 conclusion gate (exit 3) ----------------------------------
+  if (hasRegister) {
+    if (m.art36 === undefined || m.art36 === null) {
+      fail(1, 'manifest: "art36" is required when the DPIA contains a riskRegister. Declare the ' +
+              'Article 36 conclusion as true or false; the script checks it against the register.');
+    }
+    if (typeof m.art36 !== 'boolean') {
+      fail(1, `manifest: "art36" must be a boolean, got ${JSON.stringify(m.art36)}`);
+    }
+    if (m.art36 !== state.art36) {
+      const derivedWhy = state.art36
+        ? 'at least one residual risk rates High'
+        : 'no residual risk rates High';
+      fail(3, 'ARTICLE 36 CONCLUSION GATE FAILED (exit 3) — do not deliver:\n  ' +
+        `manifest declares art36=${m.art36}, but the register derives ${state.art36} (${derivedWhy}).\n  ` +
+        'Do not flip the declaration to silence this. Either the conclusion is wrong, or a ' +
+        'likelihood/severity score is — decide which, and fix that.');
+    }
+  }
+
+  // ---- Narrative contradiction scan (warning) -------------------------------
+  const hits = scanNarrative(m.blocks);
+  const contradictions = state.art36 ? hits.denies : hits.asserts;
+  if (hasRegister && contradictions.length) {
+    process.stderr.write(
+      `build_dpia: WARNING — the register derives Art. 36 = ${state.art36}, but narrative text appears to ` +
+      `assert the opposite at: ${contradictions.join('; ')}. Read those passages before delivering; the ` +
+      'executive summary is the part a supervisory authority reads first.\n');
+  }
+
+  // ---- Cover-status coherence (warning) ------------------------------------
   const art36Status = 'requires art. 36 prior consultation';
   if (state.art36 && String(m.status || 'Draft').trim().toLowerCase() !== art36Status) {
     process.stderr.write(
