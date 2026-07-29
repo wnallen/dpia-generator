@@ -69,6 +69,8 @@ dpia-generator/
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
 
+- **v1.2.1** — Two items found by running the skill end to end against a full DPIA. A manifest `outputFilename` containing a path could write outside `outputDir`; it is now reduced to a basename, with a note on stderr when that happens. Step 5 now cites the script header's line range so the manifest schema can be read without loading the whole builder.
+
 - **v1.2** — Corrected the Article 36 prior-consultation flag. It previously fired only on a High likelihood × High severity residual, so a Medium × High residual — which rates High on the published matrix, and which Art. 36(1) engages on identically — was rendered without the flag. The flag now keys to the derived residual rating wherever it appears: the register table, `risk-matrix.md`, and Step 4. The builder additionally warns when a High residual is present but the cover-page status does not say `Requires Art. 36 Prior Consultation`.
 
   Also removed the v1.1 contradiction in `output-template.md`, which still told the model to hand-write a per-run `create_dpia.js` and specified a US-Letter/Arial layout and an eleven-column register that the bundled builder does not produce; it now carries a template → manifest mapping table matching the builder's actual output. Added a Fast-Path Default section to `SKILL.md`, made the A4 page geometry explicit in the builder, and narrowed Step 5's mandatory read of the public docx skill to the exit-2 repair path.

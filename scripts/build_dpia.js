@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v1.1)
+ * build_dpia.js — dpia-generator document assembler (v1.2)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -401,7 +401,12 @@ function main() {
   const outDir = m.outputDir || '/mnt/user-data/outputs';
   fs.mkdirSync(outDir, { recursive: true });
   const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '');
-  const outPath = path.join(outDir, m.outputFilename || `DPIA_${safe}_${m.date}.docx`);
+  // basename() so a manifest "outputFilename" cannot write outside outputDir via "../".
+  const named = m.outputFilename ? path.basename(String(m.outputFilename)) : '';
+  if (m.outputFilename && named !== String(m.outputFilename)) {
+    process.stderr.write(`build_dpia: note — "outputFilename" was reduced to "${named}"; it may not contain a path.\n`);
+  }
+  const outPath = path.join(outDir, named || `DPIA_${safe}_${m.date}.docx`);
 
   const state = { art36: false };
   const doc = build(m, state);

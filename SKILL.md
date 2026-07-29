@@ -225,7 +225,7 @@ Implementation — **author a JSON manifest and run the bundled builder. Do not 
 node scripts/build_dpia.js /home/claude/dpia_manifest.json
 ```
 
-The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices and signature block, then runs `/mnt/skills/public/docx/scripts/office/validate.py` on its own output and prints the written path. The full manifest schema and block types are documented in the script's header comment — read it before writing the manifest. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
+The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices and signature block, then runs `/mnt/skills/public/docx/scripts/office/validate.py` on its own output and prints the written path. The full manifest schema and block types are documented in the script's header comment, `scripts/build_dpia.js` lines 1–65 — read that range before writing the manifest, not the whole file. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
 
 Everything the script owns — page geometry, fonts, header and footer, cover page, colour fills, the rating mapping — stays out of the manifest. If you find yourself specifying a hex fill or a font size, you are reimplementing the builder.
 
@@ -309,7 +309,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 - `references/published-dpias.md` — Curated catalog of useful real-world DPIAs and DPA decisions (Met Police RFR DPIA, CNIL biometric workplace Model Regulation, ICO Serco biometric T&A enforcement, ICO sample DPIAs, EDPB Recommendations 01/2020, CNIL TIA guide), with URLs and notes on what each is good for.
 - `references/uk-divergence.md` — Where UK GDPR diverges from EU GDPR in ways material to a DPIA (DUAA 2025 changes, Art. 22 ADM, recognized lawful bases, ICO mandatory DPIA list, transfer mechanisms).
 - `references/output-template.md` — Exact section structure (including §1.10 Privacy Policy Consistency Check), table layouts, standard wording, and the template → manifest mapping table that tells you which block type carries each section.
-- `scripts/build_dpia.js` (v1.1) — Manifest-driven .docx assembler for Step 5: cover page, running header/footer, headings, prose, bullets, tables, risk register, inherent/residual 3×3 matrices, signature block; owns the likelihood × severity → rating mapping, the Article 36 mark, and the risk-rating gate (exit 3). Manifest schema is in the script header. **Execute, don't reimplement.**
+- `scripts/build_dpia.js` (v1.2) — Manifest-driven .docx assembler for Step 5: cover page, running header/footer, headings, prose, bullets, tables, risk register, inherent/residual 3×3 matrices, signature block; owns the likelihood × severity → rating mapping, the Article 36 mark, and the risk-rating gate (exit 3). Manifest schema is in the script header. **Execute, don't reimplement.**
 
 ---
 
@@ -318,6 +318,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v1.2.1** — Hardening found by end-to-end testing: a manifest `outputFilename` containing `../` could write outside `outputDir`, and is now reduced to a basename. Step 5 points at the script header's line range rather than the whole file. Builder to v1.2.
 - **v1.2** — Article 36 flag corrected: it now keys to any residual rating of High rather than only High likelihood × High severity, so a Medium × High residual is no longer silently unflagged in the register, `risk-matrix.md`, and Step 4. `output-template.md` no longer instructs a per-run `create_dpia.js` (it contradicted v1.1) and carries a template → manifest mapping table instead; its stale US-Letter/Arial notes and eleven-column register format now match what the builder emits. Added a Fast-Path Default section, an Art. 36 cover-status coherence warning in the builder (`v1.1`), explicit A4 page geometry, and a narrowed Step 5 read of the public docx skill.
 - **v1.1** — Step 5 now builds through the bundled, tested `scripts/build_dpia.js`, replacing an unbundled per-run generator; the matrix mapping and Article 36 flag are computed by the script under a hard gate (exit 3). Description gained routing clauses against `product-regulatory-scan`, `tech-law-radar`, and `b2b-supplier-redline`.
 - **v1.0** — Baseline — Article 35 framework, published-DPIA analogs, 3x3 matrix, UK/EU divergence notes.
