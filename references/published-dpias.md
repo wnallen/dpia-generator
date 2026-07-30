@@ -30,7 +30,7 @@ Best for: triggering analysis (Step 0), criteria for an acceptable DPIA (the WP2
 
 ICO's hub: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/accountability-and-governance/data-protection-impact-assessments-dpias/
 
-ICO sample DPIA template (the 7-step ICO format used by many UK controllers): typically referenced in the iubenda and Practical-GDPR write-ups when ICO's own page is unreachable.
+ICO sample DPIA template (the 7-step ICO format used by many UK controllers). Third-party write-ups (iubenda, Practical-GDPR) reproduce the format and are sometimes easier to reach than ICO's own page, but they are secondary sources: use them to orient, cite ICO. If the ICO page will not resolve, say so under the No Silent Supplement rule rather than citing the reproduction as if it were the ICO's.
 
 ICO's "when do we need to do a DPIA" page, which restates the WP248rev01 nine criteria and ICO's own additional list under Art. 35(4): https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/accountability-and-governance/data-protection-impact-assessments-dpias/when-do-we-need-to-do-a-dpia/
 
@@ -92,7 +92,7 @@ There is no single canonical published DPIA for AI hiring (most are confidential
 
 **ICO guidance on AI and HR processing** — ICO has stated that employers were either not completing DPIAs before deploying AI hiring tools, or producing DPIAs that did not cover minimum requirements. Treat this as the ICO's stated expectation: AI in hiring requires a complete DPIA addressing automated decision-making, bias, transparency, and human review.
 
-**Fisher Phillips, "AI and Employee Data Protection in the EU" (2026)** — practitioner-level summary of how Member State DPAs are converging on the view that DPIAs for AI-in-HR are mandatory.
+**Fisher Phillips, "AI and Employee Data Protection in the EU" (2026)** `[model knowledge — verify]` — practitioner-level summary of how Member State DPAs are converging on the view that DPIAs for AI-in-HR are mandatory. No URL has been captured for this entry and it has not been verified live. It is a secondary source in any event: do not cite it in a DPIA without first locating it and, better, the DPA guidance it summarizes. Every other entry in this catalog carries a URL; this one is the exception, and it is flagged rather than quietly relied on.
 
 **EU AI Act (Annex III, employment category)** — AI systems used in recruitment, evaluation, promotion, termination, task allocation, and worker monitoring are *high-risk* AI systems under Art. 6 and Annex III, triggering Art. 27 Fundamental Rights Impact Assessment in addition to GDPR DPIA. Reference both in the DPIA.
 

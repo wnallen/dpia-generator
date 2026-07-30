@@ -1,0 +1,37 @@
+{
+  "systemName": "Narrative No False Positive",
+  "date": "2026-07-29",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "para",
+      "text": "Article 36 prior consultation is required. R1 carries a residual rating of High. This obligation is engaged by the residual rating itself; it does not require that both likelihood and severity be scored High."
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Residual High reached via Medium x High, not the corner cell.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    }
+  ]
+}

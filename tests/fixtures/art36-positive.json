@@ -1,0 +1,47 @@
+{
+  "systemName": "Art36 Positive",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Residual High reached via Medium x High, not the corner cell.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        },
+        {
+          "id": "R2",
+          "risk": "Reduces to Low on controls.",
+          "likelihood": "Medium",
+          "severity": "Medium",
+          "controls": "RBAC and logging.",
+          "residualLikelihood": "Low",
+          "residualSeverity": "Medium"
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "stage": "inherent",
+      "source": "main"
+    },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    }
+  ],
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation"
+}

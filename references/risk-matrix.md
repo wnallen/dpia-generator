@@ -6,11 +6,13 @@ Read this before scoring risks in Step 3. The matrix is consistent with CNIL's P
 
 | Likelihood ↓ / Severity → | **Low (Negligible / Limited)** | **Medium (Significant)** | **High (Maximum)** |
 |---|---|---|---|
-| **High** (will likely occur) | Medium | High | **High — Art. 36 flag** |
-| **Medium** (could occur) | Low | Medium | High |
+| **High** (will likely occur) | Medium | **High — Art. 36 flag** | **High — Art. 36 flag** |
+| **Medium** (could occur) | Low | Medium | **High — Art. 36 flag** |
 | **Low** (unlikely) | Low | Low | Medium |
 
-Use this exact mapping to convert paired (likelihood, severity) scores into a single residual risk rating. The matrix is deliberately asymmetric in the upper-right: high-severity outcomes warrant a higher residual rating than their likelihood alone would suggest, because the prejudicial impact on data subjects is the controlling consideration.
+Use this exact mapping to convert paired (likelihood, severity) scores into a single residual risk rating. The mapping is not a naive product of the two scores: no cell in which either dimension scores High is allowed to rate Low, because a Maximum-severity outcome for the data subject is the controlling consideration even where the controller considers it unlikely. `scripts/build_dpia.js` implements this table and derives every rating in the .docx from it — the script, not the drafter, owns the mapping.
+
+**Article 36 applies to any High residual rating.** Art. 36(1) engages on residual high risk however that rating is reached, so a Medium likelihood × High severity residual triggers prior consultation exactly as High × High does. Do not treat the top-right corner cell as the only trigger; the builder marks every High-rated residual row.
 
 **Color coding for the .docx output:**
 - Low → green (`#C6EFCE` fill, `#006100` text)

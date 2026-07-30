@@ -1,6 +1,6 @@
 # Output Template — Exact Structure of the DPIA .docx
 
-Read this before writing the Node.js script in Step 5. The structure below is the constant across all DPIAs produced by this skill; only the narrative content changes per processing activity.
+Read this before authoring the manifest in Step 5. The structure below is the constant across all DPIAs produced by this skill; only the narrative content changes per processing activity. The document is assembled by `scripts/build_dpia.js` from a JSON manifest — **do not hand-write a per-run generator**; the block-by-block mapping from this template to manifest blocks is at the end of this file.
 
 ## File and Header
 
@@ -109,24 +109,25 @@ Sub-sections:
 
 ### Risk Register Table Format
 
-Columns (in this order):
-1. **Ref** (R1, R2, R3, …)
-2. **Feared event** (short)
-3. **Threat scenario** (brief)
-4. **Data subjects affected**
-5. **Inherent likelihood** (L/M/H)
-6. **Inherent severity** (L/M/H)
-7. **Inherent rating** (L/M/H, color-coded)
-8. **Existing / planned controls** (brief)
-9. **Residual likelihood** (L/M/H)
-10. **Residual severity** (L/M/H)
-11. **Residual rating** (L/M/H, color-coded)
+The register is rendered by the `riskRegister` block; its columns are fixed by the builder and are, in order:
 
-Color coding per `risk-matrix.md`: Low = green (#C6EFCE), Medium = amber (#FFEB9C), High = red (#FFC7CE).
+1. **ID** (R1, R2, R3, …) — manifest `id`
+2. **Risk to data subjects** — the feared event, named concretely — manifest `risk`
+3. **Inherent (L × S)** — manifest `likelihood` × `severity`
+4. **Inherent** rating — *derived*, colour-coded
+5. **Existing / planned controls** — manifest `controls`
+6. **Residual (L × S)** — manifest `residualLikelihood` × `residualSeverity`
+7. **Residual** rating — *derived*, colour-coded, with `*` on any High rating (Art. 36)
+
+The ratings columns are **not** manifest inputs: the builder derives them from `risk-matrix.md`'s mapping. Stating `inherentRating` / `residualRating` in the manifest is optional and is treated as an assertion to be checked — a disagreement stops the build with exit 3. See the risk-rating gate in SKILL.md Step 5.
+
+**Threat scenario and data subjects affected do not get register columns.** An eleven-column table is unreadable on A4 portrait, and both fields need prose rather than a cell. They belong in §4.3's risk-by-risk narrative, which must, for every Medium or High residual risk, name the threat actor and route, the categories of data subjects affected, the controls relied on, and why the residual rating lands where it does.
+
+Colour coding per `risk-matrix.md`: Low = green (#C6EFCE), Medium = amber (#FFEB9C), High = red (#FFC7CE). The builder applies it; do not restate hex values in the manifest.
 
 ### 3×3 Matrix Visualization
 
-Two side-by-side or stacked tables (Inherent | Residual), each formatted as:
+Two stacked tables (Inherent, then Residual), emitted by two `matrix` blocks pointing at the same register. The builder plots the register's risk IDs into the cells and colours them from the same mapping that produced the ratings, so the register and the matrices cannot disagree. Each renders as:
 
 ```
               | Severity: Low | Severity: Medium | Severity: High |
@@ -150,6 +151,8 @@ For each Medium or High residual risk identified in Section 4, list:
 End the section with the **Article 36 flag**:
 
 > **Article 36 Prior Consultation:** Based on the residual risk assessment in Section 4, this DPIA [does / does not] require prior consultation with the [competent supervisory authority] under Article 36 GDPR. [Reasoning.]
+
+The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
 
 ## Section 6 — UK / EU Divergence Notes (where applicable)
 
@@ -176,6 +179,8 @@ Bulleted list of:
 - Published DPIA(s) used as analog, with URL and what they were used for
 - Standards (ISO 31000, ISO 27701, NIST Privacy Framework) cited
 
+Every entry carries its source-attribution tag; see `references/authorities.md` for which of the recurring authorities may go out as `[official publication]` and which ship UNVERIFIED. Where a run could not fetch anything, say so here in terms that distinguish it from having searched and found nothing.
+
 ## Appendix B — Open Questions and Follow-Up Items
 
 Anything the user could not answer in intake, anything that materially affected the analysis, anything that requires further investigation before the DPIA is finalized.
@@ -186,17 +191,32 @@ Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.
 
 ---
 
-## docx-js Implementation Notes
+## Template → Manifest Mapping
 
-Per `/mnt/skills/public/docx/SKILL.md`:
+The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | Prepared by Counsel" footer, the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
 
-- US Letter page size: `width: 12240, height: 15840`, 1-inch margins (1440 DXA).
-- Default font: Arial, 12pt (size 24 in docx-js units).
-- Override Heading 1, Heading 2, Heading 3 styles with explicit IDs.
-- Tables: use `WidthType.DXA`, set `columnWidths` array and individual cell `width`. Use `ShadingType.CLEAR` (never SOLID).
-- Risk matrix cells: use the hex fills from `risk-matrix.md`.
-- Header on every page: define `Header` object in section properties.
-- Footer with page number: use `PageNumber.CURRENT` and `PageNumber.TOTAL_PAGES` in the footer paragraph.
-- After creating, validate with `/mnt/skills/public/docx/scripts/office/validate.py`.
+Author the manifest against this table, then run the builder:
 
-Save the script as `create_dpia.js` in `/home/claude/` (it does not need to persist between conversations). Per-DPIA scripts are cheaper to write than to maintain a parameterized generator — the narrative is bespoke per DPIA anyway.
+| Template section | Manifest blocks |
+|---|---|
+| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. |
+| Article 36 conclusion | Top-level `art36` — `true` or `false`. **Required** wherever a `riskRegister` block exists. Checked against the register; exit 3 on disagreement. |
+| Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
+| §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
+| §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
+| §3 Stakeholder consultation | `heading` + `para` |
+| §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one) |
+| §4.3 Risk-by-risk narrative | `heading` + `para` per Medium/High residual risk |
+| §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}`, both with `source` set to the register's `id` |
+| §5 Measures | `table` with the mitigation / type / owner / target date / effect columns |
+| §6 UK–EU divergence | `heading` + `para`; omit the block entirely where the processing has no UK scope |
+| §7 Conclusion and approval | `heading` + `para` + one `signature` block |
+| Appendices A–C | `pagebreak`, then `heading` + `bullets` (A, B) and `table` (C) |
+
+Run it, and read the exit code before delivering anything:
+
+```bash
+node scripts/build_dpia.js /home/claude/dpia_manifest.json
+```
+
+`0` built and validated; `1` manifest error; `2` validation did not pass; `3` risk-rating gate failure — the stated rating disagrees with the derived one, which is a scoring error to re-examine, never a number to overwrite. Deliver only on `0`. On exit 2, read `/mnt/skills/public/docx/SKILL.md` for the unpack-fix-repack procedure and re-run.
