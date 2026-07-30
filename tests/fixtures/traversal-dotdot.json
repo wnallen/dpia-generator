@@ -1,0 +1,11 @@
+{
+  "systemName": "Traversal Dotdot",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "para",
+      "text": "outputFilename is \"..\", which basename() leaves as \"..\"; it must not climb out of outputDir."
+    }
+  ],
+  "outputFilename": ".."
+}

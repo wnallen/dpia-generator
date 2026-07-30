@@ -59,8 +59,12 @@
  *   "reference": "[DPIA-2026-001]",            // optional
  *   "status": "Draft",                         // Draft|Under DPO Review|Approved|Requires Art. 36 Prior Consultation
  *   "art36": false,                            // REQUIRED if any riskRegister block; see conclusion gate
- *   "outputDir": "/mnt/user-data/outputs",     // default shown
- *   "outputFilename": null,                    // default DPIA_<System>_<date>.docx
+ *   "outputDir": "/mnt/user-data/outputs",     // default; must resolve under an
+ *                                              //   allowed root (default outputs
+ *                                              //   dir or the OS temp dir; extend
+ *                                              //   via DPIA_OUTPUT_ROOTS)
+ *   "outputFilename": null,                    // default DPIA_<System>_<date>.docx;
+ *                                              //   reduced to a basename, never a path
  *   "blocks": [ ... ]                          // required, ordered content
  * }
  *
@@ -82,6 +86,7 @@
  */
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
@@ -446,15 +451,46 @@ function main() {
   ['systemName', 'date'].forEach(k => { if (!m[k]) fail(1, `manifest: missing required "${k}"`); });
   if (!/^\d{4}-\d{2}-\d{2}$/.test(m.date)) fail(1, 'manifest: "date" must be YYYY-MM-DD');
 
-  const outDir = m.outputDir || '/mnt/user-data/outputs';
-  fs.mkdirSync(outDir, { recursive: true });
+  // The manifest is authored from instructions that may include untrusted
+  // ingested content (vendor pages, pasted specs), so both "outputDir" and
+  // "outputFilename" are semi-trusted inputs. Confine the write to an allowlist
+  // of roots — the default outputs directory and the OS temp dir (the regression
+  // harness writes there) — extendable via DPIA_OUTPUT_ROOTS for other images.
+  // Without this, a manifest "outputDir" alone can direct the write anywhere the
+  // process can write, which is exactly what the outputFilename guard below is
+  // meant to prevent.
+  const DEFAULT_OUT = '/mnt/user-data/outputs';
+  const allowedRoots = [DEFAULT_OUT, os.tmpdir()]
+    .concat((process.env.DPIA_OUTPUT_ROOTS || '').split(path.delimiter).filter(Boolean))
+    .map(r => path.resolve(r));
+  const isInside = (base, target) => {
+    const rel = path.relative(base, target);
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+  };
+  const outDir = path.resolve(m.outputDir || DEFAULT_OUT);
+  if (!allowedRoots.some(root => isInside(root, outDir))) {
+    fail(1, `manifest: "outputDir" (${outDir}) is outside the permitted output roots ` +
+            `[${allowedRoots.join(', ')}]. Set DPIA_OUTPUT_ROOTS to permit another location.`);
+  }
+
   const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '');
   // basename() so a manifest "outputFilename" cannot write outside outputDir via "../".
-  const named = m.outputFilename ? path.basename(String(m.outputFilename)) : '';
-  if (m.outputFilename && named !== String(m.outputFilename)) {
+  // basename(".."|".") returns the reference itself, so reject those (and empty)
+  // explicitly — otherwise path.join(outDir, "..") would climb out of outDir.
+  let named = m.outputFilename ? path.basename(String(m.outputFilename)) : '';
+  if (m.outputFilename && (named === '.' || named === '..' || named === '')) {
+    process.stderr.write(`build_dpia: note — "outputFilename" (${JSON.stringify(m.outputFilename)}) is not a usable filename; using the default name.\n`);
+    named = '';
+  } else if (m.outputFilename && named !== String(m.outputFilename)) {
     process.stderr.write(`build_dpia: note — "outputFilename" was reduced to "${named}"; it may not contain a path.\n`);
   }
   const outPath = path.join(outDir, named || `DPIA_${safe}_${m.date}.docx`);
+  // Belt and braces: confirm the fully-resolved path never escaped outDir.
+  if (!isInside(outDir, path.resolve(outPath))) {
+    fail(1, `manifest: resolved output path (${path.resolve(outPath)}) escapes "outputDir" (${outDir}).`);
+  }
+
+  fs.mkdirSync(outDir, { recursive: true });
 
   const state = { art36: false };
   const doc = build(m, state);

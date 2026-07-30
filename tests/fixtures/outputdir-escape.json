@@ -1,0 +1,11 @@
+{
+  "systemName": "OutputDir Escape",
+  "date": "2026-07-29",
+  "outputDir": "/etc/dpia-escape-test-DEMO",
+  "blocks": [
+    {
+      "type": "para",
+      "text": "A manifest outputDir pointing outside the permitted roots must be refused before any write."
+    }
+  ]
+}
