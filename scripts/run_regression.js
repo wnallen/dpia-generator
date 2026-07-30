@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * run_regression.js — regression suite for build_dpia.js (v1.0)
+ * run_regression.js — regression suite for build_dpia.js (v1.1)
  *
  * Every case below is a defect that was actually shipped, or a gate that exists
  * to stop one. Run this after any change to build_dpia.js, references/risk-matrix.md,
@@ -123,6 +123,25 @@ const CASES = [
       [!fs.existsSync(path.join(tmp, '..', 'ESCAPED.docx')), 'nothing written to the parent directory'],
     ],
   },
+  {
+    name: 'traversal-dotdot',
+    why: 'outputFilename ".." survives basename() unchanged; it must fall back to the default name, not climb out of outputDir.',
+    exit: 0,
+    stderr: /is not a usable filename/,
+    checkPath: (outPath, tmp) => [
+      [path.dirname(path.resolve(outPath)) === path.resolve(tmp), 'output landed inside outputDir, not the parent'],
+    ],
+  },
+  {
+    name: 'outputdir-escape',
+    why: 'A manifest outputDir outside the permitted roots must be refused before any write.',
+    exit: 1,
+    keepDir: true,
+    stderr: /outside the permitted output roots/,
+    checkFs: () => [
+      [!fs.existsSync('/etc/dpia-escape-test-DEMO'), 'nothing written to the disallowed outputDir'],
+    ],
+  },
   { name: 'unknown-block', why: 'Unknown block types fail loudly.', exit: 1, stderr: /unknown block type/ },
   { name: 'bad-date', why: 'Date format is validated before anything is written.', exit: 1, stderr: /must be YYYY-MM-DD/ },
   { name: 'matrix-no-source', why: 'A matrix pointing at no register fails rather than rendering empty.', exit: 1, stderr: /no riskRegister named/ },
@@ -137,7 +156,9 @@ function run() {
     const src = path.join(FIXTURES, c.name + '.json');
     if (!fs.existsSync(src)) { console.log(`FAIL  ${c.name} — fixture missing`); failed++; continue; }
     const m = JSON.parse(fs.readFileSync(src, 'utf8'));
-    m.outputDir = tmp;
+    // Most cases write into the throwaway tmp dir; a case testing the outputDir
+    // allowlist itself keeps the outputDir declared in its fixture.
+    if (!c.keepDir) m.outputDir = tmp;
     const mp = path.join(tmp, c.name + '.manifest.json');
     fs.writeFileSync(mp, JSON.stringify(m));
 
@@ -161,6 +182,10 @@ function run() {
         asserts.forEach(([ok, label]) => { if (!ok) problems.push(label); });
       }
     }
+
+    // Filesystem assertions that must hold regardless of exit code (e.g. a
+    // rejected outputDir must have written nothing).
+    if (c.checkFs) c.checkFs(tmp).forEach(([ok, label]) => { if (!ok) problems.push(label); });
 
     if (problems.length) {
       failed++;
