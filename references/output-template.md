@@ -33,8 +33,7 @@ DPIA Reference: [DPIA-YYYY-NNN]
 
 Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime blocking states]
 
-AI-GENERATED DRAFT — produced by the dpia-generator skill. Not counsel’s work
-product or legal advice until reviewed and adopted by counsel.
+AI-GENERATED DRAFT — produced by the dpia-generator skill.
 ```
 
 Use a horizontal rule above and below the central block. Leave generous white space.

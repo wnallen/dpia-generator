@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v4.0)
+ * build_dpia.js — dpia-generator document assembler (v4.0.1)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -654,7 +654,7 @@ function coverPage(m, jur) {
   return out;
 }
 
-const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator skill. Not counsel’s work product or legal advice until reviewed and adopted by counsel.';
+const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator skill.';
 
 // The privilege header is the default because the DPIA is drafted as counsel's
 // work product. It is parameterized because the default is not sustainable
