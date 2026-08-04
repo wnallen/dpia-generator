@@ -44,7 +44,7 @@ sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read('word/document.xml').decode()
 }
 
 const STAR = /‖\s*High \*\s*‖/;          // a starred rating cell in the register
-const FOOTNOTE = /Article 36 prior consultation .* is engaged/;
+const FOOTNOTE = /Article 36 prior consultation .* (is|are) engaged/;
 
 const CASES = [
   {
@@ -150,6 +150,18 @@ const CASES = [
     why: 'An invented regime code must fail, not silently produce a document claiming coverage.',
     exit: 1,
     stderr: /unknown jurisdiction code "atlantis-dpa"/,
+  },
+  {
+    name: 'jurisdictions-proto',
+    why: 'v3.4.1: "__proto__" as a regime code resolved through the prototype chain, bypassing the unknown-code check and garbling the gate diagnosis.',
+    exit: 1,
+    stderr: /unknown jurisdiction code "__proto__"/,
+  },
+  {
+    name: 'matrix-proto-source',
+    why: 'v3.4.1: a matrix source of "constructor" resolved to Function via the prototype chain and crashed the builder with a stack trace instead of exit 1 (latent since v1.1).',
+    exit: 1,
+    stderr: /no riskRegister named "constructor"/,
   },
   {
     name: 'conclusions-missing-regime',

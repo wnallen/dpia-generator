@@ -1,0 +1,20 @@
+{
+  "systemName": "Prototype Chain Probe",
+  "date": "2026-08-04",
+  "jurisdictions": ["__proto__"],
+  "art36": false,
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "A prototype-chain key must be rejected as an unknown code, not resolve to Object.prototype and garble the gate.",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "n/a"
+        }
+      ]
+    }
+  ]
+}

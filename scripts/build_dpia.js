@@ -147,6 +147,14 @@ function fail(code, msg) {
   process.exit(code);
 }
 
+// Own-property lookup for objects keyed by manifest-supplied strings. A plain
+// obj[key] lets "__proto__" or "constructor" resolve through the prototype
+// chain — a manifest-controlled key must never do that: it bypasses the
+// unknown-code check and crashes downstream instead of failing cleanly.
+function own(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
+}
+
 const D = loadDocx();
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
@@ -497,7 +505,7 @@ function docTitleOf(m) {
 
 // ---------------------------------------------------------------- build
 function build(manifest, state) {
-  const registers = {};
+  const registers = Object.create(null); // null-proto: register ids come from the manifest
   const children = coverPage(manifest);
 
   (manifest.blocks || []).forEach((b, i) => {
@@ -529,7 +537,7 @@ function build(manifest, state) {
             .filter(c => REGIMES[c] && REGIMES[c].derive)
             .map(c => REGIMES[c].highResidualNote);
           const footnote = consultNotes.length
-            ? `* Residual risk rated High \u2014 ${consultNotes.join(' and ')} is engaged for this risk, and the processing may not commence until that consultation has concluded.`
+            ? `* Residual risk rated High \u2014 ${consultNotes.join(' and ')} ${consultNotes.length > 1 ? 'are' : 'is'} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`
             : '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
           children.push(p(footnote, { italic: true, size: 18 }));
         }
@@ -538,7 +546,7 @@ function build(manifest, state) {
       }
       case 'complianceMap': {
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
-        if (b.regime && !REGIMES[b.regime]) {
+        if (b.regime && !own(REGIMES, b.regime)) {
           fail(1, `${ctx}: unknown regime code "${b.regime}". Known: ${Object.keys(REGIMES).join(', ')}`);
         }
         const headings = (manifest.blocks || [])
@@ -564,7 +572,7 @@ function build(manifest, state) {
         break;
       }
       case 'matrix': {
-        const src = registers[b.source || 'default'];
+        const src = own(registers, b.source || 'default');
         if (!src) fail(1, `${ctx}: no riskRegister named "${b.source || 'default'}" appears before this block`);
         const stage = (b.stage || 'residual').toLowerCase();
         if (stage !== 'inherent' && stage !== 'residual') fail(1, `${ctx}: "stage" must be inherent|residual`);
@@ -683,7 +691,7 @@ function main() {
   }
   const jur = m.jurisdictions || ['eu-gdpr'];
   jur.forEach(c => {
-    if (!REGIMES[c]) fail(1, `manifest: unknown jurisdiction code "${c}". Known codes: ${Object.keys(REGIMES).join(', ')}`);
+    if (!own(REGIMES, c)) fail(1, `manifest: unknown jurisdiction code "${c}". Known codes: ${Object.keys(REGIMES).join(', ')}`);
   });
 
   // regulatorConclusions, with "art36" as a legacy alias: it fills
@@ -691,7 +699,7 @@ function main() {
   // that has no explicit entry. The derivation is identical across those
   // regimes — consultation engages on any High residual — so a single legacy
   // declaration cannot say two different things.
-  const rc = {};
+  const rc = Object.create(null); // null-proto: keys come from the manifest
   if (m.regulatorConclusions !== undefined) {
     if (typeof m.regulatorConclusions !== 'object' || Array.isArray(m.regulatorConclusions) || m.regulatorConclusions === null) {
       fail(1, 'manifest: "regulatorConclusions" must be an object keyed by jurisdiction code');

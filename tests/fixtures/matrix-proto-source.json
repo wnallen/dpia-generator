@@ -1,0 +1,21 @@
+{
+  "systemName": "Matrix Prototype Source",
+  "date": "2026-08-04",
+  "art36": false,
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "A matrix source of 'constructor' must fail as a missing register, not crash through the prototype chain.",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "n/a"
+        }
+      ]
+    },
+    { "type": "matrix", "stage": "residual", "source": "constructor" }
+  ]
+}
