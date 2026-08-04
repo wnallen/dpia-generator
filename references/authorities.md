@@ -75,6 +75,17 @@ All UNVERIFIED as identifiers until fetched once; the analysis lives in `referen
 - **GB/T 39335-2020** (PI security impact assessment methodology) — national standard; record how the text was obtained.
 - **CAC cross-border rules** — 2022 security-assessment measures, 2023 SCC measures, March 2024 relaxation provisions. Thresholds move; re-verify per run, not per session.
 
+### Asia-Pacific and Switzerland (Phase 3 modules)
+
+All UNVERIFIED; analysis in the respective `references/jurisdictions/` files.
+
+- **India:** DPDP Act, 2023 (s. 10 — SDF obligations); DPDP Rules, 2025 (Gazette, notified 2025-11-13). Capture the rule numbers for the annual SDF DPIA/audit and Board reporting on first fetch; check SDF designation notifications every India-scope run.
+- **Switzerland:** revFADP, SR 235.1 (Arts. 22–23; the Art. 23(4) advisor alternative is the reason the builder treats this regime as non-derivable). FDPIC guidance at edoeb.admin.ch.
+- **Singapore:** PDPA 2012 as amended; PDPC Guide to DPIAs (2021) — PDF URL recorded in the module `[web search — verify]`.
+- **Malaysia:** PDPA 2010 + Amendment Act 2024; JPDP DPIA consultation paper (2025) — watch status, module carries a volatility banner.
+- **Australia:** Privacy Act 1988 + POLA Act 2024 (tort in force 2025-06-10; APP 1.7 ADM transparency 2026-12-10); OAIC PIA guide; agencies APP Code.
+- **South Korea:** PIPA Art. 33 + Enforcement Decree thresholds (public-institution PIA through PIPC-designated agencies, submitted to the PIPC).
+
 ### Regulation (EU) 2024/1689 (EU AI Act)
 
 Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Verify the CELEX identifier and the Annex III sub-paragraph before citing** — this instrument is newer than the rest of this register and its numbering is the one most often misremembered.

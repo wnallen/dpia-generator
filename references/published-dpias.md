@@ -172,6 +172,29 @@ The national methodology standard for PI impact assessment, plus the CAC's secur
 and SCC-filing measures (the PIPIA report is part of the SCC filing package). Best for:
 `cn-pipl` method alignment and the export-route analysis; re-verify thresholds every run.
 
+### Singapore — PDPC Guide to Data Protection Impact Assessments (2021)
+
+pdpc.gov.sg (PDF URL recorded in the `sg-pdpa` module). A complete regulator-authored DPIA
+methodology with worked structure — the best APAC analog anchor. Best for: `sg-pdpa` runs and
+as a structural model for any consent-centric regime.
+
+### Australia — OAIC Guide to undertaking privacy impact assessments
+
+oaic.gov.au. Ten-step regulator methodology; the agencies' published PIA registers
+occasionally surface full public-sector PIAs — the APAC analog of the FOI-released UK
+examples. Best for: `au-privacy` runs; public-sector analogs.
+
+### South Korea — PIPC PIA program materials
+
+pipc.go.kr. The designated-agency assessment criteria are the operative methodology for the
+mandatory public-institution PIA. Best for: `kr-pipa` scoping; understanding what the formal
+agency-run PIA will test.
+
+### Switzerland — FDPIC DPIA guidance
+
+edoeb.admin.ch. Best for: `ch-fadp` runs and the Art. 23 consultation mechanics, including
+the Art. 23(4) advisor alternative.
+
 ---
 
 ## How to Add to This Catalog

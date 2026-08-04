@@ -225,6 +225,41 @@ const REGIMES = {
     conclusionKey: 'pipiaRequired',
     derive: null,
   },
+  // Switzerland has a true prior-consultation mechanism (revFADP Art. 23) but
+  // is deliberately NON-derivable: Art. 23(4) lets a controller that consulted
+  // its data protection advisor lawfully skip the FDPIC on a High residual, a
+  // fact the builder cannot see. The declaration is reviewed, not derived —
+  // see references/jurisdictions/switzerland-fadp.md §2.
+  'ch-fadp': {
+    label: 'Switzerland revFADP',
+    conclusionKey: 'fdpicConsultation',
+    derive: null,
+  },
+  'in-dpdp': {
+    label: 'India DPDP',
+    conclusionKey: 'dpiaRequired',
+    derive: null,
+  },
+  'sg-pdpa': {
+    label: 'Singapore PDPA',
+    conclusionKey: 'assessmentRequired',
+    derive: null,
+  },
+  'my-pdpa': {
+    label: 'Malaysia PDPA',
+    conclusionKey: 'assessmentRequired',
+    derive: null,
+  },
+  'au-privacy': {
+    label: 'Australia Privacy Act',
+    conclusionKey: 'piaRequired',
+    derive: null,
+  },
+  'kr-pipa': {
+    label: 'South Korea PIPA',
+    conclusionKey: 'piaRequired',
+    derive: null,
+  },
 };
 
 function norm(v, field, ctx) {
