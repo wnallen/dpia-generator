@@ -7,10 +7,11 @@ a **three-year retention rule**, and — uniquely in this skill — a PIPIA repo
 the regulator as part of the SCC route for cross-border transfers**. The authoritative text is
 Chinese; treat every English rendering, including this module, as a working translation.
 
-> **Sourcing status (2026-08-04):** primary sources not fetched at build time (403 via proxy);
-> the enumerations below are `[model knowledge — verify]`, corroborated in outline by
-> secondary sources via search. The CAC's cross-border rules were materially relaxed in March
-> 2024 and continue to move — re-verify thresholds on every China-scope run.
+> **Sourcing status (2026-08-04):** primary sources return HTTP 403 to the fetch tool. A
+> web-search corroboration pass on 2026-08-04 **confirmed Arts. 55 and 56 (verbatim structure),
+> the ≥3-year report retention, and GB/T 39335-2020**; those carry `[web search — verify]`. The
+> CAC's cross-border rules were materially relaxed in March 2024 and continue to move — those
+> thresholds stay `[model knowledge — verify]` and must be re-verified on every China-scope run.
 
 ## 1. Instrument and statute
 
@@ -19,12 +20,12 @@ Chinese; treat every English rendering, including this module, as a working tran
   (3) **entrusting** processing to another party; (4) **providing** personal information to
   another handler; (5) **publicly disclosing** personal information; (6) **transferring
   personal information abroad**; and (7) other processing with a **major impact on
-  individuals' rights and interests**. UNVERIFIED.
+  individuals' rights and interests**. `[web search — verify]` (Art. 55 trigger list confirmed 2026-08-04.)
 - **Art. 56 — required content:** (1) whether the purpose and method are lawful, legitimate
   and **necessary**; (2) the **impact on individuals' rights and interests** and the security
   risks; (3) whether the protective measures are lawful, effective and **commensurate with
   the degree of risk**. The report and processing records must be **retained at least three
-  years**. UNVERIFIED.
+  years**. `[web search — verify]` (Art. 56 content and the ≥3-year retention confirmed 2026-08-04.)
 - **Methodology standard:** GB/T 39335-2020, *Guidance for personal information security
   impact assessment* — the national standard operationalizing the assessment; a severity ×
   likelihood method compatible with this skill's 3×3 matrix. Note also the 2025 national
@@ -101,6 +102,6 @@ the SCC route, filed**. Hard rules:
 
 ## 7. Source notes
 
-- PIPL (2021) — npc.gov.cn (Chinese authoritative text; unofficial translations vary on Art. 55–56 wording). UNVERIFIED.
-- GB/T 39335-2020 — SAC national standard. UNVERIFIED; paywalled distribution is common — record how the text was obtained.
+- PIPL (2021) — npc.gov.cn (Chinese authoritative text; unofficial translations vary on Art. 55–56 wording). `[web search — verify]` (Arts. 55–56 and 3-year retention confirmed 2026-08-04; fetch the authoritative text for verbatim wording).
+- GB/T 39335-2020 — SAC national standard. `[web search — verify]` (existence/number confirmed 2026-08-04); paywalled distribution is common — record how the text was obtained.
 - CAC: Measures on Security Assessment (2022); SCC Measures (2023); Provisions on Promoting and Regulating Cross-Border Data Flows (March 2024). UNVERIFIED; thresholds move — re-verify per run.

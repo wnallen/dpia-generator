@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v3.5)
+ * build_dpia.js — dpia-generator document assembler (v3.6)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -74,8 +74,7 @@
  *   "reference": "[DPIA-2026-001]",            // optional
  *   "status": "Draft",                         // cover checkbox vocabulary is DERIVED
  *                                              //   from "jurisdictions": Draft | Under
- *                                              //   <primary regime reviewer> Review |
- *                                              //   Approved, plus each declared
+ *                                              //   DPO Review | Approved, plus each declared
  *                                              //   regime's blocking state (e.g. the
  *                                              //   Art. 36 box for EU/UK, the FDPIC
  *                                              //   box for ch-fadp). A status outside
@@ -196,18 +195,18 @@ const RATING_STYLE = {
 // declared and reviewed, not derived, and the gate checks only that the
 // declaration exists. highResidualNote is the register footnote fragment for
 // the regime; substantive analysis lives in references/jurisdictions/<code>.md.
-// Cover-page vocabulary: "reviewer" is the regime's review-officer title (the
-// primary regime — first code in "jurisdictions" — names the review status);
-// "statusOption" is a blocking lifecycle state the regime contributes to the
-// cover checkboxes when declared. Regimes with no consultation-style stop
-// contribute none — a Colorado-only assessment must not offer an Art. 36 box.
+// Cover-page vocabulary: the review status is uniformly "Under DPO Review"
+// (the review officer's exact statutory title varies by regime but the cover
+// checkbox does not need that detail); "statusOption" is a blocking lifecycle
+// state the regime contributes to the cover checkboxes when declared. Regimes
+// with no consultation-style stop contribute none — a Colorado-only assessment
+// must not offer an Art. 36 box.
 const REGIMES = {
   'eu-gdpr': {
     label: 'EU GDPR',
     conclusionKey: 'priorConsultation',
     derive: (state) => state.highResidual,
     highResidualNote: 'Article 36 prior consultation with the competent supervisory authority',
-    reviewer: 'DPO',
     statusOption: 'Requires Art. 36 Prior Consultation',
   },
   'uk-gdpr': {
@@ -215,7 +214,6 @@ const REGIMES = {
     conclusionKey: 'priorConsultation',
     derive: (state) => state.highResidual,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
-    reviewer: 'DPO / SRI',
     statusOption: 'Requires Art. 36 Prior Consultation',
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
@@ -226,37 +224,31 @@ const REGIMES = {
     label: 'Colorado CPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    reviewer: 'Privacy Counsel',
   },
   'us-ca': {
     label: 'California CCPA/CPRA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    reviewer: 'Privacy Counsel',
   },
   'us-state': {
     label: 'US state privacy laws (VA/CT/TX pattern)',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    reviewer: 'Privacy Counsel',
   },
   'ca-qc': {
     label: 'Quebec Law 25',
     conclusionKey: 'piaRequired',
     derive: null,
-    reviewer: 'Person in Charge of PI Protection',
   },
   'br-lgpd': {
     label: 'Brazil LGPD',
     conclusionKey: 'ripdRequired',
     derive: null,
-    reviewer: 'Encarregado (DPO)',
   },
   'cn-pipl': {
     label: 'China PIPL',
     conclusionKey: 'pipiaRequired',
     derive: null,
-    reviewer: 'PI Protection Officer',
   },
   // Switzerland has a true prior-consultation mechanism (revFADP Art. 23) but
   // is deliberately NON-derivable: Art. 23(4) lets a controller that consulted
@@ -267,38 +259,32 @@ const REGIMES = {
     label: 'Switzerland revFADP',
     conclusionKey: 'fdpicConsultation',
     derive: null,
-    reviewer: 'Data Protection Advisor',
     statusOption: 'Requires FDPIC Consultation',
   },
   'in-dpdp': {
     label: 'India DPDP',
     conclusionKey: 'dpiaRequired',
     derive: null,
-    reviewer: 'DPO',
   },
   'sg-pdpa': {
     label: 'Singapore PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    reviewer: 'DPO',
   },
   'my-pdpa': {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    reviewer: 'DPO',
   },
   'au-privacy': {
     label: 'Australia Privacy Act',
     conclusionKey: 'piaRequired',
     derive: null,
-    reviewer: 'Privacy Officer',
   },
   'kr-pipa': {
     label: 'South Korea PIPA',
     conclusionKey: 'piaRequired',
     derive: null,
-    reviewer: 'CPO',
     statusOption: 'Requires PIPC-Designated Agency Assessment',
   },
 };
@@ -503,9 +489,9 @@ function statusLineOf(m, jur) {
   if (Array.isArray(m.statusOptions) && m.statusOptions.length) {
     options = m.statusOptions.map(String);
   } else {
-    const primary = own(REGIMES, jur[0]);
-    const reviewer = (primary && primary.reviewer) || 'DPO';
-    options = ['Draft', `Under ${reviewer} Review`, 'Approved'];
+    // Reviewer title is uniformly "DPO" — the review officer's exact statutory
+    // name varies by regime, but the cover checkbox does not need that detail.
+    options = ['Draft', 'Under DPO Review', 'Approved'];
     jur.forEach(c => {
       const def = own(REGIMES, c);
       if (def && def.statusOption && !options.includes(def.statusOption)) options.push(def.statusOption);

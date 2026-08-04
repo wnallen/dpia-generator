@@ -10,19 +10,22 @@ fact that the detailed regulation is **still pending**.
 > guidance on RIPDs is a preliminary FAQ webpage (April 2023) and the dedicated RIPD
 > regulation remains on the ANPD's regulatory agenda, unfinalized. `[web search — verify]`
 > When the regulation lands, this module's trigger and content sections must be rebuilt from
-> it. Build-time fetches of gov.br returned HTTP 403 via proxy; every pinpoint below is
-> descriptive and UNVERIFIED.
+> it. Primary-source fetches of gov.br/planalto return HTTP 403 to the fetch tool. A web-search
+> corroboration pass on 2026-08-04 **confirmed Arts. 5(XVII) and 38 and the Art. 38 minimum
+> content** (now `[web search — verify]`) and **corrected a resolution attribution** — see §2.
+> Remaining pinpoints stay descriptive until fetched.
 
 ## 1. Instrument and statute
 
 - **Lei nº 13.709/2018 (LGPD).** RIPD defined at Art. 5(XVII): documentation from the
   controller describing processing that can generate risks to civil liberties and fundamental
-  rights, with measures and safeguards to mitigate risk. UNVERIFIED.
+  rights, with measures and safeguards to mitigate risk. `[web search — verify]`
 - **Art. 38:** the ANPD **may determine** that the controller prepare an RIPD (including for
   legitimate-interests processing, cf. Art. 10 §3); the sole paragraph sketches minimum
   content — description of the types of data collected, the methodology used for collection
   and for ensuring the security of the information, and the controller's analysis of measures,
-  safeguards and risk-mitigation mechanisms. UNVERIFIED.
+  safeguards and risk-mitigation mechanisms. `[web search — verify]` (Art. 38 and its sole-paragraph
+  content confirmed by web search 2026-08-04.)
 - **Art. 32:** the ANPD may request RIPDs from public-sector bodies.
 - Regulator: **Autoridade Nacional de Proteção de Dados (ANPD)**.
 
@@ -32,13 +35,15 @@ The LGPD does not contain an Art. 35(1)-style self-executing obligation with a d
 threshold; the operative reality is twofold:
 
 1. **High-risk processing should have an RIPD ready** — the ANPD's preliminary guidance takes
-   the position that high-risk processing calls for one, and the ANPD's small-agents
-   resolution (recalled: Resolução CD/ANPD nº 2/2022) supplies the closest thing to a
-   high-risk definition: processing is high-risk when it meets **at least one "large-scale"
-   criterion and at least one "significant-harm" criterion** (emerging technologies;
-   surveillance/control of publicly accessible areas; decisions affecting rights; sensitive
-   data; vulnerable subjects including children and the elderly). UNVERIFIED — verify the
-   resolution number and the criteria before citing.
+   the position that high-risk processing calls for one. **Correction from the 2026-08-04
+   verification pass:** Resolução CD/ANPD **nº 2, de 27 de janeiro de 2022** is the
+   **small-agents** regulation (agentes de tratamento de pequeno porte) — an earlier draft of
+   this module wrongly attributed a binding high-risk-criteria list to it. The ANPD does
+   describe high-risk indicators (a "large-scale" factor combined with a "significant-harm"
+   factor: emerging technologies; surveillance of publicly accessible areas; decisions
+   affecting rights; sensitive data; vulnerable subjects including children and the elderly),
+   but these indicators are **expressly non-exhaustive guidance**, not a closed statutory
+   list — do not cite them as binding. `[web search — verify]`
 2. **The ANPD can demand it** — the RIPD is producible on regulatory order regardless of any
    self-assessment.
 
@@ -59,8 +64,9 @@ spine**; nothing in it is surplus for Brazil. Additions:
   the chosen Art. 6 GDPR basis to its Art. 7/11 LGPD analog — they do not map one-to-one.
 - **Sensitive data (Art. 11)** roughly tracks Art. 9 but includes no employment-context
   derogation regime; verify the applicable Art. 11 hypothesis.
-- **Transfers (Arts. 33–36):** the ANPD's international-transfer regulation (recalled:
-  Resolução CD/ANPD nº 19/2024, with Brazilian SCCs) governs; a transfer limb in §1.9 should
+- **Transfers (Arts. 33–36):** the ANPD's international-transfer regulation (with Brazilian
+  SCCs) governs; the resolution number recalled as "19/2024" is **unconfirmed** (see the
+  Source notes) — cite it only once fetched. A transfer limb in §1.9 should
   identify the mechanism. Brazil recognizes no adequacy list equivalent to the EU's as of
   recall — verify current state. UNVERIFIED.
 - **Children (Art. 14):** best-interests standard; processing of children's data was loosened
@@ -96,4 +102,4 @@ delivery may be expected on an ANPD demand; record translation status.
 
 - Lei nº 13.709/2018 — planalto.gov.br. UNVERIFIED; stable statutory identifier, capture URL on first fetch.
 - ANPD RIPD FAQ page (April 2023) — gov.br/anpd. UNVERIFIED; preliminary, superseded when the RIPD regulation lands.
-- Resolução CD/ANPD nº 2/2022 (small agents; high-risk criteria) and nº 19/2024 (international transfers) — gov.br/anpd. UNVERIFIED; verify both resolution numbers.
+- Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**, `[web search — verify]` (confirmed 2026-08-04; **not** a high-risk-criteria instrument — see §2). The international-transfer resolution number (recalled "19/2024") is **unconfirmed** — a 2024-resolution search surfaced nº 15/2024 (incident communication), a different instrument; do not cite the transfer-resolution number until fetched.

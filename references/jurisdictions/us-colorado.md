@@ -7,17 +7,19 @@ prescriptive instance of the harmonized US-state pattern, and an assessment buil
 content list generally over-satisfies the sibling states.
 
 > **Sourcing status (2026-08-04):** primary-source fetches (law.cornell.edu, justia.com,
-> coag.gov) failed at build time (HTTP 403 via proxy). Every pinpoint below is **descriptive
-> and UNVERIFIED** — it tells you which part of the source carries which proposition. Fetch the
-> statute and rules before citing a sub-paragraph, and record verified pinpoints in
-> `references/authorities.md`. Do not invent an enumeration to make a citation look precise.
+> coag.gov) return HTTP 403 to the fetch tool. A web-search corroboration pass on 2026-08-04
+> **confirmed the section identifiers** — C.R.S. § 6-1-1309, and 4 CCR 904-3 Rule 8.02 (Scope),
+> Rule 8.04 (Data Protection Assessment Content), Rule 9.06 (assessments for profiling) — so
+> those carry `[web search — verify]`. The **enumerated 8.04 element list below is still
+> descriptive**: its structure is corroborated but has not been read verbatim from the rule.
+> Fetch the rule before citing a sub-paragraph, and do not invent an enumeration.
 
 ## 1. Instrument and statute
 
-- Colorado Privacy Act, **C.R.S. § 6-1-1309** (data protection assessments). `[model knowledge — verify]`
+- Colorado Privacy Act, **C.R.S. § 6-1-1309** (data protection assessments). `[web search — verify]`
 - Colorado Privacy Act Rules, **4 CCR 904-3, Part 8** (assessment scope, stakeholders, content,
-  timing, retention) and **Part 9** (additional requirements for profiling assessments).
-  `[model knowledge — verify]`
+  timing, retention) and **Part 9** (additional requirements for profiling assessments); key
+  sections **Rule 8.02 (Scope), Rule 8.04 (Content), Rule 9.06 (profiling)**. `[web search — verify]`
 - Regulator: the **Colorado Attorney General** (Consumer Protection Section). There is no
   supervisory-authority consultation mechanism; engagement is by **production on request**.
 

@@ -7,19 +7,20 @@ Protection Agency's regulations approved by the Office of Administrative Law on
 **scheduled filing obligation** — the regulator does not merely demand on request; summaries
 and attestations are submitted on a calendar.
 
-> **Sourcing status (2026-08-04):** cppa.ca.gov and law-firm summaries returned HTTP 403 at
-> build time via proxy; the approval date, effective date and first-filing deadline above were
-> corroborated across multiple secondary sources by web search `[web search — verify]`. All
-> section numbers below are **descriptive and UNVERIFIED** — the risk-assessment article is
-> recalled as 11 CCR §§ 7150–7157 but must be fetched before any section is cited. Record
-> verified pinpoints in `references/authorities.md`.
+> **Sourcing status (2026-08-04):** cppa.ca.gov returns HTTP 403 to the fetch tool. A
+> web-search corroboration pass on 2026-08-04 **confirmed the risk-assessment article structure**
+> — 11 CCR **Article 10, § 7150 (when a risk assessment is required) and § 7152 (risk-assessment
+> requirements)** — plus the effective date (2026-01-01), the first filing deadline (2028-04-01),
+> and the three-year review cycle; those carry `[web search — verify]`. The **enumerated content
+> list below is still descriptive**: corroborated in outline, not read verbatim. Fetch the
+> regulations before citing a sub-paragraph.
 
 ## 1. Instrument and statute
 
 - Cal. Civ. Code § 1798.185(a)(15) (CPRA rulemaking mandate for risk assessments and
   cybersecurity audits). `[model knowledge — verify]`
-- CPPA regulations, risk-assessment article (recalled: 11 CCR §§ 7150–7157) plus the ADMT
-  article, finalized September 2025. `[model knowledge — verify]`
+- CPPA regulations, risk-assessment article — **11 CCR Article 10, §§ 7150 (trigger) and 7152
+  (content)**, plus the ADMT article; finalized September 2025. `[web search — verify]`
 - Regulator: the **California Privacy Protection Agency**; the California AG retains parallel
   enforcement of the CCPA.
 

@@ -5,9 +5,17 @@ README changelog). Retained as the design record. The privilege question in §7(
 as proposed (per-regime privilege postures + parameterized header + two-document rule);
 Switzerland shipped non-derivable rather than derivable because of revFADP Art. 23(4) — see
 `references/jurisdictions/switzerland-fadp.md` §2 for the reasoning, which supersedes §2's
-"derivable where prior-consultation" assumption for that regime. Build-time fetches of primary
-sources returned 403 through the environment proxy, so all new jurisdiction citations ship
-UNVERIFIED per the house rule, recorded in each module's sourcing banner.
+"derivable where prior-consultation" assumption for that regime.
+
+Primary-source fetches return 403 through the environment proxy, so no citation reached
+`[official publication]`. A web-search corroboration pass (2026-08-04) nonetheless moved the
+non-EU statutory **identifiers** off pure recall onto `[web search — verify]` — confirming
+Colorado Rules 8.02/8.04/9.06, California 11 CCR Art. 10 §§ 7150/7152, Quebec ss. 3.3/17,
+LGPD Arts. 5(XVII)/38, PIPL Arts. 55/56 with the 3-year retention, GB/T 39335-2020, DPDP
+Rules Rule 13, revFADP SR 235.1 Arts. 22/23/23(4) — filling the DUAA chapter number (c. 18)
+and correcting one Brazilian resolution attribution (Res. 2/2022 is small-agents, not a
+high-risk list). The three-tier tag semantics are documented in `references/authorities.md`;
+`[web search — verify]` is corroborated-not-fetched and still requires a primary-source read.
 **Target skill version:** v3.0 (manifest schema change → major bump per house convention).
 **Date:** 2026-08-04.
 

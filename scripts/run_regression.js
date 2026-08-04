@@ -206,7 +206,7 @@ const CASES = [
       [/Content compliance map — Colorado CPA/.test(t), 'Colorado compliance map rendered'],
       [/DATA PROTECTION ASSESSMENT/.test(t), 'regime-correct document title'],
       [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a checklist-regime cover'],
-      [/Under Privacy Counsel Review/.test(t), 'regime-correct reviewer in status vocabulary'],
+      [/Under DPO Review/.test(t), 'uniform DPO reviewer in status vocabulary'],
     ],
     checkXml: (x) => [
       [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header suppressed for production posture'],
@@ -220,13 +220,13 @@ const CASES = [
   },
   {
     name: 'status-vocabulary',
-    why: 'v3.5: the cover status boxes were hard-coded GDPR vocabulary; a Swiss document must offer the FDPIC box and name the Data Protection Advisor, not the DPO/Art. 36 pair.',
+    why: 'v3.5: the cover status boxes were hard-coded GDPR vocabulary; a Swiss document must offer the FDPIC box, not the Art. 36 box.',
     exit: 0,
     noWarn: true,
     check: (t) => [
       [/☒ Requires FDPIC Consultation/.test(t), 'FDPIC blocking state present and checked'],
       [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a Swiss-only cover'],
-      [/Under Data Protection Advisor Review/.test(t), 'Swiss reviewer title in the vocabulary'],
+      [/Under DPO Review/.test(t), 'uniform DPO reviewer in the vocabulary'],
     ],
   },
   {

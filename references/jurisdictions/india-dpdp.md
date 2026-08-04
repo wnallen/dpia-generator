@@ -6,10 +6,12 @@ processing activity, and it runs on a **calendar**, not a launch gate. If the cl
 Significant Data Fiduciary, the correct output is a clean "no DPDP DPIA duty attaches" — which
 is itself a valuable conclusion to record.
 
-> **Sourcing status (2026-08-04):** Digital Personal Data Protection Act, 2023 and the DPDP
-> Rules, 2025 (notified 2025-11-13, gazetted 2025-11-14 `[web search — verify]`) not fetched
-> at build time. SDF designations and Data Protection Board practice are new and forming;
-> re-verify the client's designation status and the Rules' phase-in dates every run.
+> **Sourcing status (2026-08-04):** a web-search corroboration pass on 2026-08-04 **confirmed
+> Act s. 10 (SDF designation) and DPDP Rules 2025 Rule 13 (SDF additional obligations: DPIA +
+> independent audit every twelve months, significant observations reported to the Data
+> Protection Board)**; Rules notified 2025-11-13. Those carry `[web search — verify]`; primary
+> texts (indiacode.nic.in, the Gazette) were not fetched. SDF designations and Board practice
+> are new and forming; re-verify the client's designation status and phase-in dates every run.
 
 ## 1. Instrument and statute
 
@@ -17,11 +19,12 @@ is itself a valuable conclusion to record.
   of fiduciaries as **Significant Data Fiduciaries** based on volume and sensitivity of data,
   risk to electoral democracy, security of the State, public order, and related factors. SDFs
   must appoint an India-based DPO, appoint an **independent data auditor**, and undertake
-  **periodic DPIA and periodic audit**. UNVERIFIED.
-- **DPDP Rules, 2025:** operationalize s. 10 — recalled: DPIA **and** audit at least **once
-  every twelve months**, with the person carrying them out reporting **key findings to the
-  Data Protection Board**. UNVERIFIED — verify the exact rule number and whether the report
-  goes via the auditor or the SDF.
+  **periodic DPIA and periodic audit**. `[web search — verify]`
+- **DPDP Rules, 2025, Rule 13:** operationalizes s. 10 — DPIA **and** independent audit at
+  least **once every twelve months**, with the person carrying them out furnishing a report of
+  significant observations to the **Data Protection Board**. `[web search — verify]` (Rule 13
+  confirmed 2026-08-04; whether the report routes via the auditor or the SDF still to be read
+  from the rule text.)
 - Regulator: **Data Protection Board of India** (adjudicatory); rulemaking with **MeitY**.
 
 ## 2. Trigger test — entity designation, then calendar
@@ -82,6 +85,6 @@ preferably with outside counsel in the loop for the India limb.
 
 ## 7. Source notes
 
-- DPDP Act, 2023 — indiacode.nic.in / MeitY. UNVERIFIED.
-- DPDP Rules, 2025 — Gazette notification of 2025-11-13/14; PIB summary. `[web search — verify]`; capture rule numbers for the SDF DPIA/audit and the phase-in schedule on first fetch.
+- DPDP Act, 2023 (s. 10) — indiacode.nic.in / MeitY. `[web search — verify]`; fetch for the exact s. 10 text.
+- DPDP Rules, 2025, **Rule 13** — Gazette notification of 2025-11-13; PIB summary. `[web search — verify]` (Rule 13 = SDF additional obligations, confirmed 2026-08-04); capture the phase-in schedule on first fetch.
 - SDF designation notifications — none confirmed at build; check before every India-scope run.

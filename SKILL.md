@@ -203,10 +203,10 @@ COVER PAGE
   - System name, version, date
   - Privileged & Confidential — Attorney Work Product header
   - Controller / DPO / counsel of record
-  - Status checkboxes — vocabulary derived per regime: Draft / Under [primary
-    regime's reviewer] Review / Approved, plus each declared regime's blocking
-    state (Art. 36 box for EU/UK scope, FDPIC box for Swiss, agency-assessment
-    box for Korean public-sector scope)
+  - Status checkboxes — vocabulary derived per regime: Draft / Under DPO Review /
+    Approved, plus each declared regime's blocking state (Art. 36 box for EU/UK
+    scope, FDPIC box for Swiss, agency-assessment box for Korean public-sector
+    scope)
   - DPIA reference number placeholder
 
 EXECUTIVE SUMMARY (1 page)
@@ -342,6 +342,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v3.6** — Two refinements. (1) Cover-status reviewer title is uniform "DPO" across regimes — the review officer's exact statutory name varies but the checkbox does not carry that detail; blocking states (Art. 36, FDPIC, PIPC agency assessment) remain per-regime. (2) Citation verification pass: with primary-source fetches still 403-blocked but web search available, the non-EU statutory identifiers moved off `[model knowledge — verify]` (recall) onto `[web search — verify]` (corroborated, not fetched) — Colorado Rules 8.02/8.04/9.06, California 11 CCR Art. 10 §§ 7150/7152, Quebec ss. 3.3/17, LGPD Arts. 5(XVII)/38, PIPL Arts. 55/56 + 3-year retention, GB/T 39335-2020, DPDP Rule 13, revFADP SR 235.1 Arts. 22/23/23(4); the DUAA chapter number (c. 18) is filled and a Brazilian resolution mis-attribution corrected (Res. 2/2022 is small-agents, not a high-risk list). `authorities.md` now documents the three-tier tag semantics explicitly. No behavior change; suite unchanged at twenty-seven cases.
 - **v3.5** — Per-regime cover-status vocabulary: the status checkboxes are now derived from `jurisdictions` — base states name the primary regime's reviewer (DPO, DPO/SRI, Privacy Counsel, Person in Charge of PI Protection, Encarregado, PI Protection Officer, Data Protection Advisor, CPO…), and each declared regime with a consultation-style blocking state contributes its own box (Art. 36 for EU/UK, FDPIC for `ch-fadp`, PIPC designated-agency assessment for `kr-pipa`); checklist regimes contribute none, so a Colorado-only cover no longer offers an Art. 36 box. New optional `statusOptions` manifest override; an out-of-vocabulary `status` renders as an extra checked box with a stderr note instead of silently unchecking everything. Suite to twenty-seven cases.
 - **v3.4.1** — Hardening from adversarial testing: manifest-supplied keys (`jurisdictions` codes, matrix `source`, `regulatorConclusions` keys) no longer resolve through the prototype chain — `"__proto__"` bypassed the unknown-code check and `"constructor"` as a matrix source crashed the builder with a stack trace (latent since v1.1); both now fail cleanly with exit 1 via own-property lookups and null-prototype maps. Multi-regime Art. 36 footnote grammar corrected (singular/plural). Suite to twenty-five cases.
 - **v3.4** — Phase 4 close-out: `references/jurisdictions/screening-catalog.md` adds one-paragraph Tier-3 screening entries (Saudi Arabia, UAE, South Africa, Nigeria, Kenya, Japan, Thailand) that upgrade the coverage fallback from bare "not covered" to a bounded, tagged screening note; the description is rewritten for global triggering (Colorado/CCPA assessments, LGPD RIPD, PIPL PIPIA, Law 25 PIA) at exactly the 1024-character packaging cap with all sibling routing clauses intact; persona and README updated for the multi-jurisdiction scope; end-to-end smoke test run (four-regime biometric T&A manifest — EU/UK/Colorado/Brazil — built, gates exercised, OOXML validation passed).

@@ -37,15 +37,14 @@ Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime bloc
 Use a horizontal rule above and below the central block. Leave generous white space.
 
 **Status vocabulary is derived, not fixed.** The builder composes the checkbox row from the
-manifest's `jurisdictions`: the review status names the **primary regime's** reviewer (first
-code in the array — "Under DPO Review" for EU scope, "Under DPO / SRI Review" for UK-first,
-"Under Privacy Counsel Review" for a US-state assessment, "Under Data Protection Advisor
-Review" for Swiss, "Under Person in Charge of PI Protection Review" for Quebec), and each
-declared regime with a consultation-style blocking state contributes its checkbox — the
-Art. 36 box for EU/UK, `Requires FDPIC Consultation` for `ch-fadp`, `Requires
-PIPC-Designated Agency Assessment` for `kr-pipa`. Checklist regimes contribute none: a
-Colorado-only cover offers no Art. 36 box. A manifest `statusOptions` array overrides the
-derived list entirely; a `status` outside the vocabulary renders as an additional checked
+manifest's `jurisdictions`: the base lifecycle states are `Draft / Under DPO Review /
+Approved` (the review officer's exact statutory title varies by regime — DPO, SRI,
+Encarregado, Person in Charge of PI Protection — but the cover checkbox uses "DPO"
+uniformly), and each declared regime with a consultation-style blocking state contributes
+its checkbox — the Art. 36 box for EU/UK, `Requires FDPIC Consultation` for `ch-fadp`,
+`Requires PIPC-Designated Agency Assessment` for `kr-pipa`. Checklist regimes contribute
+none: a Colorado-only cover offers no Art. 36 box. A manifest `statusOptions` array overrides
+the derived list entirely; a `status` outside the vocabulary renders as an additional checked
 box with a note on stderr, so the cover always reflects the declared status.
 
 ## Executive Summary (1 page)

@@ -8,8 +8,10 @@ DPIA, with two structural differences: the trigger is **project-based**, and a P
 **precondition to communicating personal information outside Quebec**.
 
 > **Sourcing status (2026-08-04):** primary sources (legisquebec.gouv.qc.ca, cai.gouv.qc.ca)
-> not fetched at build time. Section numbers are descriptive `[model knowledge — verify]`;
-> the CAI guide's existence and date were corroborated by search `[web search — verify]`.
+> return HTTP 403 to the fetch tool. A web-search corroboration pass on 2026-08-04 **confirmed
+> both trigger section numbers — s. 3.3 (information-system projects) and s. 17 (communication
+> outside Quebec)** — and the CAI PIA guide; those carry `[web search — verify]`. The CAI guide's
+> internal pinpoints still require a fetch.
 
 ## 1. Instrument and statute
 
@@ -24,12 +26,12 @@ DPIA, with two structural differences: the trigger is **project-based**, and a P
 
 Two independent triggers (descriptive):
 
-1. **Information-system projects** (recalled s. 3.3): a PIA is required for any project of
+1. **Information-system projects** (s. 3.3 — confirmed 2026-08-04): a PIA is required for any project of
    **acquisition, development or redesign of an information system or electronic service
    delivery** involving the collection, use, communication, keeping or destruction of
    personal information. Proportionality applies — the PIA's depth scales with the
    sensitivity of the information, the purposes, the quantity, distribution and medium.
-2. **Communication outside Quebec** (recalled s. 17): before communicating personal
+2. **Communication outside Quebec** (s. 17 — confirmed 2026-08-04): before communicating personal
    information outside Quebec (including to the rest of Canada), the enterprise must conduct
    a PIA establishing that the information would receive **adequate protection** in light of
    generally accepted data-protection principles, and the communication must be subject to a
@@ -96,8 +98,8 @@ analysis, per the destination check.
 
 ## 8. Source notes
 
-- CQLR c. P-39.1 (as amended) — legisquebec.gouv.qc.ca. UNVERIFIED; capture the true section
-  numbers for the two triggers on first fetch (the "3.3"/"17" recall above is the most
-  commonly cited pair and must be confirmed).
-- CAI, companion guide on PIAs (Sept 2023) — cai.gouv.qc.ca. UNVERIFIED.
+- CQLR c. P-39.1 (as amended) — legisquebec.gouv.qc.ca. `[web search — verify]`; **ss. 3.3
+  (system-project PIA) and 17 (communication outside Quebec) confirmed 2026-08-04**; fetch for
+  the verbatim statutory text.
+- CAI, companion guide on PIAs (Sept 2023) — cai.gouv.qc.ca. `[web search — verify]`.
 - OPC PIA guidance; TBS Directive on Privacy Impact Assessment — priv.gc.ca / tbs-sct.canada.ca. UNVERIFIED.

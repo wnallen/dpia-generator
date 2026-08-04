@@ -6,20 +6,23 @@ regime). The revised Federal Act on Data Protection (in force 2023-09-01) mirror
 nuance that keeps this regime **non-derivable** in the builder despite having a true
 prior-consultation mechanism.
 
-> **Sourcing status (2026-08-04):** fedlex.admin.ch not fetched at build time; article
-> numbers are the standard recall for the revFADP and are **UNVERIFIED**.
+> **Sourcing status (2026-08-04):** fedlex.admin.ch returns HTTP 403 to the fetch tool. A
+> web-search corroboration pass on 2026-08-04 **confirmed SR 235.1, Art. 22 (DPIA), Art. 23
+> (FDPIC consultation) and Art. 23(4) (the data-protection-adviser alternative)**, and the
+> 2023-09-01 in-force date; those carry `[web search — verify]`. Article pinpoints still require
+> a fetch to reach `[official publication]`.
 
 ## 1. Instrument and statute
 
 - **revFADP Art. 22:** DPIA required where the intended processing is likely to result in a
   **high risk to the data subject's personality or fundamental rights**; risk driven by the
   nature, scope, circumstances and purposes — expressly including extensive processing of
-  sensitive data and systematic monitoring of extensive public areas. UNVERIFIED.
+  sensitive data and systematic monitoring of extensive public areas. `[web search — verify]`
 - **Art. 23:** where the DPIA shows a **high residual risk** despite the measures envisaged,
   the controller must obtain the **FDPIC's opinion** in advance — a genuine Art. 36 analog.
   **Art. 23(4) (the gate nuance):** a controller that has appointed a **data protection
   advisor** under Art. 10 and consulted that advisor **may refrain from consulting the
-  FDPIC**. UNVERIFIED.
+  FDPIC**. `[web search — verify]` (Arts. 22, 23 and 23(4) confirmed 2026-08-04.)
 - Regulator: **Federal Data Protection and Information Commissioner (FDPIC)**.
 
 ## 2. Why this regime is non-derivable in the builder
@@ -77,5 +80,5 @@ DPIA before the regulator by design on that branch.
 
 ## 6. Source notes
 
-- revFADP (2020, in force 2023) — fedlex.admin.ch (DE/FR/IT authentic; EN courtesy translation). UNVERIFIED; capture the SR number (recalled SR 235.1) and article pinpoints on first fetch.
+- revFADP (2020, in force 2023-09-01) — fedlex.admin.ch (DE/FR/IT authentic; EN courtesy translation). `[web search — verify]`; **SR 235.1 and Arts. 22/23/23(4) confirmed 2026-08-04**; fetch for verbatim article text.
 - FDPIC DPIA guidance — edoeb.admin.ch. UNVERIFIED.
