@@ -145,6 +145,53 @@ const CASES = [
   { name: 'unknown-block', why: 'Unknown block types fail loudly.', exit: 1, stderr: /unknown block type/ },
   { name: 'bad-date', why: 'Date format is validated before anything is written.', exit: 1, stderr: /must be YYYY-MM-DD/ },
   { name: 'matrix-no-source', why: 'A matrix pointing at no register fails rather than rendering empty.', exit: 1, stderr: /no riskRegister named/ },
+  {
+    name: 'jurisdictions-unknown',
+    why: 'An invented regime code must fail, not silently produce a document claiming coverage.',
+    exit: 1,
+    stderr: /unknown jurisdiction code "atlantis-dpa"/,
+  },
+  {
+    name: 'conclusions-missing-regime',
+    why: 'v3.0: every declared jurisdiction needs a conclusion; declaring the EU one does not answer for the UK.',
+    exit: 1,
+    stderr: /regulatorConclusions\["uk-gdpr"\]/,
+  },
+  {
+    name: 'conclusions-contradiction-regime',
+    why: 'v3.0: a per-regime conclusion contradicting the register is the same defect the art36 gate stops, per regime.',
+    exit: 3,
+    stderr: /ARTICLE 36 CONCLUSION GATE FAILED[\s\S]*\[uk-gdpr\]/,
+  },
+  {
+    name: 'regulator-conclusions-explicit',
+    why: 'v3.0 schema without the legacy art36 alias must work end to end, including the complianceMap block.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'register row is starred'],
+      [FOOTNOTE.test(t), 'Art. 36 footnote rendered'],
+      [/prior consultation with the ICO/.test(t), 'multi-regime footnote names the UK authority'],
+      [/Content compliance map — UK GDPR/.test(t), 'compliance map rendered with regime label'],
+      [/Where addressed/.test(t), 'compliance map table present'],
+    ],
+  },
+  {
+    name: 'compliancemap-bad-section',
+    why: 'A compliance map pointing at a section that does not exist is the checklist version of a fabricated citation.',
+    exit: 1,
+    stderr: /match no heading/,
+  },
+  {
+    name: 'header-suppressed',
+    why: 'A document drafted for regulator production must be able to shed the privilege header deliberately.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header absent from body'],
+      [x.includes('DATA PROTECTION ASSESSMENT'), 'overridden document title present'],
+    ],
+  },
 ];
 
 function run() {

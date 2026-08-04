@@ -1,0 +1,38 @@
+{
+  "systemName": "Explicit Conclusions",
+  "date": "2026-08-04",
+  "jurisdictions": ["eu-gdpr", "uk-gdpr"],
+  "regulatorConclusions": {
+    "eu-gdpr": { "priorConsultation": true },
+    "uk-gdpr": { "priorConsultation": true }
+  },
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual declared per regime via regulatorConclusions, no legacy art36 field.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    },
+    { "type": "matrix", "stage": "residual", "source": "main" },
+    { "type": "heading", "level": 1, "text": "SECTION 5 — MEASURES TO ADDRESS RISKS" },
+    {
+      "type": "complianceMap",
+      "regime": "uk-gdpr",
+      "rows": [
+        { "element": "Assessment of risks to rights and freedoms", "section": "SECTION 4" },
+        { "element": "Measures envisaged to address the risks", "section": "Section 5", "note": "mitigations table" }
+      ]
+    }
+  ]
+}

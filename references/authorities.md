@@ -49,7 +49,7 @@ The UK GDPR as it forms part of retained EU law, read with the DPA 2018 (c. 12).
 
 ### Data (Use and Access) Act 2025
 
-**Chapter number not captured — do not cite without it.** `legislation.gov.uk` URLs take the form `/ukpga/{year}/{chapter}`; a bare `/ukpga/2025` identifies nothing. Look the Act up, record the chapter number here, and cite the specific amending section rather than the Act as a whole. Substantive analysis is in `references/uk-divergence.md`.
+**Chapter number not captured — do not cite without it.** `legislation.gov.uk` URLs take the form `/ukpga/{year}/{chapter}`; a bare `/ukpga/2025` identifies nothing. Look the Act up, record the chapter number here, and cite the specific amending section rather than the Act as a whole. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
 
 ### Regulation (EU) 2024/1689 (EU AI Act)
 

@@ -154,13 +154,16 @@ End the section with the **Article 36 flag**:
 
 The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
 
-## Section 6 — UK / EU Divergence Notes (where applicable)
+Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table** — one row per applicable regime: Regime | Obligation the findings trigger (consultation / production on demand / filing or attestation / report retention / board reporting) | Conclusion. Each row's conclusion must match the manifest's `regulatorConclusions` entry for that regime; the builder gates on the declaration existing (and, for prior-consultation regimes, on it matching the register).
 
-Only include this section where the processing has UK scope. Use the analysis framework in `references/uk-divergence.md`. Address:
+## Section 6 — Jurisdictional Divergence (where applicable)
 
-- Whether the analysis above applies equally to EU and UK GDPR scope.
-- Where the UK position would permit a different conclusion (and whether the controller is taking advantage of it).
-- For dual-jurisdiction deployments, an explicit statement that the higher standard applies unless carved out.
+Only include this section where the processing has scope beyond EU GDPR. One subsection per applicable regime, using the analysis framework in that regime's `references/jurisdictions/<code>.md` file — UK/EU divergence first where UK scope exists. Address, per regime:
+
+- Whether the analysis above applies equally under this regime.
+- Where the regime's position would permit or require a different conclusion (and whether the controller is taking advantage of a permissive divergence).
+- For multi-jurisdiction deployments, an explicit statement that the higher standard applies unless carved out.
+- For a regime with no module file: the coverage-fallback statement — screened on the GDPR spine only, own-regime obligations not assessed.
 
 If the processing has only EU scope, omit Section 6 and renumber.
 
@@ -199,8 +202,10 @@ Author the manifest against this table, then run the builder:
 
 | Template section | Manifest blocks |
 |---|---|
-| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. |
-| Article 36 conclusion | Top-level `art36` — `true` or `false`. **Required** wherever a `riskRegister` block exists. Checked against the register; exit 3 on disagreement. |
+| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes). |
+| Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
+| Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
+| Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
 | §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
@@ -209,7 +214,7 @@ Author the manifest against this table, then run the builder:
 | §4.3 Risk-by-risk narrative | `heading` + `para` per Medium/High residual risk |
 | §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}`, both with `source` set to the register's `id` |
 | §5 Measures | `table` with the mitigation / type / owner / target date / effect columns |
-| §6 UK–EU divergence | `heading` + `para`; omit the block entirely where the processing has no UK scope |
+| §6 Jurisdictional divergence | `heading` + `para` per applicable regime; omit the block entirely where the processing has EU-only scope |
 | §7 Conclusion and approval | `heading` + `para` + one `signature` block |
 | Appendices A–C | `pagebreak`, then `heading` + `bullets` (A, B) and `table` (C) |
 

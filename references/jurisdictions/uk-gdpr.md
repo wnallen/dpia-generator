@@ -1,6 +1,10 @@
 # UK GDPR / EU GDPR Divergence — DPIA-Relevant Notes
 
-Consult this in Step 6 (Section 6 of the .docx) and whenever the user's processing has UK or dual UK/EU scope. The two regimes remain materially aligned but have diverged in specific places that change DPIA conclusions.
+**Regime code:** `uk-gdpr` (divergence overlay on the EU GDPR spine — Model A).
+
+Consult this whenever the user's processing has UK or dual UK/EU scope; its analysis feeds the Jurisdictional Divergence section (Section 6 of the .docx). The two regimes remain materially aligned but have diverged in specific places that change DPIA conclusions.
+
+**Privilege posture:** same as the EU spine — the DPIA is internal counsel's work product; the ICO does not collect it absent an Art. 36 consultation or an investigation. The default privileged header stands. Note that UK litigation privilege is narrower than US work-product doctrine; legal-advice privilege covers lawyer-client communications, and a DPIA authored by non-lawyers without counsel's direction may fall outside it — which is an argument for keeping counsel in the drafting loop, recorded here rather than asserted in the document.
 
 ## The Data (Use and Access) Act 2025 (DUAA)
 

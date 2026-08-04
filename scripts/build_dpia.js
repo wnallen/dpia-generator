@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v2.0.2)
+ * build_dpia.js — dpia-generator document assembler (v3.0)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -34,21 +34,35 @@
  * High likelihood x High severity — a Medium x High residual rates High and
  * engages prior consultation just the same.
  *
- * ARTICLE 36 CONCLUSION GATE (v2.0, exit 3)
+ * REGULATOR CONCLUSION GATE (v3.0, exit 3; formerly the Article 36 gate)
  * The rating gate stops the register from contradicting the matrix. It does
  * not stop the *prose* from contradicting the register — a DPIA whose table
  * carries a High residual while its executive summary says prior consultation
  * is not required is the same class of defect, in the sentence a regulator
- * actually reads. So the manifest must now declare its conclusion:
+ * actually reads. So the manifest must declare a conclusion per jurisdiction:
  *
- *   "art36": true | false     // REQUIRED whenever a riskRegister block exists
+ *   "jurisdictions": ["eu-gdpr", "uk-gdpr"],   // default ["eu-gdpr"]; codes below
+ *   "regulatorConclusions": {                  // one entry per declared jurisdiction,
+ *     "eu-gdpr": {"priorConsultation": true},  //   REQUIRED whenever a riskRegister
+ *     "uk-gdpr": {"priorConsultation": true}   //   block exists
+ *   }
  *
- * The script derives the answer from the register and stops with exit 3 if the
- * declaration disagrees. As with the rating gate, do not resolve a failure by
- * flipping the declaration to match: decide which is wrong, the conclusion or
- * the scores, and fix that. The script also scans narrative blocks for a
- * sentence asserting the opposite of the derived answer and warns on stderr —
- * a warning, not a stop, because phrasing is too varied to gate on.
+ *   "art36": true | false                      // legacy alias, still accepted: fills
+ *                                              //   priorConsultation for every declared
+ *                                              //   prior-consultation regime that has
+ *                                              //   no explicit entry
+ *
+ * For prior-consultation regimes (EU/UK GDPR and later additions marked
+ * derivable in the REGIMES registry) the script derives the answer from the
+ * register — any High residual engages consultation — and stops with exit 3 if
+ * the declaration disagrees. For non-derivable regimes (statutory-checklist
+ * assessments added by later phases) the gate checks only that a conclusion is
+ * declared: silence is a manifest error (exit 1), never a pass. As with the
+ * rating gate, do not resolve a failure by flipping the declaration to match:
+ * decide which is wrong, the conclusion or the scores, and fix that. The script
+ * also scans narrative blocks for a sentence asserting the opposite of the
+ * derived answer and warns on stderr — a warning, not a stop, because phrasing
+ * is too varied to gate on.
  *
  * MANIFEST SCHEMA
  * {
@@ -59,7 +73,24 @@
  *   "dpo": "...", "counsel": "...",            // optional
  *   "reference": "[DPIA-2026-001]",            // optional
  *   "status": "Draft",                         // Draft|Under DPO Review|Approved|Requires Art. 36 Prior Consultation
- *   "art36": false,                            // REQUIRED if any riskRegister block; see conclusion gate
+ *   "jurisdictions": ["eu-gdpr"],              // optional; default ["eu-gdpr"]; every
+ *                                              //   code must exist in REGIMES below
+ *   "regulatorConclusions": { ... },           // see conclusion gate above
+ *   "art36": false,                            // legacy alias; see conclusion gate
+ *   "docTitle": null,                          // optional; default "DATA PROTECTION
+ *                                              //   IMPACT ASSESSMENT" — override for
+ *                                              //   regimes that name the instrument
+ *                                              //   differently (e.g. a US state
+ *                                              //   "DATA PROTECTION ASSESSMENT")
+ *   "headerText": null,                        // optional; default "PRIVILEGED &
+ *                                              //   CONFIDENTIAL — ATTORNEY WORK
+ *                                              //   PRODUCT". Set to "" to omit —
+ *                                              //   deliberate for documents drafted
+ *                                              //   for regulator production where the
+ *                                              //   privilege header cannot be
+ *                                              //   sustained (see the destination
+ *                                              //   check and the per-regime privilege
+ *                                              //   notes in references/jurisdictions/)
  *   "outputDir": "/mnt/user-data/outputs",     // default; must resolve under an
  *                                              //   allowed root (default outputs
  *                                              //   dir or the OS temp dir; extend
@@ -83,6 +114,15 @@
  *   ]}
  *   {"type":"matrix","title":"Inherent risk","stage":"inherent"|"residual","source":"<riskRegister id>"}
  *      -- plots the register's risk IDs onto the coloured 3x3 grid.
+ *   {"type":"complianceMap","regime":"us-co","title":"...",         // regime optional but
+ *    "rows":[{"element":"<statutory required element>",            //   must be a known code
+ *             "section":"2.3","note":"optional"}]}                 //   if present
+ *      -- renders the regime -> required element -> DPIA section cross-reference
+ *         table for statutory-checklist regimes. Every "section" must match a
+ *         heading in this manifest (leading "S"/section marks stripped,
+ *         case-insensitive substring); a dangling reference is exit 1, because a
+ *         compliance map pointing at sections that do not exist is the checklist
+ *         version of a fabricated citation.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
  */
 
@@ -126,6 +166,31 @@ const RATING_STYLE = {
   Low:    { fill: 'C6EFCE', color: '006100' },
   Medium: { fill: 'FFEB9C', color: '9C5700' },
   High:   { fill: 'FFC7CE', color: '9C0006' },
+};
+
+// ------------------------------------------------------- jurisdiction registry
+// Codes accepted in the manifest's "jurisdictions" array. Each regime declares
+// how its regulator-engagement conclusion is keyed and, where the answer is
+// derivable from the register, how to derive it. Prior-consultation regimes
+// (EU/UK GDPR pattern: consultation engages on any High residual) are
+// derivable; statutory-checklist regimes (US states, China PIPL, India DPDP —
+// added by their build phases) set derive to null: their conclusion is
+// declared and reviewed, not derived, and the gate checks only that the
+// declaration exists. highResidualNote is the register footnote fragment for
+// the regime; substantive analysis lives in references/jurisdictions/<code>.md.
+const REGIMES = {
+  'eu-gdpr': {
+    label: 'EU GDPR',
+    conclusionKey: 'priorConsultation',
+    derive: (state) => state.highResidual,
+    highResidualNote: 'Article 36 prior consultation with the competent supervisory authority',
+  },
+  'uk-gdpr': {
+    label: 'UK GDPR',
+    conclusionKey: 'priorConsultation',
+    derive: (state) => state.highResidual,
+    highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
+  },
 };
 
 function norm(v, field, ctx) {
@@ -326,9 +391,9 @@ function coverPage(m) {
   const statuses = ['Draft', 'Under DPO Review', 'Approved', 'Requires Art. 36 Prior Consultation'];
   const chosen = (m.status || 'Draft').trim();
   const statusLine = statuses.map(s => (s.toLowerCase() === chosen.toLowerCase() ? '\u2612 ' : '\u2610 ') + s).join('   ');
-  return [
+  const out = [
     p('', { after: 900 }),
-    p('DATA PROTECTION IMPACT ASSESSMENT', { align: AlignmentType.CENTER, bold: true, size: 36 }),
+    p(docTitleOf(m), { align: AlignmentType.CENTER, bold: true, size: 36 }),
     rule,
     p(m.systemName, { align: AlignmentType.CENTER, bold: true, size: 28 }),
     p(m.version || 'Version 1.0 \u2014 DRAFT FOR DPO REVIEW', { align: AlignmentType.CENTER, italic: true }),
@@ -340,9 +405,25 @@ function coverPage(m) {
     p('', { after: 400 }),
     p(statusLine, { align: AlignmentType.CENTER, size: 20 }),
     rule,
-    p('PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT', { align: AlignmentType.CENTER, bold: true, size: 20, color: '9C0006' }),
-    new Paragraph({ children: [new (D.PageBreak)()] }),
   ];
+  if (headerTextOf(m)) {
+    out.push(p(headerTextOf(m), { align: AlignmentType.CENTER, bold: true, size: 20, color: '9C0006' }));
+  }
+  out.push(new Paragraph({ children: [new (D.PageBreak)()] }));
+  return out;
+}
+
+// The privilege header is the default because the DPIA is drafted as counsel's
+// work product. It is parameterized because the default is not sustainable
+// everywhere: a document drafted for production to a regulator (a Colorado
+// assessment producible to the AG; a CPPA filing) must not carry a header the
+// disclosure itself would falsify. "" deliberately omits the header; the
+// per-regime privilege notes in references/jurisdictions/ say when to do that.
+function headerTextOf(m) {
+  return m.headerText !== undefined ? String(m.headerText) : 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT';
+}
+function docTitleOf(m) {
+  return m.docTitle ? String(m.docTitle) : 'DATA PROTECTION IMPACT ASSESSMENT';
 }
 
 // ---------------------------------------------------------------- build
@@ -374,10 +455,42 @@ function build(manifest, state) {
         registers[b.id || 'default'] = resolved;
         children.push(registerTable(resolved));
         if (resolved.some(r => r.art36)) {
-          state.art36 = true;
-          children.push(p('* Residual risk rated High \u2014 Article 36 prior consultation with the competent supervisory authority is engaged for this risk, and the processing may not commence until that consultation has concluded.',
-            { italic: true, size: 18 }));
+          state.highResidual = true;
+          const consultNotes = (state.jurisdictions || ['eu-gdpr'])
+            .filter(c => REGIMES[c] && REGIMES[c].derive)
+            .map(c => REGIMES[c].highResidualNote);
+          const footnote = consultNotes.length
+            ? `* Residual risk rated High \u2014 ${consultNotes.join(' and ')} is engaged for this risk, and the processing may not commence until that consultation has concluded.`
+            : '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
+          children.push(p(footnote, { italic: true, size: 18 }));
         }
+        children.push(p('', { after: 120 }));
+        break;
+      }
+      case 'complianceMap': {
+        if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
+        if (b.regime && !REGIMES[b.regime]) {
+          fail(1, `${ctx}: unknown regime code "${b.regime}". Known: ${Object.keys(REGIMES).join(', ')}`);
+        }
+        const headings = (manifest.blocks || [])
+          .filter(x => x && x.type === 'heading')
+          .map(x => String(x.text || '').toLowerCase());
+        const missing = [];
+        const rows = b.rows.map((r, j) => {
+          const el = r.element, sec = String(r.section || '').trim();
+          if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
+          const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
+          if (!headings.some(h => h.includes(probe))) missing.push(sec);
+          return [String(el), sec + (r.note ? ` \u2014 ${r.note}` : '')];
+        });
+        if (missing.length) {
+          fail(1, `${ctx}: "section" reference(s) match no heading in this manifest: ${missing.join(', ')}. ` +
+                  'A compliance map must point at sections that exist \u2014 a dangling cross-reference is the ' +
+                  'checklist version of a fabricated citation.');
+        }
+        const regimeLabel = b.regime ? REGIMES[b.regime].label : '';
+        children.push(p(b.title || `Content compliance map${regimeLabel ? ' \u2014 ' + regimeLabel : ''}`, { bold: true, after: 100 }));
+        children.push(dataTable(['Required element', 'Where addressed'], rows, [55, 45]));
         children.push(p('', { after: 120 }));
         break;
       }
@@ -405,7 +518,7 @@ function build(manifest, state) {
   return new Document({
     creator: manifest.counsel || 'Counsel',
     title: `DPIA \u2014 ${manifest.systemName}`,
-    description: 'Privileged & Confidential \u2014 Attorney Work Product',
+    description: headerTextOf(manifest) || `DPIA \u2014 ${manifest.systemName}`,
     styles: { default: { document: { run: { font: FONT, size: 22 } } } },
     sections: [{
       properties: {
@@ -417,8 +530,10 @@ function build(manifest, state) {
       },
       headers: {
         default: new Header({
-          children: [p('PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT',
-            { align: AlignmentType.RIGHT, bold: true, size: 16, color: '9C0006', after: 0 })],
+          children: headerTextOf(manifest)
+            ? [p(headerTextOf(manifest),
+                { align: AlignmentType.RIGHT, bold: true, size: 16, color: '9C0006', after: 0 })]
+            : [new Paragraph({ children: [] })],
         }),
       },
       footers: {
@@ -493,44 +608,102 @@ function main() {
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  const state = { art36: false };
+  // ---- Jurisdiction resolution ---------------------------------------------
+  if (m.jurisdictions !== undefined && (!Array.isArray(m.jurisdictions) || !m.jurisdictions.length)) {
+    fail(1, 'manifest: "jurisdictions" must be a non-empty array of regime codes when present');
+  }
+  const jur = m.jurisdictions || ['eu-gdpr'];
+  jur.forEach(c => {
+    if (!REGIMES[c]) fail(1, `manifest: unknown jurisdiction code "${c}". Known codes: ${Object.keys(REGIMES).join(', ')}`);
+  });
+
+  // regulatorConclusions, with "art36" as a legacy alias: it fills
+  // priorConsultation for every declared prior-consultation (derivable) regime
+  // that has no explicit entry. The derivation is identical across those
+  // regimes — consultation engages on any High residual — so a single legacy
+  // declaration cannot say two different things.
+  const rc = {};
+  if (m.regulatorConclusions !== undefined) {
+    if (typeof m.regulatorConclusions !== 'object' || Array.isArray(m.regulatorConclusions) || m.regulatorConclusions === null) {
+      fail(1, 'manifest: "regulatorConclusions" must be an object keyed by jurisdiction code');
+    }
+    for (const [code, entry] of Object.entries(m.regulatorConclusions)) {
+      if (!jur.includes(code)) {
+        fail(1, `manifest: regulatorConclusions["${code}"] refers to a regime not declared in "jurisdictions" ` +
+                `[${jur.join(', ')}]. A conclusion for a regime out of scope is a manifest error.`);
+      }
+      if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
+        fail(1, `manifest: regulatorConclusions["${code}"] must be an object`);
+      }
+      rc[code] = Object.assign({}, entry);
+    }
+  }
+  if (m.art36 !== undefined && m.art36 !== null) {
+    if (typeof m.art36 !== 'boolean') {
+      fail(1, `manifest: "art36" must be a boolean, got ${JSON.stringify(m.art36)}`);
+    }
+    jur.filter(c => REGIMES[c].derive).forEach(c => {
+      if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
+        rc[c] = Object.assign({}, rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
+      }
+    });
+  }
+
+  const state = { highResidual: false, jurisdictions: jur };
   const doc = build(m, state);
 
   const hasRegister = (m.blocks || []).some(b => b && b.type === 'riskRegister');
 
-  // ---- Article 36 conclusion gate (exit 3) ----------------------------------
+  // ---- Regulator conclusion gate (exit 3; missing declaration exit 1) -------
   if (hasRegister) {
-    if (m.art36 === undefined || m.art36 === null) {
-      fail(1, 'manifest: "art36" is required when the DPIA contains a riskRegister. Declare the ' +
-              'Article 36 conclusion as true or false; the script checks it against the register.');
-    }
-    if (typeof m.art36 !== 'boolean') {
-      fail(1, `manifest: "art36" must be a boolean, got ${JSON.stringify(m.art36)}`);
-    }
-    if (m.art36 !== state.art36) {
-      const derivedWhy = state.art36
-        ? 'at least one residual risk rates High'
-        : 'no residual risk rates High';
-      fail(3, 'ARTICLE 36 CONCLUSION GATE FAILED (exit 3) — do not deliver:\n  ' +
-        `manifest declares art36=${m.art36}, but the register derives ${state.art36} (${derivedWhy}).\n  ` +
-        'Do not flip the declaration to silence this. Either the conclusion is wrong, or a ' +
-        'likelihood/severity score is — decide which, and fix that.');
+    for (const code of jur) {
+      const def = REGIMES[code];
+      const declared = rc[code] ? rc[code][def.conclusionKey] : undefined;
+      if (declared === undefined || declared === null) {
+        if (def.derive) {
+          fail(1, `manifest: "art36" is required when the DPIA contains a riskRegister ` +
+                  `(or declare regulatorConclusions["${code}"].${def.conclusionKey}). Declare the ` +
+                  'prior-consultation conclusion as true or false; the script checks it against the register.');
+        }
+        fail(1, `manifest: regulatorConclusions["${code}"].${def.conclusionKey} is required when the DPIA ` +
+                `contains a riskRegister. A ${def.label} assessment that has not formed a view on its ` +
+                'regulator-engagement obligations is not finished.');
+      }
+      if (typeof declared !== 'boolean') {
+        fail(1, `manifest: regulatorConclusions["${code}"].${def.conclusionKey} must be a boolean, got ${JSON.stringify(declared)}`);
+      }
+      if (def.derive) {
+        const expected = def.derive(state);
+        if (declared !== expected) {
+          const derivedWhy = expected
+            ? 'at least one residual risk rates High'
+            : 'no residual risk rates High';
+          fail(3, 'ARTICLE 36 CONCLUSION GATE FAILED (exit 3) — do not deliver:\n  ' +
+            `[${code}] manifest declares ${def.conclusionKey}=${declared}, but the register derives ${expected} (${derivedWhy}).\n  ` +
+            'Do not flip the declaration to silence this. Either the conclusion is wrong, or a ' +
+            'likelihood/severity score is — decide which, and fix that.');
+        }
+      }
     }
   }
 
+  // The narrative scan and status warnings speak Art. 36; they apply only where
+  // a prior-consultation regime is in scope.
+  const consultInScope = jur.some(c => REGIMES[c].derive);
+
   // ---- Narrative contradiction scan (warning) -------------------------------
   const hits = scanNarrative(m.blocks);
-  const contradictions = state.art36 ? hits.denies : hits.asserts;
-  if (hasRegister && contradictions.length) {
+  const contradictions = state.highResidual ? hits.denies : hits.asserts;
+  if (hasRegister && consultInScope && contradictions.length) {
     process.stderr.write(
-      `build_dpia: WARNING — the register derives Art. 36 = ${state.art36}, but narrative text appears to ` +
+      `build_dpia: WARNING — the register derives Art. 36 = ${state.highResidual}, but narrative text appears to ` +
       `assert the opposite at: ${contradictions.join('; ')}. Read those passages before delivering; the ` +
       'executive summary is the part a supervisory authority reads first.\n');
   }
 
   // ---- Cover-status coherence (warning) ------------------------------------
   const art36Status = 'requires art. 36 prior consultation';
-  if (state.art36 && String(m.status || 'Draft').trim().toLowerCase() !== art36Status) {
+  if (state.highResidual && consultInScope && String(m.status || 'Draft').trim().toLowerCase() !== art36Status) {
     process.stderr.write(
       'build_dpia: WARNING — a residual risk rates High (Art. 36 prior consultation engaged) but manifest ' +
       `"status" is "${m.status || 'Draft'}". Confirm the cover page and executive summary carry the Art. 36 flag.\n`);

@@ -1,0 +1,10 @@
+{
+  "systemName": "Unknown Jurisdiction Code",
+  "date": "2026-08-04",
+  "jurisdictions": ["eu-gdpr", "atlantis-dpa"],
+  "art36": false,
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "A typo'd or invented regime code must fail loudly, not silently produce a document claiming coverage." }
+  ]
+}

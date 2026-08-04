@@ -1,0 +1,13 @@
+{
+  "systemName": "Dangling Compliance Reference",
+  "date": "2026-08-04",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    {
+      "type": "complianceMap",
+      "rows": [
+        { "element": "A required element mapped to a section that does not exist", "section": "SECTION 9" }
+      ]
+    }
+  ]
+}

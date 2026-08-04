@@ -49,21 +49,22 @@ dpia-generator/
 │   ├── legal-framework.md            # Art. 35/36 text, recitals, WP248rev01 nine criteria, mandatory lists
 │   ├── risk-matrix.md                # 3×3 matrix, scoring rubrics, inherent → residual transition
 │   ├── authorities.md                # Citation register: settled statutory cites vs. unverified guidance
-│   ├── published-dpias.md            # Curated catalog of real DPIAs and DPA decisions with URLs
-│   ├── uk-divergence.md              # Where UK GDPR diverges from EU GDPR (incl. DUAA 2025)
+│   ├── published-dpias.md            # Curated catalog of real DPIAs, DPA decisions and regulator guides
+│   ├── jurisdictions/                # One module per non-EU regime (trigger test, Art. 35(7)
+│   │   └── uk-gdpr.md                #   crosswalk, regulator engagement, privilege posture)
 │   └── output-template.md            # Section structure, table layouts, template → manifest mapping
 ├── scripts/
-│   ├── build_dpia.js                 # Manifest-driven .docx assembler; owns the matrix mapping,
-│   │                                 #   the Article 36 mark, and both exit-3 gates
+│   ├── build_dpia.js                 # Manifest-driven .docx assembler; owns the jurisdiction registry,
+│   │                                 #   the matrix mapping, the high-residual mark, and the exit-3 gates
 │   └── run_regression.js             # Regression suite over the builder
-└── tests/fixtures/                   # Fifteen manifests, one per regression case
+└── tests/fixtures/                   # One manifest per regression case
 ```
 
 ## Testing
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 15 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 21 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -80,6 +81,16 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.0** — Multi-jurisdiction architecture, deliberately behavior-preserving for EU/UK work.
+
+  **Jurisdictions and per-regime conclusions.** The manifest gains a `jurisdictions` array (default `["eu-gdpr"]`, so every existing manifest keeps its meaning) and a `regulatorConclusions` object requiring one declared engagement conclusion per regime wherever a risk register exists. The v2.0 `art36` field survives as an alias that fills the prior-consultation answer for GDPR-family regimes. The Article 36 conclusion gate becomes the general regulator conclusion gate: for prior-consultation regimes the declaration is checked against the register (exit 3 on contradiction, as before); for statutory-checklist regimes added by later phases the gate enforces that a conclusion exists at all (exit 1 on silence) — an assessment that has not formed a view on its regulator obligations is not finished, in any jurisdiction.
+
+  **Checklist regimes get a machine-checked map.** A new `complianceMap` block renders a regime's required-element → DPIA-section cross-reference; a `section` reference matching no heading in the manifest fails the build, because a dangling cross-reference is the checklist version of a fabricated citation.
+
+  **Privilege posture is now a parameter, not a constant.** `docTitle` and `headerText` override the cover title and the privileged header; `headerText: ""` deliberately omits the header for documents drafted for regulator production (a Colorado assessment producible to the AG cannot carry a header the disclosure itself would falsify). The default — full privileged header — is unchanged.
+
+  **Layout.** `references/uk-divergence.md` moved to `references/jurisdictions/uk-gdpr.md`, becoming the first module in the per-regime layout every subsequent jurisdiction follows; Section 6 generalized from "UK/EU Divergence" to "Jurisdictional Divergence"; intake question 9 became an applicable-regimes mapping with a hard coverage-fallback rule (a regime with no module is reported as not covered — never silently absorbed). Regression suite grows from fifteen to twenty-one cases.
 
 - **v2.0.2** — Repo hygiene for public release. The builder's exit 2 previously conflated two different events: the validator ran and rejected the document, and the validator itself crashed before validating anything (a Python traceback from a missing `defusedxml` or `lxml` in the environment). The second is not a defect in the document, and the suite would go red on healthy code wherever the docx skill was present but its Python dependencies were not. The builder now captures the validator's output, detects a crash, and skips validation with a warning; exit 2 is reserved for a document the validator actually rejected. Also commits `package-lock.json` (previously gitignored) for reproducible installs, removes the README's reference to a packaged zip deleted from the repo, documents the validator's Python dependencies and `--no-validate`, and states the MIT license explicitly. Aligns the skill text with the README's not-legal-advice disclaimer: the work-product style note now reads "counsel's advice to the client" rather than "legal advice" (identical doctrine, no longer quotable out of context), and the delivery summary now restates on every run that the DPIA is a draft for attorney review — not legal advice until counsel has reviewed and adopted it.
 - **v2.0.1** — Security hardening of the output path. The manifest is authored from instructions that can include untrusted ingested content (vendor pages, pasted specs), which makes its path fields semi-trusted. `outputDir` was unrestricted, so a manifest could direct the write to any location the process could reach — the same escape the `outputFilename` basename guard next to it was meant to prevent. `outputDir` is now confined to an allowlist (the default outputs directory and the OS temp dir, extendable via the `DPIA_OUTPUT_ROOTS` environment variable), and the residual `outputFilename` gap where `..`/`.` survive `basename()` and climb one level out of `outputDir` is closed, with the fully-resolved path re-checked against `outputDir`. Adds a pinned `package.json` (`npm test` runs the suite), a `.gitignore`, and two regression fixtures — `outputdir-escape` and `traversal-dotdot` — taking the suite to fifteen cases.

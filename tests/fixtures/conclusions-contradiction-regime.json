@@ -1,0 +1,26 @@
+{
+  "systemName": "Per-Regime Contradiction",
+  "date": "2026-08-04",
+  "jurisdictions": ["eu-gdpr", "uk-gdpr"],
+  "regulatorConclusions": {
+    "eu-gdpr": { "priorConsultation": true },
+    "uk-gdpr": { "priorConsultation": false }
+  },
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual; the UK conclusion contradicts the register while the EU one agrees.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    }
+  ]
+}
