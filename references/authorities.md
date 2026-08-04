@@ -85,6 +85,14 @@ The **section identifiers** below were corroborated by independent web search on
 - **Australia:** Privacy Act 1988 + POLA Act 2024 (tort in force 2025-06-10; APP 1.7 ADM transparency 2026-12-10); OAIC PIA guide; agencies APP Code.
 - **South Korea:** PIPA Art. 33 + Enforcement Decree thresholds (public-institution PIA through PIPC-designated agencies, submitted to the PIPC).
 
+### Africa and Southeast Asia (Phase 4+ modules)
+
+All corroborated by web search on 2026-08-04 (`[web search — verify]`); primary texts not fetched.
+
+- **Kenya:** Data Protection Act, 2019 (No. 24 of 2019), s. 31 — DPIA duty, s. 31(4) definition, and the Data Commissioner prior-consultation duty on high risk (the third derivable regime in the builder). Official text at kenyalaw.org; capture the consultation subsection and confirm whether the reported 60-days-prior submission timeline is statutory or ODPC guidance.
+- **Vietnam:** PDP Law No. 91/2025/QH15 (passed 2025-06-26, effective 2026-01-01), replacing Decree 13/2023/ND-CP; transfer impact dossier submitted to the MPS within 60 days of transfer start. Capture the Law's article numbers for both dossiers; the Decree 13 Arts. 24–25 structure is recall-level until then.
+- **Indonesia:** Law No. 27/2022 (UU PDP), Art. 34 — DPIA for high-potential-risk processing with an enumerated high-risk list; implementing regulation pending (module carries a volatility banner).
+
 ### Regulation (EU) 2024/1689 (EU AI Act)
 
 Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Verify the CELEX identifier and the Annex III sub-paragraph before citing** — this instrument is newer than the rest of this register and its numbering is the one most often misremembered.

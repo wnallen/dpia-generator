@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v3.7)
+ * build_dpia.js — dpia-generator document assembler (v3.8)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -325,6 +325,32 @@ const REGIMES = {
     statusOption: 'Requires PIPC-Designated Agency Assessment',
     engagement: "Public-institution PIA performed by a PIPC-designated agency and submitted to the PIPC",
     conclusionLabels: ["PIA required", "PIA not required"],
+  },
+  // Kenya is derivable: s. 31 DPA 2019 requires Data Commissioner consultation
+  // where the DPIA indicates high risk — a true Art. 36 analog with no advisor
+  // alternative (unlike ch-fadp). See references/jurisdictions/kenya-dpa.md.
+  'ke-dpa': {
+    label: 'Kenya DPA 2019',
+    conclusionKey: 'priorConsultation',
+    derive: (state) => state.highResidual,
+    highResidualNote: 'prior consultation with the Kenyan Data Commissioner under s. 31 DPA 2019',
+    statusOption: 'Requires ODPC Consultation',
+    engagement: "DPIA for high-risk processing (s. 31); Data Commissioner consultation on residual high risk; submission timeline per ODPC guidance",
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
+  },
+  'vn-pdpl': {
+    label: 'Vietnam PDP Law',
+    conclusionKey: 'dossierRequired',
+    derive: null,
+    engagement: "Processing and transfer impact dossiers submitted to the MPS (A05) within 60 days; producible in inspections; MPS may order transfer suspension",
+    conclusionLabels: ["Dossier required", "Dossier not required"],
+  },
+  'id-pdp': {
+    label: 'Indonesia PDP Law',
+    conclusionKey: 'dpiaRequired',
+    derive: null,
+    engagement: "DPIA maintained for high-risk processing (Art. 34); production expectations pending the implementing regulation",
+    conclusionLabels: ["DPIA required", "DPIA not required"],
   },
 };
 
@@ -894,11 +920,19 @@ function main() {
   }
 
   // ---- Cover-status coherence (warning) ------------------------------------
-  const art36Status = 'requires art. 36 prior consultation';
-  if (state.highResidual && consultInScope && String(m.status || 'Draft').trim().toLowerCase() !== art36Status) {
+  // Any derivable regime in scope contributes its blocking-status label as a
+  // coherent cover status for an engaged consultation — hard-coding the Art. 36
+  // string here would warn spuriously on a Kenya-only document whose cover
+  // correctly says "Requires ODPC Consultation".
+  const coherentStatuses = jur
+    .filter(c => REGIMES[c].derive && REGIMES[c].statusOption)
+    .map(c => REGIMES[c].statusOption.toLowerCase());
+  if (state.highResidual && consultInScope &&
+      !coherentStatuses.includes(String(m.status || 'Draft').trim().toLowerCase())) {
     process.stderr.write(
-      'build_dpia: WARNING — a residual risk rates High (Art. 36 prior consultation engaged) but manifest ' +
-      `"status" is "${m.status || 'Draft'}". Confirm the cover page and executive summary carry the Art. 36 flag.\n`);
+      'build_dpia: WARNING — a residual risk rates High (prior consultation engaged) but manifest ' +
+      `"status" is "${m.status || 'Draft'}". Confirm the cover page and executive summary carry the ` +
+      'consultation flag for every prior-consultation regime in scope.\n');
   }
 
   Packer.toBuffer(doc).then(buf => {

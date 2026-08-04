@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 28 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 29 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -81,6 +81,10 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.8** — Kenya, Vietnam, Indonesia — the two coverage omissions the optimization review named, plus the cheapest promotion.
+
+  All three were search-verified before a line was written. **Kenya** (`ke-dpa`) is promoted out of the screening catalog and becomes the builder's **third derivable regime**: s. 31 of the DPA 2019 requires Data Commissioner consultation where the DPIA indicates high risk — a true Article 36 analog with no advisor escape hatch — so the conclusion derives from the register exactly as for EU/UK, with its own "Requires ODPC Consultation" cover status and register footnote. **Vietnam** (`vn-pdpl`) covers the PDP Law No. 91/2025/QH15 (effective 2026-01-01, replacing Decree 13/2023): the most filing-intensive regime in the skill, with processing and transfer impact dossiers submitted to the Ministry of Public Security within 60 days — added to the regulator filing gate, with a China-grade privilege posture (no candid analysis in the Vietnam record, ever). **Indonesia** (`id-pdp`) covers UU PDP Article 34's high-risk DPIA duty behind a volatility banner while the implementing regulation is pending. Adding Kenya exposed and fixed a latent seam: the cover-status coherence warning was hard-coded to the Art. 36 status string and would have warned spuriously on a correct Kenya-only cover; it now accepts any derivable regime's blocking status. Registry: seventeen codes. Suite: twenty-nine cases.
 
 - **v3.7** — The gate philosophy reaches the last hand-authored surface; the two-document posture becomes mechanical.
 

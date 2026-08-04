@@ -190,6 +190,18 @@ pipc.go.kr. The designated-agency assessment criteria are the operative methodol
 mandatory public-institution PIA. Best for: `kr-pipa` scoping; understanding what the formal
 agency-run PIA will test.
 
+### Kenya — ODPC Guidance Note on DPIAs
+
+odpc.go.ke. The Data Commissioner's own DPIA methodology, plus a registration regime that
+frames the compliance posture. Best for: `ke-dpa` runs; the reported 60-days-prior
+submission timeline should be pinned to its source here on first fetch.
+
+### Vietnam — MPS dossier forms
+
+The prescribed impact-dossier forms issued under the PDP Law's implementing instruments
+are the operative "template" — a Vietnam filing is made on the ministry's forms, not in
+free prose. Best for: `vn-pdpl` runs; verify current form numbers before any real filing.
+
 ### Switzerland — FDPIC DPIA guidance
 
 edoeb.admin.ch. Best for: `ch-fadp` runs and the Art. 23 consultation mechanics, including

@@ -229,6 +229,19 @@ const CASES = [
     stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
   },
   {
+    name: 'kenya-derivable',
+    why: 'v3.8: Kenya is the third derivable regime (s. 31 consultation); its footnote, conclusion derivation and ODPC cover status must all work without the Art. 36 machinery firing spuriously.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'high residual row starred'],
+      [/Kenyan Data Commissioner/.test(t), 'Kenya consultation footnote from the registry'],
+      [/☒ Requires ODPC Consultation/.test(t), 'ODPC blocking status present, checked, and coherent (no warning)'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a Kenya-only cover'],
+      [/‖\s*Prior consultation required/.test(t), 'computed conclusion in the engagement table'],
+    ],
+  },
+  {
     name: 'status-vocabulary',
     why: 'v3.5: the cover status boxes were hard-coded GDPR vocabulary; a Swiss document must offer the FDPIC box, not the Art. 36 box.',
     exit: 0,

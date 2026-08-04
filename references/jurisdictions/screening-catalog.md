@@ -11,6 +11,10 @@ sources, crosswalk, privilege posture, registry code, fixtures).
 
 All entries UNVERIFIED as of 2026-08-04.
 
+**Promotions:** Kenya was promoted out of this catalog to a full module (`ke-dpa`) on
+2026-08-04, alongside new modules for Vietnam (`vn-pdpl`) and Indonesia (`id-pdp`) — the
+promotion path works exactly as described above.
+
 ## Saudi Arabia — PDPL
 
 DPIA-like assessment expected for high-risk processing under the PDPL (Royal Decree M/19,
@@ -40,12 +44,6 @@ The Nigeria Data Protection Act 2023 requires a DPIA where processing is likely 
 high risk (recalled s. 28), and the NDPC's General Application and Implementation Directive
 (GAID, 2025) operationalizes it; data controllers "of major importance" carry registration and
 audit obligations through licensed DPCOs. Regulator: NDPC.
-
-## Kenya — Data Protection Act 2019
-
-Express DPIA duty (s. 31) where processing is likely to result in high risk, with ODPC
-guidance and a registration regime. One of the clearest GDPR-family DPIA duties in Africa;
-promote early if African-scope work recurs.
 
 ## Japan — APPI
 
