@@ -71,6 +71,37 @@ Each case is a defect that shipped or a gate that exists to stop one, and each c
 
 The builder validates its own OOXML output via the public docx skill's `validate.py` where that skill is installed (`/mnt/skills/public/docx`). The validator is a Python script requiring the `defusedxml` and `lxml` packages; if it is absent or cannot run, the builder skips validation with a warning on stderr rather than failing the build. `--no-validate` disables the validation step entirely.
 
+## Maintenance — keeping seventeen regimes honest
+
+The skill's coverage is only as good as its most stale module. Four standing rules:
+
+1. **Volatility banners are contracts.** Modules carrying an explicit banner — Brazil
+   (ANPD RIPD regulation pending), Malaysia (JPDP DPIA guideline in consultation),
+   Indonesia (UU PDP implementing regulation pending), Vietnam (2025 Law's implementing
+   decrees rolling) — must be **re-searched on every run that touches them**, and rebuilt
+   from the final instrument when it lands, never patched by prose. Australia's tranche-two
+   reforms and the UAE's executive regulations are the same class, tracked in their module
+   and the screening catalog respectively.
+2. **Dates are check-by dates.** Every sourcing banner records when its corroboration pass
+   ran (currently 2026-08-04). A banner more than ~6 months old should be treated as a
+   prompt to re-verify before reliance, not as a fact.
+3. **`tech-law-radar` feeds the queue.** The sibling skill's periodic sweeps are the
+   designed intake for new instruments (a final Malaysian guideline, an SDF designation
+   wave in India, a CPPA enforcement action interpreting § 7152). Radar findings that touch
+   a covered regime become module updates; findings that touch a screening-catalog regime
+   are promotion candidates.
+4. **Promotion has one path.** Screening entry → full module via the standard build: fetch
+   (or search-corroborate, honestly tagged) the primary sources, write the module skeleton,
+   add the registry code, add a fixture if the regime introduces new gate behavior, bump
+   the version. Kenya (v3.8) is the worked example.
+
+The first session run from an environment whose fetch tool can reach official portals
+should also execute the `[official publication]` upgrade pass recorded in
+`references/authorities.md` — the corroborated middle tier is deliberate, not final.
+
+Skill-level eval prompts (the workflow behaviors the regression suite cannot test) live in
+`docs/eval-prompts.md`.
+
 ## Notes and limitations
 
 - **Never invents facts or citations.** Unknown processing details become open questions; every cited DPA decision must exist and is verified by web-fetch before it is cited.
@@ -81,6 +112,8 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.9** — The maintenance loop is written down, and the workflow gets evals. A README Maintenance section makes the upkeep rules explicit — volatility banners as contracts, check-by dates, the `tech-law-radar` intake for regulatory drift, and the single promotion path from screening entry to module. `docs/eval-prompts.md` adds three graded skill-level eval prompts for the behaviors the builder suite cannot test: regime mapping and per-regime screening on a four-jurisdiction fact pattern, the producible-record posture on a Colorado-only request, and — most importantly — the negative case: an assessment touching Saudi Arabia and the UAE must surface the screening notes and the coverage fallback rather than silently absorbing regimes the skill has not built. No behavior change.
 
 - **v3.8** — Kenya, Vietnam, Indonesia — the two coverage omissions the optimization review named, plus the cheapest promotion.
 
