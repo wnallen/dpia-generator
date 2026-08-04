@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v3.8)
+ * build_dpia.js — dpia-generator document assembler (v4.0)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -52,17 +52,39 @@
  *                                              //   prior-consultation regime that has
  *                                              //   no explicit entry
  *
- * For prior-consultation regimes (EU/UK GDPR and later additions marked
- * derivable in the REGIMES registry) the script derives the answer from the
- * register — any High residual engages consultation — and stops with exit 3 if
- * the declaration disagrees. For non-derivable regimes (statutory-checklist
- * assessments added by later phases) the gate checks only that a conclusion is
+ * For prior-consultation regimes (EU/UK GDPR, Kenya — marked derivable in the
+ * REGIMES registry) the script derives the answer from the register and stops
+ * with exit 3 if the declaration disagrees. For non-derivable regimes
+ * (statutory-checklist assessments) the gate checks only that a conclusion is
  * declared: silence is a manifest error (exit 1), never a pass. As with the
  * rating gate, do not resolve a failure by flipping the declaration to match:
  * decide which is wrong, the conclusion or the scores, and fix that. The script
  * also scans narrative blocks for a sentence asserting the opposite of the
  * derived answer and warns on stderr — a warning, not a stop, because phrasing
  * is too varied to gate on.
+ *
+ * CONDITIONAL CONSULTATION (v4.0)
+ * Art. 36(1) keys to high risk "in the absence of measures taken by the
+ * controller to mitigate the risk". Register rows may therefore carry optional
+ * post-mitigation scores — the residual expected once Section 5's recommended
+ * mitigations are implemented:
+ *
+ *   "mitigatedLikelihood": "Low", "mitigatedSeverity": "High"   // together or not at all
+ *   "mitigatedRating": "Medium"                                 // optional; checked if present
+ *
+ * The derived consultation conclusion is then tri-state: false (no High
+ * residual); "conditional" (every High residual falls below High
+ * post-mitigation — consultation is required only if the controller proceeds
+ * WITHOUT implementing the mitigations); true (at least one High residual has
+ * no such pathway). "art36" and priorConsultation accept true|false|
+ * "conditional" accordingly, the register footnote states the conditional
+ * pathway, and the register gains a Post-mitigation column when any row scores
+ * one. A "mitigated" matrix stage plots the post-mitigation grid.
+ *
+ * GENERATION TRANSPARENCY (v4.0, no manifest knob)
+ * Every document self-identifies as an AI-generated draft of the dpia-generator
+ * skill — cover notice, footer line, and file metadata — for attorney review
+ * and adoption. This is builder-owned text and deliberately not overridable.
  *
  * MANIFEST SCHEMA
  * {
@@ -216,20 +238,20 @@ const REGIMES = {
   'eu-gdpr': {
     label: 'EU GDPR',
     conclusionKey: 'priorConsultation',
-    derive: (state) => state.highResidual,
+    derive: (state) => state.consult,
     highResidualNote: 'Article 36 prior consultation with the competent supervisory authority',
     statusOption: 'Requires Art. 36 Prior Consultation',
     engagement: "Art. 36 prior consultation with the competent supervisory authority on residual high risk",
-    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   'uk-gdpr': {
     label: 'UK GDPR',
     conclusionKey: 'priorConsultation',
-    derive: (state) => state.highResidual,
+    derive: (state) => state.consult,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
     statusOption: 'Requires Art. 36 Prior Consultation',
     engagement: "UK GDPR Art. 36 prior consultation with the ICO on residual high risk",
-    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
   // conclusion is the declared answer to the regime's own trigger screen
@@ -332,11 +354,11 @@ const REGIMES = {
   'ke-dpa': {
     label: 'Kenya DPA 2019',
     conclusionKey: 'priorConsultation',
-    derive: (state) => state.highResidual,
+    derive: (state) => state.consult,
     highResidualNote: 'prior consultation with the Kenyan Data Commissioner under s. 31 DPA 2019',
     statusOption: 'Requires ODPC Consultation',
     engagement: "DPIA for high-risk processing (s. 31); Data Commissioner consultation on residual high risk; submission timeline per ODPC guidance",
-    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   'vn-pdpl': {
     label: 'Vietnam PDP Law',
@@ -409,15 +431,30 @@ function resolveRegister(rows) {
     const rS = norm(r.residualSeverity !== undefined ? r.residualSeverity : r.severity, 'residualSeverity', ctx);
     const inherent = rate(iL, iS);
     const residual = rate(rL, rS);
+    // Optional post-mitigation scoring: the residual expected once Section 5's
+    // recommended mitigations are implemented. This is what makes a
+    // "conditional" prior-consultation conclusion derivable — Art. 36(1) keys
+    // to high risk in the absence of mitigating measures, so a High residual
+    // whose mitigated rating falls below High engages consultation only if the
+    // controller proceeds without the mitigations.
+    const hasML = r.mitigatedLikelihood !== undefined && r.mitigatedLikelihood !== null;
+    const hasMS = r.mitigatedSeverity !== undefined && r.mitigatedSeverity !== null;
+    if (hasML !== hasMS) fail(1, `${ctx}: "mitigatedLikelihood" and "mitigatedSeverity" must be stated together or not at all`);
+    const mL = hasML ? norm(r.mitigatedLikelihood, 'mitigatedLikelihood', ctx) : null;
+    const mS = hasMS ? norm(r.mitigatedSeverity, 'mitigatedSeverity', ctx) : null;
+    const mitigated = mL ? rate(mL, mS) : null;
     if (r.inherentRating && String(r.inherentRating).trim() !== inherent) {
       violations.push(`${ctx}: stated inherentRating "${r.inherentRating}" != derived "${inherent}" from (${iL} x ${iS})`);
     }
     if (r.residualRating && String(r.residualRating).trim() !== residual) {
       violations.push(`${ctx}: stated residualRating "${r.residualRating}" != derived "${residual}" from (${rL} x ${rS})`);
     }
+    if (r.mitigatedRating && String(r.mitigatedRating).trim() !== mitigated) {
+      violations.push(`${ctx}: stated mitigatedRating "${r.mitigatedRating}" != derived "${mitigated}" from (${mL} x ${mS})`);
+    }
     return {
       id: r.id || `R${i + 1}`, risk: r.risk || '', controls: r.controls || '',
-      iL, iS, inherent, rL, rS, residual,
+      iL, iS, inherent, rL, rS, residual, mL, mS, mitigated,
       art36: isArt36(rL, rS),
     };
   });
@@ -493,14 +530,18 @@ function dataTable(columns, bodyRows, widths) {
 
 // ---------------------------------------------------------------- composites
 function registerTable(rows) {
+  // The post-mitigation column appears only when at least one row scores it —
+  // it is the register-level record of the conditional consultation pathway.
+  const hasMit = rows.some(r => r.mitigated);
   const cols = ['ID', 'Risk to data subjects', 'Inherent (L x S)', 'Inherent', 'Controls', 'Residual (L x S)', 'Residual'];
-  const w = [5, 30, 11, 9, 24, 11, 10];
+  const w = hasMit ? [5, 25, 10, 8, 20, 10, 9] : [5, 30, 11, 9, 24, 11, 10];
+  if (hasMit) { cols.push('Post-mitigation'); w.push(13); }
   const head = new TableRow({
     tableHeader: true,
     children: cols.map((c, i) => cell(c, { bold: true, fill: 'D9E2F3', width: w[i] })),
   });
-  const body = rows.map(r => new TableRow({
-    children: [
+  const body = rows.map(r => {
+    const cells = [
       cell(r.id, { width: w[0], bold: true }),
       cell(r.risk, { width: w[1] }),
       cell(`${r.iL} x ${r.iS}`, { width: w[2], align: AlignmentType.CENTER }),
@@ -508,8 +549,14 @@ function registerTable(rows) {
       cell(r.controls, { width: w[4] }),
       cell(`${r.rL} x ${r.rS}`, { width: w[5], align: AlignmentType.CENTER }),
       cell(r.residual + (r.art36 ? ' *' : ''), { width: w[6], align: AlignmentType.CENTER, bold: true, ...RATING_STYLE[r.residual] }),
-    ],
-  }));
+    ];
+    if (hasMit) {
+      cells.push(r.mitigated
+        ? cell(`${r.mL} x ${r.mS} = ${r.mitigated}`, { width: w[7], align: AlignmentType.CENTER, bold: true, ...RATING_STYLE[r.mitigated] })
+        : cell('—', { width: w[7], align: AlignmentType.CENTER }));
+    }
+    return new TableRow({ children: cells });
+  });
   return table([head, ...body]);
 }
 
@@ -517,8 +564,10 @@ function matrixTable(rows, stage) {
   const plot = {};
   LEVELS.forEach(l => { plot[l] = {}; LEVELS.forEach(s => { plot[l][s] = []; }); });
   rows.forEach(r => {
-    const L = stage === 'inherent' ? r.iL : r.rL;
-    const S = stage === 'inherent' ? r.iS : r.rS;
+    // 'mitigated' plots post-mitigation scores, falling back to the residual
+    // where a row has none — the grid shows the world after Section 5.
+    const L = stage === 'inherent' ? r.iL : (stage === 'mitigated' ? (r.mL || r.rL) : r.rL);
+    const S = stage === 'inherent' ? r.iS : (stage === 'mitigated' ? (r.mS || r.rS) : r.rS);
     plot[L][S].push(r.id);
   });
   const sev = ['Low', 'Medium', 'High'];
@@ -597,9 +646,15 @@ function coverPage(m, jur) {
   if (headerTextOf(m)) {
     out.push(p(headerTextOf(m), { align: AlignmentType.CENTER, bold: true, size: 20, color: '9C0006' }));
   }
+  // Generation transparency is builder-owned and has no manifest knob: every
+  // document must say what produced it. It renders even on producible records
+  // that suppress the privilege header — transparency matters most there.
+  out.push(p(GENERATION_NOTICE, { align: AlignmentType.CENTER, italic: true, size: 18, color: '595959' }));
   out.push(new Paragraph({ children: [new (D.PageBreak)()] }));
   return out;
 }
+
+const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator skill. Not counsel’s work product or legal advice until reviewed and adopted by counsel.';
 
 // The privilege header is the default because the DPIA is drafted as counsel's
 // work product. It is parameterized because the default is not sustainable
@@ -644,6 +699,13 @@ function build(manifest, state) {
         children.push(registerTable(resolved));
         if (resolved.some(r => r.art36)) {
           state.highResidual = true;
+          // A High-residual row with no post-mitigation score, or one still High
+          // after mitigation, keeps consultation unconditional. Only when every
+          // High row falls below High post-mitigation is the conditional
+          // pathway available.
+          const unmitigatedHigh = resolved.some(r => r.art36 && (!r.mitigated || r.mitigated === 'High'));
+          if (unmitigatedHigh) state.highMitigated = true;
+          const conditionalHere = !unmitigatedHigh;
           const consultNotes = (state.jurisdictions || ['eu-gdpr'])
             .filter(c => REGIMES[c] && REGIMES[c].derive)
             .map(c => REGIMES[c].highResidualNote);
@@ -653,9 +715,15 @@ function build(manifest, state) {
           const joined = consultNotes.length <= 2
             ? consultNotes.join(' and ')
             : consultNotes.slice(0, -1).join(', ') + ', and ' + consultNotes[consultNotes.length - 1];
-          const footnote = consultNotes.length
-            ? `* Residual risk rated High \u2014 ${joined} ${consultNotes.length > 1 ? 'are' : 'is'} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`
-            : '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
+          const verb = consultNotes.length > 1 ? 'are' : 'is';
+          let footnote;
+          if (!consultNotes.length) {
+            footnote = '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
+          } else if (conditionalHere) {
+            footnote = `* Residual risk rated High on existing and planned controls \u2014 ${joined} ${verb} engaged unless the Section 5 mitigations are implemented before processing commences; with those mitigations implemented, every High-rated residual falls below High and prior consultation is not required.`;
+          } else {
+            footnote = `* Residual risk rated High \u2014 ${joined} ${verb} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`;
+          }
           children.push(p(footnote, { italic: true, size: 18 }));
         }
         children.push(p('', { after: 120 }));
@@ -692,8 +760,11 @@ function build(manifest, state) {
         const src = own(registers, b.source || 'default');
         if (!src) fail(1, `${ctx}: no riskRegister named "${b.source || 'default'}" appears before this block`);
         const stage = (b.stage || 'residual').toLowerCase();
-        if (stage !== 'inherent' && stage !== 'residual') fail(1, `${ctx}: "stage" must be inherent|residual`);
-        children.push(p(b.title || (stage === 'inherent' ? 'Inherent risk' : 'Residual risk'), { bold: true, after: 100 }));
+        if (stage !== 'inherent' && stage !== 'residual' && stage !== 'mitigated') {
+          fail(1, `${ctx}: "stage" must be inherent|residual|mitigated`);
+        }
+        children.push(p(b.title || (stage === 'inherent' ? 'Inherent risk'
+          : stage === 'mitigated' ? 'Post-mitigation residual risk' : 'Residual risk'), { bold: true, after: 100 }));
         children.push(matrixTable(src, stage));
         children.push(p('', { after: 120 }));
         break;
@@ -714,7 +785,9 @@ function build(manifest, state) {
                     'the regulator-engagement table — a table row without a declared conclusion is an ' +
                     'assessment that has not finished.');
           }
-          const label = def.conclusionLabels[declared ? 0 : 1];
+          const label = declared === 'conditional'
+            ? (def.conclusionLabels[2] || 'Conditional — see the Section 5 mitigations')
+            : def.conclusionLabels[declared ? 0 : 1];
           const note = b.notes ? own(b.notes, code) : undefined;
           return [def.label, def.engagement, label + (note ? ` — ${note}` : '')];
         });
@@ -735,9 +808,9 @@ function build(manifest, state) {
   });
 
   return new Document({
-    creator: manifest.counsel || 'Counsel',
+    creator: 'dpia-generator (AI-generated draft)',
     title: `DPIA \u2014 ${manifest.systemName}`,
-    description: headerTextOf(manifest) || `DPIA \u2014 ${manifest.systemName}`,
+    description: (headerTextOf(manifest) ? headerTextOf(manifest) + ' | ' : '') + GENERATION_NOTICE,
     styles: { default: { document: { run: { font: FONT, size: 22 } } } },
     sections: [{
       properties: {
@@ -761,7 +834,7 @@ function build(manifest, state) {
             alignment: AlignmentType.CENTER,
             children: [new TextRun({
               children: ['Page ', PageNumber.CURRENT, ' of ', PageNumber.TOTAL_PAGES,
-                `   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   Prepared by Counsel`],
+                `   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   AI-generated draft (dpia-generator) — for attorney review`],
               font: FONT, size: 16, color: '595959',
             })],
           })],
@@ -863,8 +936,8 @@ function main() {
     }
   }
   if (m.art36 !== undefined && m.art36 !== null) {
-    if (typeof m.art36 !== 'boolean') {
-      fail(1, `manifest: "art36" must be a boolean, got ${JSON.stringify(m.art36)}`);
+    if (typeof m.art36 !== 'boolean' && m.art36 !== 'conditional') {
+      fail(1, `manifest: "art36" must be true, false or "conditional", got ${JSON.stringify(m.art36)}`);
     }
     jur.filter(c => REGIMES[c].derive).forEach(c => {
       if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
@@ -873,8 +946,15 @@ function main() {
     });
   }
 
-  const state = { highResidual: false, jurisdictions: jur, conclusions: rc };
+  const state = { highResidual: false, highMitigated: false, jurisdictions: jur, conclusions: rc };
   const doc = build(m, state);
+
+  // Tri-state consultation conclusion (see the conditional-consultation note in
+  // the header): false — no High residual; 'conditional' — every High residual
+  // falls below High once the Section 5 mitigations are implemented, so
+  // consultation is required only if the controller proceeds without them;
+  // true — at least one High residual has no such pathway.
+  state.consult = !state.highResidual ? false : (state.highMitigated ? true : 'conditional');
 
   const hasRegister = (m.blocks || []).some(b => b && b.type === 'riskRegister');
 
@@ -893,19 +973,25 @@ function main() {
                 `contains a riskRegister. A ${def.label} assessment that has not formed a view on its ` +
                 'regulator-engagement obligations is not finished.');
       }
-      if (typeof declared !== 'boolean') {
-        fail(1, `manifest: regulatorConclusions["${code}"].${def.conclusionKey} must be a boolean, got ${JSON.stringify(declared)}`);
+      const validDeclared = def.derive
+        ? (typeof declared === 'boolean' || declared === 'conditional')
+        : typeof declared === 'boolean';
+      if (!validDeclared) {
+        fail(1, `manifest: regulatorConclusions["${code}"].${def.conclusionKey} must be ` +
+                `${def.derive ? 'true, false or "conditional"' : 'a boolean'}, got ${JSON.stringify(declared)}`);
       }
       if (def.derive) {
         const expected = def.derive(state);
         if (declared !== expected) {
-          const derivedWhy = expected
-            ? 'at least one residual risk rates High'
-            : 'no residual risk rates High';
+          const derivedWhy = expected === true
+            ? 'at least one High residual has no post-mitigation score below High'
+            : expected === 'conditional'
+              ? 'every High residual falls below High once the Section 5 mitigations are implemented — consultation is avoidable, so declare "conditional"'
+              : 'no residual risk rates High';
           fail(3, 'ARTICLE 36 CONCLUSION GATE FAILED (exit 3) — do not deliver:\n  ' +
-            `[${code}] manifest declares ${def.conclusionKey}=${declared}, but the register derives ${expected} (${derivedWhy}).\n  ` +
+            `[${code}] manifest declares ${def.conclusionKey}=${JSON.stringify(declared)}, but the register derives ${JSON.stringify(expected)} (${derivedWhy}).\n  ` +
             'Do not flip the declaration to silence this. Either the conclusion is wrong, or a ' +
-            'likelihood/severity score is — decide which, and fix that.');
+            'likelihood/severity/mitigated score is — decide which, and fix that.');
         }
       }
     }
@@ -917,10 +1003,13 @@ function main() {
 
   // ---- Narrative contradiction scan (warning) -------------------------------
   const hits = scanNarrative(m.blocks);
-  const contradictions = state.highResidual ? hits.denies : hits.asserts;
+  // On a 'conditional' conclusion the prose legitimately both asserts and
+  // negates ("required unless the mitigations are implemented") — no scan.
+  const contradictions = state.consult === true ? hits.denies
+    : state.consult === false ? hits.asserts : [];
   if (hasRegister && consultInScope && contradictions.length) {
     process.stderr.write(
-      `build_dpia: WARNING — the register derives Art. 36 = ${state.highResidual}, but narrative text appears to ` +
+      `build_dpia: WARNING — the register derives Art. 36 = ${state.consult}, but narrative text appears to ` +
       `assert the opposite at: ${contradictions.join('; ')}. Read those passages before delivering; the ` +
       'executive summary is the part a supervisory authority reads first.\n');
   }
@@ -933,7 +1022,7 @@ function main() {
   const coherentStatuses = jur
     .filter(c => REGIMES[c].derive && REGIMES[c].statusOption)
     .map(c => REGIMES[c].statusOption.toLowerCase());
-  if (state.highResidual && consultInScope &&
+  if (state.consult === true && consultInScope &&
       !coherentStatuses.includes(String(m.status || 'Draft').trim().toLowerCase())) {
     process.stderr.write(
       'build_dpia: WARNING — a residual risk rates High (prior consultation engaged) but manifest ' +

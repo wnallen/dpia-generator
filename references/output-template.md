@@ -12,7 +12,7 @@ Read this before authoring the manifest in Step 5. The structure below is the co
 **Every page should carry a footer with:**
 - Page X of Y
 - DPIA reference number (placeholder: `[DPIA-YYYY-NNN]`)
-- "Prepared by Counsel"
+- "AI-generated draft (dpia-generator) — for attorney review"
 
 ## Cover Page
 
@@ -32,6 +32,9 @@ Counsel of Record: [Counsel name — placeholder]
 DPIA Reference: [DPIA-YYYY-NNN]
 
 Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime blocking states]
+
+AI-GENERATED DRAFT — produced by the dpia-generator skill. Not counsel’s work
+product or legal advice until reviewed and adopted by counsel.
 ```
 
 Use a horizontal rule above and below the central block. Leave generous white space.
@@ -129,6 +132,11 @@ The register is rendered by the `riskRegister` block; its columns are fixed by t
 5. **Existing / planned controls** — manifest `controls`
 6. **Residual (L × S)** — manifest `residualLikelihood` × `residualSeverity`
 7. **Residual** rating — *derived*, colour-coded, with `*` on any High rating (Art. 36)
+8. **Post-mitigation** — *optional*: appears only when at least one row states
+   `mitigatedLikelihood` + `mitigatedSeverity` (together or not at all) — the residual expected
+   once Section 5's recommended mitigations are implemented. Rendered `L x S = Rating`, derived
+   and colour-coded; a stated `mitigatedRating` is checked like the other ratings (exit 3 on
+   disagreement). This column is what makes a "conditional" consultation conclusion derivable.
 
 The ratings columns are **not** manifest inputs: the builder derives them from `risk-matrix.md`'s mapping. Stating `inherentRating` / `residualRating` in the manifest is optional and is treated as an assertion to be checked — a disagreement stops the build with exit 3. See the risk-rating gate in SKILL.md Step 5.
 
@@ -164,6 +172,10 @@ End the section with the **Article 36 flag**:
 > **Article 36 Prior Consultation:** Based on the residual risk assessment in Section 4, this DPIA [does / does not] require prior consultation with the [competent supervisory authority] under Article 36 GDPR. [Reasoning.]
 
 The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
+
+**Conditional pathway.** Art. 36(1) keys to high risk *in the absence of mitigating measures*. Where every High-rated residual carries a post-mitigation score below High, the honest statement is conditional, and the builder derives exactly that: "Article 36 prior consultation is required **only if** the controller proceeds without implementing the Section 5 mitigations; with those mitigations implemented before processing commences, no residual risk rates High and consultation is not required." Declare `"conditional"` in the manifest (the gate checks it); the register footnote and engagement table carry the conditional language; the recommended cover status is `Draft` with the executive summary stating the condition. Where any High residual has no post-mitigation score below High, the unconditional flag stands.
+
+A `matrix` block with `"stage": "mitigated"` may follow the residual matrix to show the post-mitigation grid.
 
 Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table**, emitted by one `regulatorTable` block — **never hand-authored as a `table`**. The builder renders Regime | Engagement mechanism | Conclusion for every declared jurisdiction from `regulatorConclusions` plus its registry, appending any per-regime reasoning passed in the block's `notes`; a declared regime with no conclusion fails the build. This is the same computed-not-asserted rule as the matrix: the table a regulator reads cannot disagree with the declared conclusions the gate checks.
 
@@ -201,13 +213,13 @@ Anything the user could not answer in intake, anything that materially affected 
 
 ## Appendix C — Revision History
 
-Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — Counsel — Initial draft."
+Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — dpia-generator (AI) — initial draft for counsel review." Human reviewers add their own rows on adoption.
 
 ---
 
 ## Template → Manifest Mapping
 
-The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | Prepared by Counsel" footer, the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
+The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | AI-generated draft (dpia-generator) — for attorney review" footer and the cover generation notice (builder-owned, no manifest knob), the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
 
 Author the manifest against this table, then run the builder:
 
@@ -222,9 +234,9 @@ Author the manifest against this table, then run the builder:
 | §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
 | §3 Stakeholder consultation | `heading` + `para` |
-| §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one) |
+| §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one); rows may add `mitigatedLikelihood`/`mitigatedSeverity` for the conditional-consultation pathway |
 | §4.3 Risk-by-risk narrative | `heading` + `para` per Medium/High residual risk |
-| §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}`, both with `source` set to the register's `id` |
+| §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}` (plus an optional `{"stage":"mitigated"}` where post-mitigation scores exist), all with `source` set to the register's `id` |
 | §5 Measures | `table` with the mitigation / type / owner / target date / effect columns |
 | §6 Jurisdictional divergence | `heading` + `para` per applicable regime; omit the block entirely where the processing has EU-only scope |
 | §7 Conclusion and approval | `heading` + `para` + one `signature` block |

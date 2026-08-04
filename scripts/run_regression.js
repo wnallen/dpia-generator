@@ -65,8 +65,29 @@ const CASES = [
     check: (t) => [
       [!STAR.test(t), 'no starred rating cell'],
       [!FOOTNOTE.test(t), 'no Art. 36 footnote'],
+      [/AI-GENERATED DRAFT/.test(t), 'generation notice on the cover'],
     ],
     noWarn: true,
+  },
+  {
+    name: 'art36-conditional',
+    why: 'v4.0: a High residual whose post-mitigation score falls below High engages consultation only if the mitigations are not implemented; the conclusion is "conditional", not an unconditional required.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'High-residual row still starred'],
+      [/engaged unless the Section 5 mitigations are implemented/.test(t), 'conditional footnote'],
+      [/Post-mitigation/.test(t), 'post-mitigation register column present'],
+      [/Low x High = Medium/.test(t), 'derived mitigated rating rendered'],
+      [/Post-mitigation residual risk/.test(t), 'mitigated matrix rendered'],
+      [/Prior consultation required unless the Section 5 mitigations are implemented/.test(t), 'conditional label in the engagement table'],
+    ],
+  },
+  {
+    name: 'art36-conditional-mismatch',
+    why: 'v4.0: declaring an unconditional "required" when every High residual is mitigable below High overstates the obligation; the gate forces the honest conditional answer.',
+    exit: 3,
+    stderr: /derives "conditional"[\s\S]*consultation is avoidable/,
   },
   {
     name: 'rating-gate',
@@ -281,6 +302,7 @@ const CASES = [
     checkXml: (x) => [
       [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header absent from body'],
       [x.includes('DATA PROTECTION ASSESSMENT'), 'overridden document title present'],
+      [x.includes('AI-GENERATED DRAFT'), 'generation notice survives privilege-header suppression'],
     ],
   },
 ];

@@ -66,6 +66,31 @@ For every risk, score it twice:
 
 Show both ratings in the DPIA risk register table. A controller whose residual risks are uniformly Low has either an excellent control environment or a self-serving assessment; the document should make clear which.
 
+## Post-Mitigation Scoring and the Conditional Consultation Pathway
+
+For any risk whose **residual** rating is High, additionally score the **post-mitigation**
+residual: the likelihood and severity expected once the *additional* mitigations recommended
+in Section 5 are implemented (as distinct from `controls`, the existing and already-planned
+measures the residual is scored against). Same rubric, same matrix, same honesty rules.
+
+Why it matters: Art. 36(1) engages on high risk *"in the absence of measures taken by the
+controller to mitigate the risk."* A High residual that falls below High once the Section 5
+mitigations are implemented does not condemn the controller to consultation — it gives the
+controller a documented choice: **implement the mitigations before processing commences, or
+consult**. The builder derives this as a "conditional" conclusion and states it in those
+terms; where any High residual has no post-mitigation score below High, consultation is
+unconditional.
+
+Two discipline rules:
+
+1. **A post-mitigation score is a commitment, not a wish.** Score it only for mitigations
+   specific enough to appear in Section 5 with an owner and a target date. If the mitigation
+   is "improve security," there is no score — the risk stays unconditionally High.
+2. **Do not launder scores through mitigation.** The same rubric applies: severity rarely
+   moves (impact on the data subject is largely control-independent); likelihood is where
+   mitigations work. A post-mitigation score that drops severity needs the same justification
+   a residual severity drop would (e.g., genuine pseudonymization).
+
 ## The Three CNIL Feared Events — Always Assess These
 
 The CNIL methodology requires assessment of three baseline feared events, derived from the CIA triad applied to personal data:

@@ -1,0 +1,24 @@
+{
+  "systemName": "Conditional Declared Unconditional",
+  "date": "2026-08-04",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Mitigated below High but declared unconditionally required — the gate must force the honest conditional answer.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Perimeter controls only.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High",
+          "mitigatedLikelihood": "Low",
+          "mitigatedSeverity": "High"
+        }
+      ]
+    }
+  ]
+}

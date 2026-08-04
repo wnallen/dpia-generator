@@ -35,6 +35,18 @@ Read this before completing the Article 35(1)/(3) triggering screen in Step 0, b
 
 The practical reading post-EDPB guidance: if your DPIA shows **residual** (post-control) risk that is still High, you must consult the supervisory authority *before* starting the processing. This is not a notification; it is a stop-the-line obligation. Build your DPIA's executive summary so this flag is unmissable.
 
+**The pragmatic corollary — consultation is often avoidable, and the DPIA should say so.**
+The statutory text keys to high risk "in the absence of measures taken by the controller to
+mitigate the risk." Where the DPIA itself recommends mitigations (Section 5) that, once
+implemented, bring every High residual below High, the accurate conclusion is **conditional**:
+consultation is required *only if* the controller proceeds without implementing those
+mitigations. This is not a loophole — it is the assessment doing its job: the DPIA identifies
+the measures, the controller commits to them before processing, and the risk the statute
+cares about never materializes at the High level. Score the post-mitigation residual per
+`references/risk-matrix.md` and declare `"conditional"`; the builder derives and gates the
+answer. Where a High residual survives even the recommended mitigations, the unconditional
+obligation stands and no drafting choice changes it.
+
 ## WP29 Nine Criteria (WP248rev01, October 2017)
 
 The Article 29 Working Party identified nine criteria. WP29's rule: meeting two or more criteria generally indicates the processing is likely to result in high risk and a DPIA should be conducted. Meeting one criterion may also trigger the requirement depending on context.

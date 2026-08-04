@@ -36,7 +36,7 @@ The Skill asks (in one message) only for the intake details it's missing, runs t
 
 ## Outputs
 
-- **`DPIA_<SystemName>_<date>.docx`** — the full attorney-work-product DPIA: cover page (with triggering conclusion and any documented assumptions), executive summary, necessity/proportionality analysis, risk matrix, controls inventory, residual ratings and mitigations, Article 36 flag, and a defined review cadence. Produced by default with a "PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT" header; a sanitized version is offered when the document is going outside the privilege circle.
+- **`DPIA_<SystemName>_<date>.docx`** — the full DPIA draft: cover page (with triggering conclusion and any documented assumptions), executive summary, necessity/proportionality analysis, risk matrix, controls inventory, residual ratings and mitigations, Article 36 flag (required / not required / conditional on the Section 5 mitigations), and a defined review cadence. Produced by default with a "PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT" header; a sanitized version is offered when the document is going outside the privilege circle. **Every output self-identifies as an AI-generated draft of this skill** — cover notice, footer, and file metadata, none of it removable by manifest — authored for attorney review and adoption, never presented as counsel's own work.
 
 ## Project structure
 
@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 30 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 32 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -112,6 +112,12 @@ Skill-level eval prompts (the workflow behaviors the regression suite cannot tes
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v4.0** — Generation transparency, and pragmatism in the Article 36 conclusion.
+
+  **Every document now says what made it.** The cover carries a fixed notice — "AI-GENERATED DRAFT — produced by the dpia-generator skill. Not counsel's work product or legal advice until reviewed and adopted by counsel." — the footer reads "AI-generated draft (dpia-generator) — for attorney review" where it previously said "Prepared by Counsel", the file metadata names the generator, and the revision history's initial author is the skill, not a person. None of this is manifest-controllable, and it renders on producible records too, where transparency matters most. The counsel's-voice analytical style is unchanged; what changed is that the *authorship* is no longer implied — the sign-off block is where a human reviewer adopts the draft as their own.
+
+  **Consultation conclusions are now pragmatic where the scores support it.** Article 36(1) requires consultation for high risk "in the absence of measures taken by the controller to mitigate the risk" — so a High residual that falls below High once the DPIA's own Section 5 mitigations are implemented should not read as an unconditional stop. Register rows may now score the post-mitigation residual (checked by the rating gate like everything else), and the derived conclusion becomes tri-state: required, not required, or **conditional** — required only if the controller proceeds without implementing the mitigations. The register grows a Post-mitigation column, the matrices a post-mitigation stage, the footnote and engagement table state the condition in plain terms, and the gate is symmetric: overstating the obligation (declaring unconditional "required" when every High residual is mitigable) fails the build exactly as understating it does. The discipline rules travel with it — a post-mitigation score is a commitment with an owner and a date, not a wish, and where any High residual survives the recommended mitigations, the unconditional flag stands. Suite: thirty-two cases.
 
 - **v3.9.1** — A grammar defect found by the three-scenario test pass (global, EU-only, USA+KSA): with three consultation regimes engaged (EU + UK + Kenya), the register footnote chained the authorities with repeated "and"s. The join is now Oxford-style, and a new fixture pins both the three-item list and the legacy `art36` alias filling every derivable regime's conclusion. Suite: thirty cases.
 
