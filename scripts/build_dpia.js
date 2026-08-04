@@ -647,8 +647,14 @@ function build(manifest, state) {
           const consultNotes = (state.jurisdictions || ['eu-gdpr'])
             .filter(c => REGIMES[c] && REGIMES[c].derive)
             .map(c => REGIMES[c].highResidualNote);
+          // Prose list join: "a" / "a and b" / "a, b, and c" \u2014 three consultation
+          // regimes must not produce an "and ... and" run-on in the sentence a
+          // regulator reads first.
+          const joined = consultNotes.length <= 2
+            ? consultNotes.join(' and ')
+            : consultNotes.slice(0, -1).join(', ') + ', and ' + consultNotes[consultNotes.length - 1];
           const footnote = consultNotes.length
-            ? `* Residual risk rated High \u2014 ${consultNotes.join(' and ')} ${consultNotes.length > 1 ? 'are' : 'is'} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`
+            ? `* Residual risk rated High \u2014 ${joined} ${consultNotes.length > 1 ? 'are' : 'is'} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`
             : '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
           children.push(p(footnote, { italic: true, size: 18 }));
         }

@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 29 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 30 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -112,6 +112,8 @@ Skill-level eval prompts (the workflow behaviors the regression suite cannot tes
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.9.1** — A grammar defect found by the three-scenario test pass (global, EU-only, USA+KSA): with three consultation regimes engaged (EU + UK + Kenya), the register footnote chained the authorities with repeated "and"s. The join is now Oxford-style, and a new fixture pins both the three-item list and the legacy `art36` alias filling every derivable regime's conclusion. Suite: thirty cases.
 
 - **v3.9** — The maintenance loop is written down, and the workflow gets evals. A README Maintenance section makes the upkeep rules explicit — volatility banners as contracts, check-by dates, the `tech-law-radar` intake for regulatory drift, and the single promotion path from screening entry to module. `docs/eval-prompts.md` adds three graded skill-level eval prompts for the behaviors the builder suite cannot test: regime mapping and per-regime screening on a four-jurisdiction fact pattern, the producible-record posture on a Colorado-only request, and — most importantly — the negative case: an assessment touching Saudi Arabia and the UAE must surface the screening notes and the coverage fallback rather than silently absorbing regimes the skill has not built. No behavior change.
 

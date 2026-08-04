@@ -229,6 +229,17 @@ const CASES = [
     stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
   },
   {
+    name: 'footnote-three-regimes',
+    why: 'v3.9.1: three consultation regimes produced an "and ... and" run-on in the register footnote; the list join is now Oxford-style, and the art36 alias must fill all three derivable conclusions.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/supervisory authority, UK GDPR Article 36 prior consultation with the ICO, and prior consultation with the Kenyan Data Commissioner/.test(t), 'Oxford-style three-item list'],
+      [!/ and UK GDPR Article 36 prior consultation with the ICO and /.test(t), 'no "and ... and" run-on'],
+      [/are engaged/.test(t), 'plural agreement holds'],
+    ],
+  },
+  {
     name: 'kenya-derivable',
     why: 'v3.8: Kenya is the third derivable regime (s. 31 consultation); its footnote, conclusion derivation and ODPC cover status must all work without the Art. 36 machinery firing spuriously.',
     exit: 0,
