@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 21 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 23 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -81,6 +81,12 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.1** — Phase 1 jurisdictions: the United States and Canada.
+
+  Four regime modules land in `references/jurisdictions/`: **Colorado** (`us-co` — the most prescriptive US content list, Rule 8.04, producible to the AG within 30 days), **California** (`us-ca` — CPPA risk assessments with the only scheduled filing obligation in the skill: first attestation due 2028-04-01 covering 2026–2027), the **harmonized US-state pattern** (`us-state` — Virginia CDPA archetype, one module rather than fifteen), and **Quebec Law 25** (`ca-qc` — project-based PIA trigger plus the outside-Quebec transfer PIA, the closest non-European analog to Article 35). The builder's registry gains all four as non-derivable checklist regimes: their conclusions are declared answers to their own trigger screens, gated on existence rather than derived from the register.
+
+  The plan's open privilege question is resolved: each module carries a **privilege posture** section, and the destination check now enforces a two-document default for regimes whose assessment is producible or filed by design — the producible record (no privileged header, regime-correct title) and counsel's candid analysis in the privileged GDPR-spine document. Build-time fetches of the primary sources returned 403 through the environment proxy; per the house rule every new citation ships UNVERIFIED with descriptive pinpoints, and each module says so at the top rather than presenting recall as verification. Suite grows to twenty-three cases.
 
 - **v3.0** — Multi-jurisdiction architecture, deliberately behavior-preserving for EU/UK work.
 

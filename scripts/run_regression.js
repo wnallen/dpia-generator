@@ -183,6 +183,28 @@ const CASES = [
     stderr: /match no heading/,
   },
   {
+    name: 'non-gdpr-regime',
+    why: 'v3.1: a checklist-regime-only document must not speak GDPR — no Art. 36 footnote, no status warning, generic high-residual marker instead.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'high residual row is still starred'],
+      [!FOOTNOTE.test(t), 'Art. 36 footnote absent'],
+      [/regulator-engagement analysis/.test(t), 'generic high-residual footnote present'],
+      [/Content compliance map — Colorado CPA/.test(t), 'Colorado compliance map rendered'],
+      [/DATA PROTECTION ASSESSMENT/.test(t), 'regime-correct document title'],
+    ],
+    checkXml: (x) => [
+      [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header suppressed for production posture'],
+    ],
+  },
+  {
+    name: 'nonderivable-missing-conclusion',
+    why: 'v3.1: a declared checklist regime with no conclusion is unfinished; the legacy art36 alias cannot answer for it.',
+    exit: 1,
+    stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
+  },
+  {
     name: 'header-suppressed',
     why: 'A document drafted for regulator production must be able to shed the privilege header deliberately.',
     exit: 0,

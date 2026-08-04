@@ -128,6 +128,40 @@ Best for: any ISS likely to be accessed by under-18s in the UK; useful as a stru
 
 ---
 
+## Non-EU Regulator Guidance and Templates (per-jurisdiction anchors)
+
+Outside the EU/UK, published *completed* assessments are scarce — controllers do not publish
+US state data protection assessments or Chinese PIPIAs. The anchors for Step 1 in these
+regimes are the regulators' own **guides, rules and enforcement decisions**. Entries below are
+UNVERIFIED until fetched (build-time fetches of several of these hosts returned 403; that is
+a proxy condition, not evidence about the source).
+
+### Quebec — CAI companion guide on PIAs (2023)
+
+cai.gouv.qc.ca. The CAI's own methodology for Law 25 PIAs, in French. The closest thing to a
+CNIL-guide analog in North America. Best for: structuring a `ca-qc` PIA; the outside-Quebec
+communication analysis.
+
+### Colorado — CPA Rules, Part 8 and 9 (4 CCR 904-3)
+
+The most prescriptive assessment content list of any US regulator; functions as a de facto
+template. Best for: the `complianceMap` element list for `us-co` and, by over-satisfaction,
+every `us-state` jurisdiction.
+
+### California — CPPA final regulations and supporting materials (2025)
+
+cppa.ca.gov. The regulations themselves plus the CPPA's announcements and any published
+practical guidance. Best for: `us-ca` trigger and content mapping; the ADMT
+notice/opt-out/access architecture; filing mechanics and deadlines.
+
+### Federal Canada — OPC PIA guidance; TBS Directive on PIA
+
+priv.gc.ca / tbs-sct.canada.ca. Best for: public-sector-adjacent processing and
+accountability framing where PIPEDA applies; the TBS directive is a full PIA methodology for
+federal institutions.
+
+---
+
 ## How to Add to This Catalog
 
 When you find a useful published DPIA or DPA decision during a Step 1 web search, add it here in the same format: what it is, URL, what it's good for, what it isn't. Over time this becomes a powerful institutional resource and reduces the per-DPIA research burden.

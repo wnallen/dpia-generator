@@ -191,6 +191,30 @@ const REGIMES = {
     derive: (state) => state.highResidual,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
   },
+  // Statutory-checklist regimes (Model B modules). derive: null — the
+  // conclusion is the declared answer to the regime's own trigger screen
+  // (assessment required or not), reviewed against references/jurisdictions/,
+  // not derivable from the residual ratings.
+  'us-co': {
+    label: 'Colorado CPA',
+    conclusionKey: 'assessmentRequired',
+    derive: null,
+  },
+  'us-ca': {
+    label: 'California CCPA/CPRA',
+    conclusionKey: 'assessmentRequired',
+    derive: null,
+  },
+  'us-state': {
+    label: 'US state privacy laws (VA/CT/TX pattern)',
+    conclusionKey: 'assessmentRequired',
+    derive: null,
+  },
+  'ca-qc': {
+    label: 'Quebec Law 25',
+    conclusionKey: 'piaRequired',
+    derive: null,
+  },
 };
 
 function norm(v, field, ctx) {

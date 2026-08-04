@@ -51,6 +51,19 @@ The UK GDPR as it forms part of retained EU law, read with the DPA 2018 (c. 12).
 
 **Chapter number not captured — do not cite without it.** `legislation.gov.uk` URLs take the form `/ukpga/{year}/{chapter}`; a bare `/ukpga/2025` identifies nothing. Look the Act up, record the chapter number here, and cite the specific amending section rather than the Act as a whole. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
 
+### US state statutes and rules (Phase 1 modules)
+
+All UNVERIFIED as identifiers until fetched once; the analysis lives in `references/jurisdictions/`.
+
+- **Colorado:** C.R.S. § 6-1-1309 (data protection assessments); Colorado Privacy Act Rules, 4 CCR 904-3 Parts 8–9. Capture the Rule 8.04 sub-paragraph enumeration on first fetch — the module deliberately does not state it from recall.
+- **California:** Cal. Civ. Code § 1798.185(a)(15); CPPA regulations (risk assessments + ADMT), OAL-approved 2025-09-23, effective 2026-01-01. Capture the article/section numbers (recalled 11 CCR §§ 7150–7157 — verify before citing).
+- **Virginia pattern:** Va. Code § 59.1-580 and state analogs (CT, TX, OR, MT, DE, NH, NJ, MN, TN, IN, KY, NE, RI). Verify per state actually relied on; the list itself rolls forward session to session.
+
+### Canada / Quebec (Phase 1 module)
+
+- **Quebec:** CQLR c. P-39.1 as amended by Law 25 (S.Q. 2021, c. 25). The two trigger provisions are recalled as ss. 3.3 and 17 — **verify both section numbers on first fetch**; they are the most-cited pair in secondary sources and the most likely to be misremembered.
+- **Federal:** PIPEDA, S.C. 2000, c. 5 (no PIA obligation — cite only for the accountability principle); TBS Directive on Privacy Impact Assessment (federal institutions only).
+
 ### Regulation (EU) 2024/1689 (EU AI Act)
 
 Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Verify the CELEX identifier and the Annex III sub-paragraph before citing** — this instrument is newer than the rest of this register and its numbering is the one most often misremembered.
@@ -117,6 +130,27 @@ Commission implementing decision on the adequate level of protection under the E
 - **Cited for:** the UK position on workplace biometric time-and-attendance; the Art. 5(1)(a)/6/9 findings.
 - **Capture:** the enforcement notice reference and date.
 - **Status:** UNVERIFIED. Detail in `published-dpias.md`.
+
+### CAI (Quebec) — companion guide on PIAs
+
+- **Cited for:** Quebec Law 25 PIA methodology and the CAI's expectations; the outside-Quebec adequacy analysis.
+- **Verify at:** cai.gouv.qc.ca (published September 2023; French — record translation status when citing to an anglophone reviewer).
+- **Capture:** the guide's title, edition date, and the section on the outside-Quebec communication analysis.
+- **Status:** UNVERIFIED.
+
+### CPPA — final CCPA regulations and filing mechanics
+
+- **Cited for:** California risk-assessment triggers, content, and the attestation/filing calendar (first filing 2028-04-01 covering 2026–2027).
+- **Verify at:** cppa.ca.gov (regulations page and the 2025-09-23 approval announcement).
+- **Capture:** the section numbers for the trigger list, content list, and submission requirements.
+- **Status:** UNVERIFIED (build-time fetches returned 403; dates corroborated by secondary sources only).
+
+### Colorado AG — CPA rules guidance and enforcement
+
+- **Cited for:** Rule 8.04 content expectations; profiling assessment additions (Part 9); AG production mechanics.
+- **Verify at:** coag.gov and the Colorado Secretary of State rules register.
+- **Capture:** the Rule 8.04 sub-paragraph enumeration; the non-waiver provision's exact statutory cite.
+- **Status:** UNVERIFIED.
 
 ### EDPB Guidelines 05/2020 on consent
 
