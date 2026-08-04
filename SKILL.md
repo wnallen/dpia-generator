@@ -5,10 +5,10 @@ description: >-
   jurisdiction's equivalent for a new or modified processing. Triggers: "run a DPIA on", "assess privacy risk
   for", "is this Article 35 / high risk?", "need a Colorado data protection assessment / CCPA risk assessment
   / LGPD RIPD / PIPL PIPIA / Law 25 PIA?", or any new-processing description — tool, vendor, AI feature,
-  monitoring, transfer — with a privacy-risk question in any jurisdiction, or a pasted vendor page with a
+  monitoring — with a privacy-risk question in any jurisdiction, or a pasted vendor page with a
   GDPR/ICO/CNIL/EDPB/CPPA/ANPD question. Use even when the user doesn't say "DPIA". Produces an
-  attorney-work-product assessment in Word: necessity/proportionality, 3×3 risk matrix, residual ratings,
-  mitigations, Art. 36-and-analog flags, jurisdictional divergence. Do NOT use for the regulatory
+  attorney-work-product assessment in Word: necessity/proportionality, 3×3 risk matrix, mitigations,
+  Art. 36-and-analog flags, jurisdictional divergence. Do NOT use for the regulatory
   landscape of a named product with no specific processing to assess (product-regulatory-scan), a
   category-level tech-law sweep (tech-law-radar), or reviewing a DPA or vendor agreement
   (b2b-supplier-redline).
@@ -28,7 +28,7 @@ Run one-shot. Step 0 intake is the single permitted pause, it happens once, and 
 
 After that, work to completion without check-ins. Chat output is a start line, the file, and the compact Step 6 delivery summary — no plan restatements, no progress narration, no section-by-section drafts pasted into chat. The .docx is the deliverable and carries its own appendices; do not attach a cover memo or a companion summary document alongside it.
 
-Three things still stop the run, and only these: a blocking input problem (no workable processing description at all), a consequential-step gate (the destination check and the Article 36 filing gate below), and a nonzero builder exit code.
+Three things still stop the run, and only these: a blocking input problem (no workable processing description at all), a consequential-step gate (the destination check and the regulator filing gate below), and a nonzero builder exit code.
 
 ---
 
@@ -52,7 +52,7 @@ You need, at minimum:
 3. **Categories of data subjects.** Employees, candidates, customers, end-users, members of the public, children. Flag any vulnerable populations.
 4. **Recipients / processors / sub-processors.** Who sees the data — internal teams, vendors, sub-processors, public authorities — and on what basis.
 5. **Retention period.** How long and on what justification.
-6. **Cross-border transfers.** Where data lands geographically, and whether to a country with an EU adequacy decision. If transfers go to the US, ask specifically whether the importer is EU-US Data Privacy Framework certified.
+6. **Cross-border transfers.** Where data lands geographically, assessed **against each applicable regime**, because "transfer" triggers differ: EU/UK adequacy (for US importers, ask specifically whether the importer is EU-US Data Privacy Framework certified), China's export routes (CAC assessment / SCC filing / certification), Quebec's communication-outside-Quebec rule (which fires even intra-Canada), Brazil's ANPD mechanisms, and any localization rules a module flags. One destination can be a paperwork exercise for one regime and a hard blocker for another.
 7. **Automated decision-making or profiling.** Whether the processing produces decisions with legal or similarly significant effects on individuals (Art. 22).
 8. **AI / ML involvement.** Whether AI/ML is in the loop and whether vendor-side training on customer data is contemplated.
 9. **Jurisdictional scope.** Where is the controller established, where are the data subjects, and what sector is this? Map the answers to an **applicable-regimes table** in the cover note: one row per regime (EU GDPR, UK GDPR, and any regime with a module in `references/jurisdictions/`), each with its own triggering conclusion. A regime the processing touches that has **no** module file gets a row too, marked "not covered — assessed on the GDPR spine only" (see the coverage fallback below). Do not ask a per-jurisdiction questionnaire; derive the table from the three facts above.
@@ -139,7 +139,7 @@ Answer four questions in counsel's voice, with reasoned analysis, not bullet che
 
 1. **Is the processing necessary to achieve the stated purpose?** Could the purpose be achieved by processing less data, less identifying data, or no personal data at all? Has the controller considered and rejected less-intrusive alternatives, and on what basis?
 
-2. **Is the lawful basis sound?** Identify the Art. 6 basis (and Art. 9 / Art. 10 condition if special-category or criminal data). For consent-based processing in an employer-employee or government-citizen context, address the power-imbalance problem (WP29 / EDPB position: consent is generally not freely given). For legitimate interests, complete a three-part LIA in narrative form (purpose / necessity / balancing).
+2. **Is the lawful basis sound?** Identify the Art. 6 basis (and Art. 9 / Art. 10 condition if special-category or criminal data). For consent-based processing in an employer-employee or government-citizen context, address the power-imbalance problem (WP29 / EDPB position: consent is generally not freely given). For legitimate interests, complete a three-part LIA in narrative form (purpose / necessity / balancing). **Where non-EU regimes are in scope, the Art. 6 conclusion does not transplant** — map it through each module's basis notes (LGPD's ten Art. 7 bases; India's consent-plus-legitimate-uses with no LI; China's separate-consent triggers; Quebec's consent-centric statute) and say expressly in §2.2 where a regime needs a different story.
 
 3. **Are the data minimization, accuracy, storage limitation, and purpose limitation principles satisfied?** Walk through Art. 5(1)(b)–(e) for the specific data fields proposed.
 
@@ -187,7 +187,7 @@ If any residual risk rates **High**, the DPIA must trigger an Article 36 prior c
 
 If residual risk is **Medium**, recommend internal DPO consultation and a defined re-review cadence (typically annual or on material change).
 
-**Regulator-engagement table (multi-jurisdiction assessments).** Where the applicable-regimes table lists jurisdictions beyond EU/UK GDPR, Section 5 must end with one row per regime stating what the findings oblige, drawn from each regime's `references/jurisdictions/<code>.md`: prior consultation (EU/UK, Swiss FDPIC), production on regulator demand (Colorado AG, ANPD), scheduled filing or attestation (California CPPA), report retention (China PIPL), or reporting to a board (India DPDP). Every declared regime gets a conclusion — declared in the manifest's `regulatorConclusions` and enforced by the builder's gate; a regime with no conclusion fails the build, because an assessment that has not formed a view on its regulator obligations is not finished.
+**Regulator-engagement table (multi-jurisdiction assessments).** Where the applicable-regimes table lists jurisdictions beyond EU/UK GDPR, Section 5 must end with the engagement table — **emitted by the builder's `regulatorTable` block, never hand-authored as a `table`**: the builder renders one row per declared regime from `regulatorConclusions` plus its registry (engagement mechanism and conclusion label), so the table a regulator reads cannot disagree with the declared conclusions the gate checks — the same computed-not-asserted rule as the matrix. Put the per-regime reasoning in the block's `notes`. Every declared regime needs a conclusion; a regime without one fails the build, because an assessment that has not formed a view on its regulator obligations is not finished.
 
 ---
 
@@ -195,7 +195,7 @@ If residual risk is **Medium**, recommend internal DPO consultation and a define
 
 Read `references/output-template.md` for the DPIA's exact section structure and its template → manifest mapping table. You are not writing document code, so do not read `/mnt/skills/public/docx/SKILL.md` as a matter of course — the builder already encodes the docx-js patterns and runs the validator itself. Read it only if the build exits 2 and you need the unpack-fix-repack procedure.
 
-The output is a single Word document, saved to `/mnt/user-data/outputs/DPIA_[SystemName]_[YYYY-MM-DD].docx`, with this structure:
+The output is a Word document saved to `/mnt/user-data/outputs/`, named `[prefix]_[SystemName]_[YYYY-MM-DD].docx` where the prefix is the document title's initials — the default title yields the historical `DPIA_`, a Colorado "DATA PROTECTION ASSESSMENT" yields `DPA_`. Structure:
 
 ```
 COVER PAGE
@@ -242,9 +242,18 @@ Implementation — **author a JSON manifest and run the bundled builder. Do not 
 node scripts/build_dpia.js /home/claude/dpia_manifest.json
 ```
 
-The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices and signature block, then runs `/mnt/skills/public/docx/scripts/office/validate.py` on its own output and prints the written path. The full manifest schema and block types are documented in the script's header comment, `scripts/build_dpia.js` lines 1–137 — read that range before writing the manifest, not the whole file. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
+The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices and signature block, then runs `/mnt/skills/public/docx/scripts/office/validate.py` on its own output and prints the written path. The full manifest schema and block types are documented in the script's header comment, `scripts/build_dpia.js` lines 1–147 — read that range before writing the manifest, not the whole file. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
 
 Everything the script owns — page geometry, fonts, header and footer, cover page, colour fills, the rating mapping — stays out of the manifest. If you find yourself specifying a hex fill or a font size, you are reimplementing the builder.
+
+### Two-Document Runs (producible record + privileged spine)
+
+When the destination check yields the two-document posture (a regime that collects the assessment by design — Colorado, California, China's SCC route, India's findings layer), author **two manifests and run the builder twice**:
+
+1. **Producible record** — `jurisdictions` scoped to the producible regime(s); the regime's own `docTitle` (which also sets the filename prefix); `"headerText": ""`; the factual record only: description, register, matrices, `complianceMap`, `regulatorTable`, safeguards, the balancing/go-no-go statement. No counsel's strategic reasoning, no weaknesses framed for the privilege circle.
+2. **Privileged spine** — the full GDPR-spine DPIA with defaults intact (privileged header, `DPIA_` prefix), carrying counsel's candid analysis and the complete multi-regime picture, including the producible regimes' conclusions.
+
+The two files land side by side in the outputs directory under different prefixes. The Step 6 chat summary must label which is which and repeat the rule: the privileged spine does not leave the privilege circle; the producible record is the only document that goes to the regulator.
 
 **Regulator conclusion gate (mandatory, exit 3).** Any manifest containing a risk register must declare a regulator-engagement conclusion for **every** regime listed in its top-level `"jurisdictions"` array (default `["eu-gdpr"]`), via `"regulatorConclusions": {"<code>": {...}}`. The legacy `"art36": true | false` is still accepted and fills the prior-consultation answer for every declared GDPR-family regime without an explicit entry. For prior-consultation regimes the script derives the answer from the register and stops with exit 3 if a declaration disagrees; a missing conclusion for any declared regime is a manifest error (exit 1), because an assessment that has not formed a view on its regulator obligations is not finished. The script additionally scans the narrative blocks and warns where prose appears to assert the opposite of the derived answer — the executive summary is what a supervisory authority reads first, and it is the place this contradiction historically survives. **Never resolve a gate failure by flipping the declaration.** Decide which is wrong, the conclusion or a likelihood/severity score, and fix that.
 
@@ -256,8 +265,8 @@ If validation fails (exit 2), unpack, fix, and repack per the docx skill's guida
 
 ## Step 6 — Deliver
 
-1. Save the .docx to `/mnt/user-data/outputs/DPIA_[SystemName]_[YYYY-MM-DD].docx`.
-2. Call `present_files` to make it downloadable.
+1. Save the .docx to `/mnt/user-data/outputs/` (both files, on a two-document run, labelled per Step 5).
+2. Call `present_files` to make it (or them) downloadable.
 3. In the chat, summarize:
    - Article 35 triggering conclusion (mandatory / prudential)
    - The published DPIA or DPA decision used as the reference analog
@@ -308,17 +317,23 @@ Do not silently apply the privileged header and then help the user paste it into
 
 **Per-regime privilege posture.** The work-product framing is a US doctrine and the "inside the circle" default assumes a GDPR-style internal document. Several covered regimes break that assumption by design: a Colorado assessment is producible to the AG on 30 days' notice, a California risk assessment feeds a scheduled CPPA filing, and some jurisdictions covered by later modules recognize no in-house privilege at all. Each `references/jurisdictions/` file carries a **privilege posture** section — read it during the destination check for every applicable regime. Where a regime's document is producible or filed by design, the default is **two documents**: the producible record built with `"headerText": ""` (and the regime's own `docTitle`), and counsel's candid analysis kept in the privileged GDPR-spine DPIA or a separate memo. Never put strategic weaknesses drafted for the privilege circle into a record the regulator collects on schedule.
 
-### Article 36 Filing Gate
+### Regulator Filing Gate (Article 36 and its analogs)
 
-If the DPIA's residual risk findings trigger Art. 36 prior consultation with a supervisory authority (per Step 4), submission is a consequential step that goes beyond producing the document. Filing makes the DPIA part of the supervisory record; any material omission or error becomes enforcement exposure rather than a draft to revise.
+Several covered regimes turn the assessment (or a layer of it) into a **submission to a regulator**, and submission is a consequential step that goes beyond producing the document: any material omission or error becomes enforcement exposure rather than a draft to revise. The gate applies to all of them, not only Art. 36:
 
-Before producing a "ready-to-file" version (as distinct from a draft for internal DPO review), confirm:
+- **Art. 36 prior consultation** (EU/UK) — the DPIA filed with the ICO / CNIL / lead authority;
+- **FDPIC consultation** (Switzerland, Art. 23) — the DPIA placed before the FDPIC;
+- **CPPA attestation and summary filing** (California) — the risk-assessment summary submitted on the filing calendar;
+- **CAC SCC filing** (China) — the PIPIA report included in the standard-contract filing package;
+- **Data Protection Board report** (India) — the SDF DPIA/audit significant-observations report.
 
-- "This DPIA is ready to file with the [ICO / CNIL / lead authority] under Art. 36 — yes / no?"
+Before producing a "ready-to-file" version of any of these (as distinct from a draft for internal review), confirm:
+
+- "This [document / package] is ready to file with [authority] under [mechanism] — yes / no?"
 
 If yes, the document becomes the controller's representation to the regulator and should be treated as a final substantive filing, not a draft. If no, mark the cover page Status as "Draft — Not for Filing" and proceed.
 
-Do not file on the user's behalf. The supervisory authority's submission portals and procedures vary; the controller submits, not Claude.
+Do not file on the user's behalf. Submission portals and procedures vary; the controller submits, not Claude.
 
 ---
 
@@ -332,8 +347,8 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 - `references/published-dpias.md` — Curated catalog of useful real-world DPIAs and DPA decisions (Met Police RFR DPIA, CNIL biometric workplace Model Regulation, ICO Serco biometric T&A enforcement, ICO sample DPIAs, EDPB Recommendations 01/2020, CNIL TIA guide), with URLs and notes on what each is good for.
 - `references/jurisdictions/` — One file per non-EU regime, named by its code (`uk-gdpr.md`, and more as modules are built). Each follows a fixed skeleton: instrument + statute cite, trigger test, required-content crosswalk against Art. 35(7), risk method, regulator engagement (consultation / filing / production / retention), divergence-that-changes-the-answer table, privilege posture, and Tier A/B source notes. Read the file for every regime in the applicable-regimes table; a regime with no file is **not covered** and takes the coverage fallback. `uk-gdpr.md` covers UK divergence (DUAA 2025 changes, Art. 22 ADM, recognized lawful bases, ICO mandatory DPIA list, transfer mechanisms).
 - `references/output-template.md` — Exact section structure (including §1.10 Privacy Policy Consistency Check), table layouts, standard wording, and the template → manifest mapping table that tells you which block type carries each section.
-- `scripts/build_dpia.js` (v3.0) — Manifest-driven .docx assembler for Step 5: cover page (parameterizable title and privilege header), running header/footer, headings, prose, bullets, tables, risk register, inherent/residual 3×3 matrices, compliance maps, signature block; owns the jurisdiction registry (`REGIMES`), the likelihood × severity → rating mapping, the Article 36 mark, the risk-rating gate and the per-regime regulator conclusion gate (both exit 3). Manifest schema is in the script header, lines 1–137. **Execute, don't reimplement.**
-- `scripts/run_regression.js` + `tests/fixtures/` — Twenty-seven-case regression suite over the builder. Every case is a defect that shipped or a gate that exists to stop one. Run `node scripts/run_regression.js` after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema; the matrix mapping and the Article 36 flag are the two things here a reader cannot check by eye. Requires the `docx` package (pinned in `package.json`) resolvable by the builder.
+- `scripts/build_dpia.js` (v3.0) — Manifest-driven .docx assembler for Step 5: cover page (parameterizable title and privilege header), running header/footer, headings, prose, bullets, tables, risk register, inherent/residual 3×3 matrices, compliance maps, signature block; owns the jurisdiction registry (`REGIMES`), the likelihood × severity → rating mapping, the Article 36 mark, the risk-rating gate and the per-regime regulator conclusion gate (both exit 3). Manifest schema is in the script header, lines 1–147. **Execute, don't reimplement.**
+- `scripts/run_regression.js` + `tests/fixtures/` — Twenty-eight-case regression suite over the builder. Every case is a defect that shipped or a gate that exists to stop one. Run `node scripts/run_regression.js` after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema; the matrix mapping and the Article 36 flag are the two things here a reader cannot check by eye. Requires the `docx` package (pinned in `package.json`) resolvable by the builder.
 
 ---
 
@@ -342,6 +357,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v3.7** — The gate philosophy reaches the last hand-authored surface, and the two-document posture becomes mechanical. New `regulatorTable` block: the Section 5 regulator-engagement table is now computed from `regulatorConclusions` + the registry (per-regime engagement text and conclusion labels; per-regime reasoning via `notes`; a declared regime without a conclusion is exit 1) — never hand-authored. The Article 36 filing gate generalizes to the **regulator filing gate** covering the CPPA attestation, the CAC SCC filing package (which includes the PIPIA), the Indian DPB report and the Swiss FDPIC consultation. Filename prefix now derives from the document title's initials (default `DPIA_`; a Colorado record ships as `DPA_`), and Step 5 gains the **two-document run** procedure (producible record + privileged spine as two manifests). Intake item 6 (transfers) globalized per regime; Step 2 gains the lawful-basis-does-not-transplant pointer to the module basis notes; description trimmed to 996 chars for maintenance headroom. Suite to twenty-eight cases.
 - **v3.6** — Two refinements. (1) Cover-status reviewer title is uniform "DPO" across regimes — the review officer's exact statutory name varies but the checkbox does not carry that detail; blocking states (Art. 36, FDPIC, PIPC agency assessment) remain per-regime. (2) Citation verification pass: with primary-source fetches still 403-blocked but web search available, the non-EU statutory identifiers moved off `[model knowledge — verify]` (recall) onto `[web search — verify]` (corroborated, not fetched) — Colorado Rules 8.02/8.04/9.06, California 11 CCR Art. 10 §§ 7150/7152, Quebec ss. 3.3/17, LGPD Arts. 5(XVII)/38, PIPL Arts. 55/56 + 3-year retention, GB/T 39335-2020, DPDP Rule 13, revFADP SR 235.1 Arts. 22/23/23(4); the DUAA chapter number (c. 18) is filled and a Brazilian resolution mis-attribution corrected (Res. 2/2022 is small-agents, not a high-risk list). `authorities.md` now documents the three-tier tag semantics explicitly. No behavior change; suite unchanged at twenty-seven cases.
 - **v3.5** — Per-regime cover-status vocabulary: the status checkboxes are now derived from `jurisdictions` — base states name the primary regime's reviewer (DPO, DPO/SRI, Privacy Counsel, Person in Charge of PI Protection, Encarregado, PI Protection Officer, Data Protection Advisor, CPO…), and each declared regime with a consultation-style blocking state contributes its own box (Art. 36 for EU/UK, FDPIC for `ch-fadp`, PIPC designated-agency assessment for `kr-pipa`); checklist regimes contribute none, so a Colorado-only cover no longer offers an Art. 36 box. New optional `statusOptions` manifest override; an out-of-vocabulary `status` renders as an extra checked box with a stderr note instead of silently unchecking everything. Suite to twenty-seven cases.
 - **v3.4.1** — Hardening from adversarial testing: manifest-supplied keys (`jurisdictions` codes, matrix `source`, `regulatorConclusions` keys) no longer resolve through the prototype chain — `"__proto__"` bypassed the unknown-code check and `"constructor"` as a matrix source crashed the builder with a stack trace (latent since v1.1); both now fail cleanly with exit 1 via own-property lookups and null-prototype maps. Multi-regime Art. 36 footnote grammar corrected (singular/plural). Suite to twenty-five cases.

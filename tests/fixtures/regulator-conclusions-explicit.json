@@ -1,14 +1,25 @@
 {
   "systemName": "Explicit Conclusions",
   "date": "2026-08-04",
-  "jurisdictions": ["eu-gdpr", "uk-gdpr"],
+  "jurisdictions": [
+    "eu-gdpr",
+    "uk-gdpr"
+  ],
   "regulatorConclusions": {
-    "eu-gdpr": { "priorConsultation": true },
-    "uk-gdpr": { "priorConsultation": true }
+    "eu-gdpr": {
+      "priorConsultation": true
+    },
+    "uk-gdpr": {
+      "priorConsultation": true
+    }
   },
   "status": "Requires Art. 36 Prior Consultation",
   "blocks": [
-    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
     {
       "type": "riskRegister",
       "id": "main",
@@ -24,15 +35,36 @@
         }
       ]
     },
-    { "type": "matrix", "stage": "residual", "source": "main" },
-    { "type": "heading", "level": 1, "text": "SECTION 5 — MEASURES TO ADDRESS RISKS" },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 5 \u2014 MEASURES TO ADDRESS RISKS"
+    },
     {
       "type": "complianceMap",
       "regime": "uk-gdpr",
       "rows": [
-        { "element": "Assessment of risks to rights and freedoms", "section": "SECTION 4" },
-        { "element": "Measures envisaged to address the risks", "section": "Section 5", "note": "mitigations table" }
+        {
+          "element": "Assessment of risks to rights and freedoms",
+          "section": "SECTION 4"
+        },
+        {
+          "element": "Measures envisaged to address the risks",
+          "section": "Section 5",
+          "note": "mitigations table"
+        }
       ]
+    },
+    {
+      "type": "regulatorTable",
+      "notes": {
+        "eu-gdpr": "R1 residual High"
+      }
     }
   ]
 }

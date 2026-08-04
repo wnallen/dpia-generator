@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v3.6)
+ * build_dpia.js — dpia-generator document assembler (v3.7)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -104,8 +104,12 @@
  *                                              //   allowed root (default outputs
  *                                              //   dir or the OS temp dir; extend
  *                                              //   via DPIA_OUTPUT_ROOTS)
- *   "outputFilename": null,                    // default DPIA_<System>_<date>.docx;
- *                                              //   reduced to a basename, never a path
+ *   "outputFilename": null,                    // default <prefix>_<System>_<date>.docx,
+ *                                              //   where <prefix> is the docTitle's
+ *                                              //   initials (default title -> "DPIA",
+ *                                              //   "DATA PROTECTION ASSESSMENT" ->
+ *                                              //   "DPA"); reduced to a basename,
+ *                                              //   never a path
  *   "blocks": [ ... ]                          // required, ordered content
  * }
  *
@@ -132,6 +136,13 @@
  *         case-insensitive substring); a dangling reference is exit 1, because a
  *         compliance map pointing at sections that do not exist is the checklist
  *         version of a fabricated citation.
+ *   {"type":"regulatorTable","title":"...",                         // all fields optional
+ *    "notes":{"eu-gdpr":"R1 residual High"}}
+ *      -- renders the Regime | Engagement mechanism | Conclusion table for every
+ *         declared jurisdiction, COMPUTED from regulatorConclusions + the REGIMES
+ *         registry (never hand-authored — same rule as the matrix). A declared
+ *         jurisdiction with no conclusion is exit 1. "notes" appends per-regime
+ *         reasoning to the conclusion cell.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
  */
 
@@ -208,6 +219,8 @@ const REGIMES = {
     derive: (state) => state.highResidual,
     highResidualNote: 'Article 36 prior consultation with the competent supervisory authority',
     statusOption: 'Requires Art. 36 Prior Consultation',
+    engagement: "Art. 36 prior consultation with the competent supervisory authority on residual high risk",
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
   },
   'uk-gdpr': {
     label: 'UK GDPR',
@@ -215,6 +228,8 @@ const REGIMES = {
     derive: (state) => state.highResidual,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
     statusOption: 'Requires Art. 36 Prior Consultation',
+    engagement: "UK GDPR Art. 36 prior consultation with the ICO on residual high risk",
+    conclusionLabels: ["Prior consultation required", "Prior consultation not required"],
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
   // conclusion is the declared answer to the regime's own trigger screen
@@ -224,31 +239,43 @@ const REGIMES = {
     label: 'Colorado CPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    engagement: "Data protection assessment producible to the Colorado AG within 30 days of request; no filing, no consultation",
+    conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'us-ca': {
     label: 'California CCPA/CPRA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    engagement: "Risk assessment; attestation and summary filed with the CPPA on schedule; full assessment producible on request",
+    conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'us-state': {
     label: 'US state privacy laws (VA/CT/TX pattern)',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    engagement: "Assessment producible to the state AG on civil investigative demand; no filing, no consultation",
+    conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'ca-qc': {
     label: 'Quebec Law 25',
     conclusionKey: 'piaRequired',
     derive: null,
+    engagement: "PIA maintained; CAI may require production in an investigation; PIA is a precondition to communication outside Quebec",
+    conclusionLabels: ["PIA required", "PIA not required"],
   },
   'br-lgpd': {
     label: 'Brazil LGPD',
     conclusionKey: 'ripdRequired',
     derive: null,
+    engagement: "RIPD maintained; producible to the ANPD on demand (Art. 38); no filing, no consultation",
+    conclusionLabels: ["RIPD required", "RIPD not required"],
   },
   'cn-pipl': {
     label: 'China PIPL',
     conclusionKey: 'pipiaRequired',
     derive: null,
+    engagement: "PIPIA report retained at least three years; filed with the provincial CAC where the SCC export route is used",
+    conclusionLabels: ["PIPIA required", "PIPIA not required"],
   },
   // Switzerland has a true prior-consultation mechanism (revFADP Art. 23) but
   // is deliberately NON-derivable: Art. 23(4) lets a controller that consulted
@@ -260,32 +287,44 @@ const REGIMES = {
     conclusionKey: 'fdpicConsultation',
     derive: null,
     statusOption: 'Requires FDPIC Consultation',
+    engagement: "FDPIC opinion before processing on residual high risk (Art. 23), unless the Art. 23(4) advisor route is taken and documented",
+    conclusionLabels: ["FDPIC consultation required", "FDPIC consultation not required"],
   },
   'in-dpdp': {
     label: 'India DPDP',
     conclusionKey: 'dpiaRequired',
     derive: null,
+    engagement: "Annual SDF DPIA and independent audit; significant observations reported to the Data Protection Board",
+    conclusionLabels: ["DPIA required (SDF)", "No DPIA duty (not a designated SDF)"],
   },
   'sg-pdpa': {
     label: 'Singapore PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    engagement: "Assessment producible to the PDPC in an investigation; statutory precondition for deemed consent by notification and the legitimate interests exception",
+    conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'my-pdpa': {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    engagement: "DPIA guideline in consultation (watch status) \u2014 verify current JPDP position before relying",
+    conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'au-privacy': {
     label: 'Australia Privacy Act',
     conclusionKey: 'piaRequired',
     derive: null,
+    engagement: "Agency PIAs registered under the APP Code; OAIC may require production in an investigation",
+    conclusionLabels: ["PIA required", "PIA not required"],
   },
   'kr-pipa': {
     label: 'South Korea PIPA',
     conclusionKey: 'piaRequired',
     derive: null,
     statusOption: 'Requires PIPC-Designated Agency Assessment',
+    engagement: "Public-institution PIA performed by a PIPC-designated agency and submitted to the PIPC",
+    conclusionLabels: ["PIA required", "PIA not required"],
   },
 };
 
@@ -627,6 +666,31 @@ function build(manifest, state) {
         children.push(p('', { after: 120 }));
         break;
       }
+      case 'regulatorTable': {
+        // Rendered from the resolved regulatorConclusions + the registry, never
+        // hand-authored — the same computed-not-asserted rule as the matrix: the
+        // engagement table a regulator reads cannot disagree with the declared
+        // conclusions the gate checks.
+        const jurs = state.jurisdictions || ['eu-gdpr'];
+        const rc = state.conclusions || {};
+        const rows = jurs.map(code => {
+          const def = own(REGIMES, code);
+          const entry = own(rc, code);
+          const declared = entry ? entry[def.conclusionKey] : undefined;
+          if (declared === undefined || declared === null) {
+            fail(1, `${ctx}: regulatorConclusions["${code}"].${def.conclusionKey} is required to render ` +
+                    'the regulator-engagement table — a table row without a declared conclusion is an ' +
+                    'assessment that has not finished.');
+          }
+          const label = def.conclusionLabels[declared ? 0 : 1];
+          const note = b.notes ? own(b.notes, code) : undefined;
+          return [def.label, def.engagement, label + (note ? ` — ${note}` : '')];
+        });
+        children.push(p(b.title || 'Regulator engagement — conclusions by jurisdiction', { bold: true, after: 100 }));
+        children.push(dataTable(['Regime', 'Engagement mechanism', 'Conclusion'], rows, [18, 46, 36]));
+        children.push(p('', { after: 120 }));
+        break;
+      }
       case 'signature': {
         const rows = (b.rows || []).map(r => r.map(v => String(v)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
@@ -713,6 +777,11 @@ function main() {
   }
 
   const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  // Filename prefix follows the document title's initials, so the default title
+  // yields the historical "DPIA_" and a Colorado "DATA PROTECTION ASSESSMENT"
+  // yields "DPA_" — a producible record must not ship under a DPIA filename.
+  const prefix = ((docTitleOf(m).match(/[A-Za-z]+/g) || [])
+    .map(w => w[0].toUpperCase()).join('').slice(0, 8)) || 'DPIA';
   // basename() so a manifest "outputFilename" cannot write outside outputDir via "../".
   // basename(".."|".") returns the reference itself, so reject those (and empty)
   // explicitly — otherwise path.join(outDir, "..") would climb out of outDir.
@@ -723,7 +792,7 @@ function main() {
   } else if (m.outputFilename && named !== String(m.outputFilename)) {
     process.stderr.write(`build_dpia: note — "outputFilename" was reduced to "${named}"; it may not contain a path.\n`);
   }
-  const outPath = path.join(outDir, named || `DPIA_${safe}_${m.date}.docx`);
+  const outPath = path.join(outDir, named || `${prefix}_${safe}_${m.date}.docx`);
   // Belt and braces: confirm the fully-resolved path never escaped outDir.
   if (!isInside(outDir, path.resolve(outPath))) {
     fail(1, `manifest: resolved output path (${path.resolve(outPath)}) escapes "outputDir" (${outDir}).`);
@@ -772,7 +841,7 @@ function main() {
     });
   }
 
-  const state = { highResidual: false, jurisdictions: jur };
+  const state = { highResidual: false, jurisdictions: jur, conclusions: rc };
   const doc = build(m, state);
 
   const hasRegister = (m.blocks || []).some(b => b && b.type === 'riskRegister');

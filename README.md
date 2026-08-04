@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 27 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 28 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -81,6 +81,10 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.7** — The gate philosophy reaches the last hand-authored surface; the two-document posture becomes mechanical.
+
+  The Section 5 regulator-engagement table — the exact analog, for the other eleven regimes, of the Article 36 flag — was still a free-hand `table` block a manifest could contradict. A new `regulatorTable` block now renders it computed from `regulatorConclusions` plus the builder's registry (per-regime engagement mechanism and conclusion label, with per-regime reasoning passed as `notes`); a declared regime without a conclusion cannot render a row and fails the build. The Article 36 filing gate generalizes to a **regulator filing gate** covering every submission event the expansion added: the CPPA attestation package, China's SCC filing (which includes the PIPIA report itself), India's Data Protection Board report, and the Swiss FDPIC consultation. The two-document posture is now operational rather than aspirational: filenames derive their prefix from the document title's initials (the default title still yields `DPIA_`; a Colorado "DATA PROTECTION ASSESSMENT" ships as `DPA_`), and Step 5 specifies the two-manifest procedure — producible record and privileged spine, built separately, labelled in the delivery summary. Two workflow seams closed: the transfers intake question now runs per regime (China export routes, Quebec's intra-Canada trigger, Brazilian mechanisms) instead of asking only about EU adequacy, and Step 2 directs the lawful-basis analysis through each module's basis mapping rather than transplanting the Article 6 conclusion. The description is trimmed to 996 characters, restoring deliberate headroom under the 1024 packaging cap. Suite: twenty-eight cases.
 
 - **v3.6** — Reviewer title simplified to a uniform "DPO", and a citation-verification pass.
 

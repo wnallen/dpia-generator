@@ -186,7 +186,15 @@ const CASES = [
       [/prior consultation with the ICO/.test(t), 'multi-regime footnote names the UK authority'],
       [/Content compliance map — UK GDPR/.test(t), 'compliance map rendered with regime label'],
       [/Where addressed/.test(t), 'compliance map table present'],
+      [/Engagement mechanism/.test(t), 'regulator-engagement table rendered'],
+      [/Prior consultation required — R1 residual High/.test(t), 'computed conclusion with per-regime note'],
     ],
+  },
+  {
+    name: 'regulator-table-missing-conclusion',
+    why: 'v3.7: the engagement table is computed from declared conclusions; a declared regime with no conclusion cannot render a row.',
+    exit: 1,
+    stderr: /regulatorConclusions\["uk-gdpr"\]\.priorConsultation is required to render/,
   },
   {
     name: 'compliancemap-bad-section',
@@ -207,6 +215,8 @@ const CASES = [
       [/DATA PROTECTION ASSESSMENT/.test(t), 'regime-correct document title'],
       [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a checklist-regime cover'],
       [/Under DPO Review/.test(t), 'uniform DPO reviewer in status vocabulary'],
+      [/producible to the Colorado AG/.test(t), 'engagement table row from the registry'],
+      [/‖\s*Assessment required/.test(t), 'computed conclusion label rendered'],
     ],
     checkXml: (x) => [
       [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header suppressed for production posture'],

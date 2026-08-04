@@ -4,7 +4,7 @@ Read this before authoring the manifest in Step 5. The structure below is the co
 
 ## File and Header
 
-**Filename:** `DPIA_[SystemName]_[YYYY-MM-DD].docx`, saved to `/mnt/user-data/outputs/`.
+**Filename:** `[prefix]_[SystemName]_[YYYY-MM-DD].docx`, saved to `/mnt/user-data/outputs/`. The prefix is derived by the builder from the document title's initials: the default title yields `DPIA_`; a `docTitle` of "DATA PROTECTION ASSESSMENT" yields `DPA_` — a producible record must not ship under a DPIA filename.
 
 **Every page should carry a header (top-right) reading:**
 > PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT
@@ -165,7 +165,7 @@ End the section with the **Article 36 flag**:
 
 The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
 
-Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table** — one row per applicable regime: Regime | Obligation the findings trigger (consultation / production on demand / filing or attestation / report retention / board reporting) | Conclusion. Each row's conclusion must match the manifest's `regulatorConclusions` entry for that regime; the builder gates on the declaration existing (and, for prior-consultation regimes, on it matching the register).
+Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table**, emitted by one `regulatorTable` block — **never hand-authored as a `table`**. The builder renders Regime | Engagement mechanism | Conclusion for every declared jurisdiction from `regulatorConclusions` plus its registry, appending any per-regime reasoning passed in the block's `notes`; a declared regime with no conclusion fails the build. This is the same computed-not-asserted rule as the matrix: the table a regulator reads cannot disagree with the declared conclusions the gate checks.
 
 ## Section 6 — Jurisdictional Divergence (where applicable)
 
@@ -217,6 +217,7 @@ Author the manifest against this table, then run the builder:
 | Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
 | Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
+| Regulator-engagement table (§5) | one `regulatorTable` block — `{"notes":{"<code>":"reasoning"}}`; rows computed from `regulatorConclusions` + the registry, exit 1 on a declared regime without a conclusion |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
 | §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
