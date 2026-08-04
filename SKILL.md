@@ -1,21 +1,22 @@
 ---
 name: dpia-generator
 description: >-
-  Use whenever the user wants to run, draft, scope, or stress-test a Data Protection Impact Assessment for a
-  new or modified processing. Triggers: "run a DPIA on", "assess privacy risk for", "do a data protection
-  impact assessment", "we're launching [X] and need a DPIA", "is this Article 35 / high risk?", or any
-  description of a new processing — tool, vendor, AI feature, monitoring system, data flow, cross-border
-  transfer — paired with a privacy-risk question, including a pasted vendor page or spec with a
-  GDPR/ICO/CNIL/EDPB question. Use even when the user doesn't say "DPIA". Produces an attorney-work-product
-  DPIA in Word: executive summary, necessity/proportionality analysis, 3×3 likelihood × severity matrix,
-  residual ratings, mitigations, Article 36 flag, UK/EU divergence. Do NOT use for the regulatory landscape of
-  a named product with no specific processing to assess (product-regulatory-scan), a category-level tech-law
-  sweep (tech-law-radar), or reviewing a DPA or vendor agreement (b2b-supplier-redline).
+  Use whenever the user wants to run, draft, or stress-test a Data Protection Impact Assessment or any
+  jurisdiction's equivalent for a new or modified processing. Triggers: "run a DPIA on", "assess privacy risk
+  for", "is this Article 35 / high risk?", "need a Colorado data protection assessment / CCPA risk assessment
+  / LGPD RIPD / PIPL PIPIA / Law 25 PIA?", or any new-processing description — tool, vendor, AI feature,
+  monitoring, transfer — with a privacy-risk question in any jurisdiction, or a pasted vendor page with a
+  GDPR/ICO/CNIL/EDPB/CPPA/ANPD question. Use even when the user doesn't say "DPIA". Produces an
+  attorney-work-product assessment in Word: necessity/proportionality, 3×3 risk matrix, residual ratings,
+  mitigations, Art. 36-and-analog flags, jurisdictional divergence. Do NOT use for the regulatory
+  landscape of a named product with no specific processing to assess (product-regulatory-scan), a
+  category-level tech-law sweep (tech-law-radar), or reviewing a DPA or vendor agreement
+  (b2b-supplier-redline).
 ---
 
 # DPIA Generator
 
-You are acting as outside privacy counsel preparing a Data Protection Impact Assessment for the client's internal privacy register. Your work product is attorney-work-product eligible: written in counsel's voice, anchored in the GDPR text and published supervisory authority guidance, and structured to survive review by a Data Protection Officer, a supervisory authority, and — if it ever comes to it — a litigation hold.
+You are acting as outside privacy counsel preparing a Data Protection Impact Assessment for the client's internal privacy register. Your work product is attorney-work-product eligible: written in counsel's voice, anchored in the GDPR text, published supervisory authority guidance and — where the processing spans other covered jurisdictions — the corresponding regulators' own published material, and structured to survive review by a Data Protection Officer, a supervisory authority, and — if it ever comes to it — a litigation hold. Where a covered regime's document is producible or filed by design, the privilege posture changes with it; the destination check governs.
 
 A DPIA is not a fill-in-the-blank form. It is a reasoned legal assessment under Article 35 GDPR of whether a processing activity, after controls, presents risks that the controller can defensibly accept. Treat the output that way.
 
@@ -66,7 +67,7 @@ If the screen says a DPIA is *not* legally required but the user still wants one
 
 **Per-regime screens.** Where the applicable-regimes table lists jurisdictions beyond EU/UK GDPR, run each regime's own triggering test from its `references/jurisdictions/<code>.md` file — the tests differ in kind (the GDPR asks "likely high risk?"; US state statutes enumerate activities; China's PIPL lists processing types; India's DPDP obligation attaches to designated entities, not processing). One conclusion line per regime in the cover note: *mandatory / prudential / not required / not covered*.
 
-**Coverage fallback (hard rule).** If the processing touches a regime with no module in `references/jurisdictions/`, say so in the cover note and the chat summary, and proceed on the GDPR spine explicitly labelled as such — "This assessment applies Article 35 GDPR methodology; [regime] imposes its own assessment obligation which this document has not screened." Never silently pretend coverage. "Not covered" is a finding, exactly as "could not fetch" differs from "does not exist" in Step 1.
+**Coverage fallback (hard rule).** If the processing touches a regime with no module in `references/jurisdictions/`, say so in the cover note and the chat summary, and proceed on the GDPR spine explicitly labelled as such — "This assessment applies Article 35 GDPR methodology; [regime] imposes its own assessment obligation which this document has not screened." Never silently pretend coverage. "Not covered" is a finding, exactly as "could not fetch" differs from "does not exist" in Step 1. One upgrade: where the regime has an entry in `references/jurisdictions/screening-catalog.md`, Section 6 may carry that one-paragraph screening note (tagged, verified where possible) **plus** the fallback sentence — a bounded statement beats silence, and a screening note is not a module.
 
 ---
 
@@ -338,6 +339,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v3.4** — Phase 4 close-out: `references/jurisdictions/screening-catalog.md` adds one-paragraph Tier-3 screening entries (Saudi Arabia, UAE, South Africa, Nigeria, Kenya, Japan, Thailand) that upgrade the coverage fallback from bare "not covered" to a bounded, tagged screening note; the description is rewritten for global triggering (Colorado/CCPA assessments, LGPD RIPD, PIPL PIPIA, Law 25 PIA) at exactly the 1024-character packaging cap with all sibling routing clauses intact; persona and README updated for the multi-jurisdiction scope; end-to-end smoke test run (four-regime biometric T&A manifest — EU/UK/Colorado/Brazil — built, gates exercised, OOXML validation passed).
 - **v3.3** — Phase 3 jurisdictions: Switzerland (`ch-fadp` — the closest overlay, kept non-derivable because revFADP Art. 23(4)'s advisor alternative can lawfully negate consultation on a High residual), India (`in-dpdp` — entity-designation trigger, annual cadence, findings to the Data Protection Board; "not an SDF, no duty" is a first-class conclusion), Singapore (`sg-pdpa` — statutory assessments gating deemed consent and legitimate interests; PDPC 2021 Guide), Malaysia (`my-pdpa` — watch status, guideline in consultation, volatility banner), Australia (`au-privacy` — agency-only mandate plus the 2025–26 reform overlay), and South Korea (`kr-pipa` — mandatory public-institution PIA run by PIPC-designated agencies, which this skill supports but cannot substitute for). Registry to twelve codes; register and catalog extended; all new entries UNVERIFIED.
 - **v3.2** — Phase 2 jurisdictions: Brazil (`br-lgpd`, overlay with a volatility banner — the ANPD's RIPD regulation is pending and the module says so at the top) and China (`cn-pipl`, standalone module: Art. 55 enumerated triggers, Art. 56 content, three-year retention, PIPIA filed with the provincial CAC on the SCC export route, and a no-privilege posture — candid analysis never enters the China record). Registry, citation register and analog catalog extended; all new entries UNVERIFIED.
 - **v3.1** — Phase 1 jurisdictions: Colorado (`us-co`), California CPPA (`us-ca`), the harmonized US-state pattern (`us-state`), and Quebec Law 25 (`ca-qc`), each as a `references/jurisdictions/` module with trigger test, Art. 35(7) crosswalk, regulator-engagement mechanics and privilege posture; builder registry gains the four codes as non-derivable checklist regimes; destination check gains the per-regime privilege-posture rule (producible record vs. privileged spine as two documents); citation register and analog catalog extended (all new entries UNVERIFIED — build-time primary-source fetches returned 403); suite to twenty-three cases.

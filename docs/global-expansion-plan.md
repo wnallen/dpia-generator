@@ -1,6 +1,13 @@
 # Global Expansion Plan — Multi-Jurisdiction DPIA Coverage
 
-**Status:** Proposal for review — no skill behavior changes in this document.
+**Status:** EXECUTED — Phases 0–4 shipped as v3.0–v3.4 (see `SKILL.md ## Version` and the
+README changelog). Retained as the design record. The privilege question in §7(1) was resolved
+as proposed (per-regime privilege postures + parameterized header + two-document rule);
+Switzerland shipped non-derivable rather than derivable because of revFADP Art. 23(4) — see
+`references/jurisdictions/switzerland-fadp.md` §2 for the reasoning, which supersedes §2's
+"derivable where prior-consultation" assumption for that regime. Build-time fetches of primary
+sources returned 403 through the environment proxy, so all new jurisdiction citations ship
+UNVERIFIED per the house rule, recorded in each module's sourcing banner.
 **Target skill version:** v3.0 (manifest schema change → major bump per house convention).
 **Date:** 2026-08-04.
 

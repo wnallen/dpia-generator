@@ -1,6 +1,6 @@
 # DPIA Generator
 
-A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR as attorney-work-product for a client's privacy register. It gathers a workable processing description, screens whether a DPIA is legally mandatory or prudential, anchors its analysis in real published DPIAs and supervisory-authority guidance (ICO, CNIL, EDPB, WP29), scores risks on a 3×3 likelihood × severity matrix, and produces a reasoned Word deliverable — cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, and an Article 36 prior-consultation flag — that flags UK/EU GDPR divergence where it changes the answer.
+A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR — and its analogs in other covered jurisdictions — as attorney-work-product for a client's privacy register. It gathers a workable processing description, maps the applicable regimes (EU/UK GDPR plus per-jurisdiction modules for the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Australia and South Korea), screens each regime's own trigger, anchors its analysis in real published DPIAs and regulator guidance (ICO, CNIL, EDPB, WP29, CPPA, CAI, ANPD, PDPC, OAIC and peers), scores risks on a 3×3 likelihood × severity matrix, and produces a reasoned Word deliverable — cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, and per-regime regulator-engagement flags (Article 36 prior consultation and its analogs) — with a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
 
 # Important
 
@@ -81,6 +81,10 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.4** — Phase 4 close-out: the screening catalog and the global triggering contract.
+
+  `references/jurisdictions/screening-catalog.md` adds Tier-3 screening entries — Saudi Arabia, UAE, South Africa (whose prior-authorisation regime under POPIA ss. 57–58 is closer to Article 36 than most), Nigeria, Kenya, Japan, Thailand — which upgrade the coverage fallback: instead of a bare "not covered", Section 6 may carry the one-paragraph screening note plus the explicit statement that coverage is limited to it. Promotion to a full module goes through the standard build (fetch, crosswalk, privilege posture, registry code), never by patching catalog prose. The skill description is rewritten for global triggering within the 1024-character packaging cap with every sibling routing clause intact, and the phase closes with an end-to-end smoke test: a four-regime biometric time-and-attendance manifest (EU, UK, Colorado, Brazil) through intake logic, per-regime conclusions, the regulator-engagement table and the builder's gates, with OOXML validation passing.
 
 - **v3.3** — Phase 3 jurisdictions: Switzerland, India, Singapore, Malaysia, Australia, South Korea.
 
