@@ -64,6 +64,17 @@ All UNVERIFIED as identifiers until fetched once; the analysis lives in `referen
 - **Quebec:** CQLR c. P-39.1 as amended by Law 25 (S.Q. 2021, c. 25). The two trigger provisions are recalled as ss. 3.3 and 17 — **verify both section numbers on first fetch**; they are the most-cited pair in secondary sources and the most likely to be misremembered.
 - **Federal:** PIPEDA, S.C. 2000, c. 5 (no PIA obligation — cite only for the accountability principle); TBS Directive on Privacy Impact Assessment (federal institutions only).
 
+### Brazil (Phase 2 module)
+
+- **Lei nº 13.709/2018 (LGPD)** — stable statutory identifier; RIPD at Arts. 5(XVII) and 38. UNVERIFIED as URL; capture planalto.gov.br link on first fetch.
+- **ANPD resolutions** — recalled: Resolução CD/ANPD nº 2/2022 (high-risk / large-scale criteria) and nº 19/2024 (international transfers, Brazilian SCCs). **Verify both numbers before citing** — resolution numbering is the highest-risk recall in this register. The RIPD regulation itself is pending; see the volatility banner in `references/jurisdictions/brazil-lgpd.md`.
+
+### China (Phase 2 module)
+
+- **PIPL (2021)**, Arts. 55–56 (PIPIA), 28 (sensitive PI), 38–40 (export routes) — authoritative text is Chinese; record which translation was relied on.
+- **GB/T 39335-2020** (PI security impact assessment methodology) — national standard; record how the text was obtained.
+- **CAC cross-border rules** — 2022 security-assessment measures, 2023 SCC measures, March 2024 relaxation provisions. Thresholds move; re-verify per run, not per session.
+
 ### Regulation (EU) 2024/1689 (EU AI Act)
 
 Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Verify the CELEX identifier and the Annex III sub-paragraph before citing** — this instrument is newer than the rest of this register and its numbering is the one most often misremembered.

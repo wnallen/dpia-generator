@@ -82,6 +82,12 @@ The builder validates its own OOXML output via the public docx skill's `validate
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
 
+- **v3.2** — Phase 2 jurisdictions: Brazil and China.
+
+  **Brazil** (`br-lgpd`) lands as a GDPR-family overlay: the LGPD's RIPD is satisfied by the Article 35 spine, with module coverage of the ten-basis lawful-basis mapping, the ANPD's high-risk criteria and demand power, and Brazilian transfer mechanics. The module opens with a volatility banner — the ANPD's dedicated RIPD regulation is still pending, and the module must be rebuilt from it when it lands rather than patched.
+
+  **China** (`cn-pipl`) is a standalone module: enumerated Article 55 triggers (sensitive PI is harm-defined and much broader than Article 9 — financial accounts, location, under-14s), short statutory content under Article 56 that the spine over-satisfies, a three-year retention rule, and the skill's second production-by-design regime — on the SCC export route the PIPIA report is filed with the provincial CAC. The privilege posture is the bluntest in the skill: China recognizes no legal professional privilege in the common-law sense, so counsel's candid analysis never enters the China record, without exception.
+
 - **v3.1** — Phase 1 jurisdictions: the United States and Canada.
 
   Four regime modules land in `references/jurisdictions/`: **Colorado** (`us-co` — the most prescriptive US content list, Rule 8.04, producible to the AG within 30 days), **California** (`us-ca` — CPPA risk assessments with the only scheduled filing obligation in the skill: first attestation due 2028-04-01 covering 2026–2027), the **harmonized US-state pattern** (`us-state` — Virginia CDPA archetype, one module rather than fifteen), and **Quebec Law 25** (`ca-qc` — project-based PIA trigger plus the outside-Quebec transfer PIA, the closest non-European analog to Article 35). The builder's registry gains all four as non-derivable checklist regimes: their conclusions are declared answers to their own trigger screens, gated on existence rather than derived from the register.

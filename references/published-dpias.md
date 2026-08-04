@@ -160,6 +160,18 @@ priv.gc.ca / tbs-sct.canada.ca. Best for: public-sector-adjacent processing and
 accountability framing where PIPEDA applies; the TBS directive is a full PIA methodology for
 federal institutions.
 
+### Brazil — ANPD RIPD FAQ and resolutions
+
+gov.br/anpd. The April 2023 FAQ page is preliminary (the RIPD regulation is pending — see the
+volatility banner in the `br-lgpd` module); the small-agents resolution carries the ANPD's
+high-risk criteria. Best for: the `br-lgpd` trigger screen and demand-readiness posture.
+
+### China — GB/T 39335-2020 and CAC cross-border materials
+
+The national methodology standard for PI impact assessment, plus the CAC's security-assessment
+and SCC-filing measures (the PIPIA report is part of the SCC filing package). Best for:
+`cn-pipl` method alignment and the export-route analysis; re-verify thresholds every run.
+
 ---
 
 ## How to Add to This Catalog

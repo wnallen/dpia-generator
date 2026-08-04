@@ -215,6 +215,16 @@ const REGIMES = {
     conclusionKey: 'piaRequired',
     derive: null,
   },
+  'br-lgpd': {
+    label: 'Brazil LGPD',
+    conclusionKey: 'ripdRequired',
+    derive: null,
+  },
+  'cn-pipl': {
+    label: 'China PIPL',
+    conclusionKey: 'pipiaRequired',
+    derive: null,
+  },
 };
 
 function norm(v, field, ctx) {
