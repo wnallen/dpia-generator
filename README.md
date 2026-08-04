@@ -68,7 +68,7 @@ node scripts/run_regression.js          # 15 cases; exit 0 if all pass, --keep t
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
 
-`dpia-generator.skill.zip` at the repo root is the packaged build of the above, regenerated whenever the skill changes.
+The builder validates its own OOXML output via the public docx skill's `validate.py` where that skill is installed (`/mnt/skills/public/docx`). The validator is a Python script requiring the `defusedxml` and `lxml` packages; if it is absent or cannot run, the builder skips validation with a warning on stderr rather than failing the build. `--no-validate` disables the validation step entirely.
 
 ## Notes and limitations
 
@@ -81,6 +81,7 @@ Each case is a defect that shipped or a gate that exists to stop one, and each c
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
 
+- **v2.0.2** — Repo hygiene for public release. The builder's exit 2 previously conflated two different events: the validator ran and rejected the document, and the validator itself crashed before validating anything (a Python traceback from a missing `defusedxml` or `lxml` in the environment). The second is not a defect in the document, and the suite would go red on healthy code wherever the docx skill was present but its Python dependencies were not. The builder now captures the validator's output, detects a crash, and skips validation with a warning; exit 2 is reserved for a document the validator actually rejected. Also commits `package-lock.json` (previously gitignored) for reproducible installs, removes the README's reference to a packaged zip deleted from the repo, documents the validator's Python dependencies and `--no-validate`, and states the MIT license explicitly.
 - **v2.0.1** — Security hardening of the output path. The manifest is authored from instructions that can include untrusted ingested content (vendor pages, pasted specs), which makes its path fields semi-trusted. `outputDir` was unrestricted, so a manifest could direct the write to any location the process could reach — the same escape the `outputFilename` basename guard next to it was meant to prevent. `outputDir` is now confined to an allowlist (the default outputs directory and the OS temp dir, extendable via the `DPIA_OUTPUT_ROOTS` environment variable), and the residual `outputFilename` gap where `..`/`.` survive `basename()` and climb one level out of `outputDir` is closed, with the fully-resolved path re-checked against `outputDir`. Adds a pinned `package.json` (`npm test` runs the suite), a `.gitignore`, and two regression fixtures — `outputdir-escape` and `traversal-dotdot` — taking the suite to fifteen cases.
 
 - **v2.0** — Extends the gate philosophy from the ratings to the conclusion, and adds the means to keep it honest.
@@ -105,4 +106,4 @@ The `## Version` section of `SKILL.md` is canonical; this is the long-form recor
 
 ## License
 
-Review License file.
+MIT — see [LICENSE](LICENSE).

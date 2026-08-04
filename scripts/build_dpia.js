@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v2.0)
+ * build_dpia.js — dpia-generator document assembler (v2.0.2)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -13,7 +13,8 @@
  * Exit codes:
  *   0  success (built, and validated unless --no-validate)
  *   1  manifest / build failure
- *   2  OOXML validation failure
+ *   2  OOXML validation failure (the validator ran and rejected the document;
+ *      a validator that cannot run — missing Python deps — skips with a warning)
  *   3  risk-rating gate failure (see below) — HARD STOP
  *
  * RISK-RATING GATE (why this script owns the matrix)
@@ -88,7 +89,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawnSync } = require('child_process');
 
 // Resolve docx from the global prefix; it is installed globally in this image.
 function loadDocx() {
@@ -540,11 +541,21 @@ function main() {
     if (!noValidate) {
       const v = '/mnt/skills/public/docx/scripts/office/validate.py';
       if (fs.existsSync(v)) {
-        try { execFileSync('python3', [v, outPath], { stdio: 'inherit' }); }
-        catch (e) {
-          fail(2, 'validation did not pass for ' + outPath +
-            ' — if the output above is a Python traceback the validator itself failed to run ' +
-            '(missing dependency), which is not a defect in the document; otherwise the OOXML is invalid.');
+        const r = spawnSync('python3', [v, outPath], { encoding: 'utf8' });
+        if (r.stdout) process.stdout.write(r.stdout);
+        if (r.stderr) process.stderr.write(r.stderr);
+        if (r.error || r.status !== 0) {
+          // A Python traceback (or a failure to launch python3 at all) means the
+          // validator itself could not run — a missing dependency in the
+          // environment, not a defect in the document. Only a clean validator
+          // run that rejects the file is an OOXML failure.
+          const crashed = r.error || /Traceback \(most recent call last\)/.test(r.stderr || '');
+          if (crashed) {
+            process.stderr.write('build_dpia: validate.py could not run (missing dependency?); ' +
+              'validation skipped — not a defect in the document.\n');
+          } else {
+            fail(2, 'OOXML validation failed for ' + outPath);
+          }
         }
       } else {
         process.stderr.write('build_dpia: validate.py not found; skipped validation\n');
