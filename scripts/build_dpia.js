@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v3.0)
+ * build_dpia.js — dpia-generator document assembler (v3.5)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
@@ -72,7 +72,17 @@
  *   "controller": "Acme Ltd",                  // optional; placeholder if omitted
  *   "dpo": "...", "counsel": "...",            // optional
  *   "reference": "[DPIA-2026-001]",            // optional
- *   "status": "Draft",                         // Draft|Under DPO Review|Approved|Requires Art. 36 Prior Consultation
+ *   "status": "Draft",                         // cover checkbox vocabulary is DERIVED
+ *                                              //   from "jurisdictions": Draft | Under
+ *                                              //   <primary regime reviewer> Review |
+ *                                              //   Approved, plus each declared
+ *                                              //   regime's blocking state (e.g. the
+ *                                              //   Art. 36 box for EU/UK, the FDPIC
+ *                                              //   box for ch-fadp). A status outside
+ *                                              //   the vocabulary renders as an extra
+ *                                              //   checked box with a stderr note.
+ *   "statusOptions": null,                     // optional array; overrides the derived
+ *                                              //   vocabulary entirely
  *   "jurisdictions": ["eu-gdpr"],              // optional; default ["eu-gdpr"]; every
  *                                              //   code must exist in REGIMES below
  *   "regulatorConclusions": { ... },           // see conclusion gate above
@@ -186,18 +196,27 @@ const RATING_STYLE = {
 // declared and reviewed, not derived, and the gate checks only that the
 // declaration exists. highResidualNote is the register footnote fragment for
 // the regime; substantive analysis lives in references/jurisdictions/<code>.md.
+// Cover-page vocabulary: "reviewer" is the regime's review-officer title (the
+// primary regime — first code in "jurisdictions" — names the review status);
+// "statusOption" is a blocking lifecycle state the regime contributes to the
+// cover checkboxes when declared. Regimes with no consultation-style stop
+// contribute none — a Colorado-only assessment must not offer an Art. 36 box.
 const REGIMES = {
   'eu-gdpr': {
     label: 'EU GDPR',
     conclusionKey: 'priorConsultation',
     derive: (state) => state.highResidual,
     highResidualNote: 'Article 36 prior consultation with the competent supervisory authority',
+    reviewer: 'DPO',
+    statusOption: 'Requires Art. 36 Prior Consultation',
   },
   'uk-gdpr': {
     label: 'UK GDPR',
     conclusionKey: 'priorConsultation',
     derive: (state) => state.highResidual,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
+    reviewer: 'DPO / SRI',
+    statusOption: 'Requires Art. 36 Prior Consultation',
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
   // conclusion is the declared answer to the regime's own trigger screen
@@ -207,31 +226,37 @@ const REGIMES = {
     label: 'Colorado CPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    reviewer: 'Privacy Counsel',
   },
   'us-ca': {
     label: 'California CCPA/CPRA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    reviewer: 'Privacy Counsel',
   },
   'us-state': {
     label: 'US state privacy laws (VA/CT/TX pattern)',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    reviewer: 'Privacy Counsel',
   },
   'ca-qc': {
     label: 'Quebec Law 25',
     conclusionKey: 'piaRequired',
     derive: null,
+    reviewer: 'Person in Charge of PI Protection',
   },
   'br-lgpd': {
     label: 'Brazil LGPD',
     conclusionKey: 'ripdRequired',
     derive: null,
+    reviewer: 'Encarregado (DPO)',
   },
   'cn-pipl': {
     label: 'China PIPL',
     conclusionKey: 'pipiaRequired',
     derive: null,
+    reviewer: 'PI Protection Officer',
   },
   // Switzerland has a true prior-consultation mechanism (revFADP Art. 23) but
   // is deliberately NON-derivable: Art. 23(4) lets a controller that consulted
@@ -242,31 +267,39 @@ const REGIMES = {
     label: 'Switzerland revFADP',
     conclusionKey: 'fdpicConsultation',
     derive: null,
+    reviewer: 'Data Protection Advisor',
+    statusOption: 'Requires FDPIC Consultation',
   },
   'in-dpdp': {
     label: 'India DPDP',
     conclusionKey: 'dpiaRequired',
     derive: null,
+    reviewer: 'DPO',
   },
   'sg-pdpa': {
     label: 'Singapore PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    reviewer: 'DPO',
   },
   'my-pdpa': {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
+    reviewer: 'DPO',
   },
   'au-privacy': {
     label: 'Australia Privacy Act',
     conclusionKey: 'piaRequired',
     derive: null,
+    reviewer: 'Privacy Officer',
   },
   'kr-pipa': {
     label: 'South Korea PIPA',
     conclusionKey: 'piaRequired',
     derive: null,
+    reviewer: 'CPO',
+    statusOption: 'Requires PIPC-Designated Agency Assessment',
   },
 };
 
@@ -458,16 +491,43 @@ function matrixTable(rows, stage) {
   return table([head, ...body]);
 }
 
-function coverPage(m) {
+// Cover-page status vocabulary, derived from the declared jurisdictions: the
+// base lifecycle states name the primary regime's reviewer, and each declared
+// regime with a consultation-style blocking state contributes its own checkbox
+// (deduplicated — EU and UK share the Art. 36 label). A manifest may override
+// the whole list with "statusOptions". A "status" outside the vocabulary is
+// rendered as an additional checked option with a note on stderr — the cover
+// must reflect the declared status, but an unrecognized one deserves a look.
+function statusLineOf(m, jur) {
+  let options;
+  if (Array.isArray(m.statusOptions) && m.statusOptions.length) {
+    options = m.statusOptions.map(String);
+  } else {
+    const primary = own(REGIMES, jur[0]);
+    const reviewer = (primary && primary.reviewer) || 'DPO';
+    options = ['Draft', `Under ${reviewer} Review`, 'Approved'];
+    jur.forEach(c => {
+      const def = own(REGIMES, c);
+      if (def && def.statusOption && !options.includes(def.statusOption)) options.push(def.statusOption);
+    });
+  }
+  const chosen = (m.status || 'Draft').trim();
+  if (!options.some(s => s.toLowerCase() === chosen.toLowerCase())) {
+    options.push(chosen);
+    process.stderr.write(`build_dpia: note — "status" (${JSON.stringify(chosen)}) is outside the derived status ` +
+      `vocabulary for [${jur.join(', ')}]; rendered as an additional checked option.\n`);
+  }
+  return options.map(s => (s.toLowerCase() === chosen.toLowerCase() ? '☒ ' : '☐ ') + s).join('   ');
+}
+
+function coverPage(m, jur) {
   const rule = new Paragraph({
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: '1F3864' } },
     spacing: { before: 200, after: 300 },
     children: [new TextRun({ text: '', font: FONT })],
   });
   const line = (label, value) => p(`${label}: ${value || '[to be completed]'}`, { align: AlignmentType.CENTER });
-  const statuses = ['Draft', 'Under DPO Review', 'Approved', 'Requires Art. 36 Prior Consultation'];
-  const chosen = (m.status || 'Draft').trim();
-  const statusLine = statuses.map(s => (s.toLowerCase() === chosen.toLowerCase() ? '\u2612 ' : '\u2610 ') + s).join('   ');
+  const statusLine = statusLineOf(m, jur);
   const out = [
     p('', { after: 900 }),
     p(docTitleOf(m), { align: AlignmentType.CENTER, bold: true, size: 36 }),
@@ -506,7 +566,7 @@ function docTitleOf(m) {
 // ---------------------------------------------------------------- build
 function build(manifest, state) {
   const registers = Object.create(null); // null-proto: register ids come from the manifest
-  const children = coverPage(manifest);
+  const children = coverPage(manifest, state.jurisdictions || ['eu-gdpr']);
 
   (manifest.blocks || []).forEach((b, i) => {
     const ctx = `block ${i + 1} (${b.type})`;

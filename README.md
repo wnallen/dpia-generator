@@ -64,7 +64,7 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 25 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # 27 cases; exit 0 if all pass, --keep to inspect the .docx files
 ```
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
@@ -81,6 +81,10 @@ The builder validates its own OOXML output via the public docx skill's `validate
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v3.5** — Per-regime cover-status vocabulary, closing the last GDPR hard-coding the two-test evaluation reported.
+
+  The cover page's status checkboxes were a fixed GDPR list — a Colorado-only data protection assessment offered a "Requires Art. 36 Prior Consultation" box it could never lawfully check. The vocabulary is now derived from the manifest's `jurisdictions`: the review state names the primary regime's reviewer title (Under DPO Review, Under DPO / SRI Review, Under Privacy Counsel Review, Under Data Protection Advisor Review, Under Person in Charge of PI Protection Review, and so on through the registry), and each declared regime with a genuine consultation-style blocking state contributes its own checkbox — Article 36 for EU/UK scope, FDPIC consultation for Switzerland, the PIPC designated-agency assessment for Korean public-sector scope. Checklist regimes contribute none. A `statusOptions` manifest array overrides the derived list; a declared `status` outside the vocabulary renders as an additional checked box with a stderr note, so the cover always reflects the declared state rather than silently unchecking every option. Three new regression cases pin the Swiss vocabulary, the out-of-vocabulary path, and the absence of the Art. 36 box on checklist-regime covers (suite: twenty-seven cases).
 
 - **v3.4.1** — Hardening found by a two-test global evaluation (a four-regime quality run and an adversarial security run). Manifest-supplied lookup keys could resolve through the JavaScript prototype chain: `"__proto__"` as a jurisdiction code slipped past the unknown-code check and produced a garbled gate diagnosis, and `"constructor"` as a matrix `source` crashed the builder with a stack trace — a latent defect dating to v1.1, exposed only once the registry pattern multiplied manifest-keyed lookups. All such lookups now go through own-property checks and null-prototype maps, failing cleanly with exit 1 and a correct message; two fixtures pin the behavior (suite: twenty-five cases). Also corrects the multi-regime Article 36 footnote to agree in number ("are engaged … those consultations have concluded") when both EU and UK authorities are named.
 

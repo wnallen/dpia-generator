@@ -31,10 +31,22 @@ Data Protection Officer: [DPO name — placeholder]
 Counsel of Record: [Counsel name — placeholder]
 DPIA Reference: [DPIA-YYYY-NNN]
 
-Status: ☐ Draft  ☐ Under DPO Review  ☐ Approved  ☐ Requires Art. 36 Prior Consultation
+Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime blocking states]
 ```
 
 Use a horizontal rule above and below the central block. Leave generous white space.
+
+**Status vocabulary is derived, not fixed.** The builder composes the checkbox row from the
+manifest's `jurisdictions`: the review status names the **primary regime's** reviewer (first
+code in the array — "Under DPO Review" for EU scope, "Under DPO / SRI Review" for UK-first,
+"Under Privacy Counsel Review" for a US-state assessment, "Under Data Protection Advisor
+Review" for Swiss, "Under Person in Charge of PI Protection Review" for Quebec), and each
+declared regime with a consultation-style blocking state contributes its checkbox — the
+Art. 36 box for EU/UK, `Requires FDPIC Consultation` for `ch-fadp`, `Requires
+PIPC-Designated Agency Assessment` for `kr-pipa`. Checklist regimes contribute none: a
+Colorado-only cover offers no Art. 36 box. A manifest `statusOptions` array overrides the
+derived list entirely; a `status` outside the vocabulary renders as an additional checked
+box with a note on stderr, so the cover always reflects the declared status.
 
 ## Executive Summary (1 page)
 
@@ -202,7 +214,7 @@ Author the manifest against this table, then run the builder:
 
 | Template section | Manifest blocks |
 |---|---|
-| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes). |
+| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes); optional `statusOptions` overrides the per-regime derived status vocabulary (see the cover-page section above). |
 | Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
 | Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |

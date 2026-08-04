@@ -205,6 +205,8 @@ const CASES = [
       [/regulator-engagement analysis/.test(t), 'generic high-residual footnote present'],
       [/Content compliance map — Colorado CPA/.test(t), 'Colorado compliance map rendered'],
       [/DATA PROTECTION ASSESSMENT/.test(t), 'regime-correct document title'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a checklist-regime cover'],
+      [/Under Privacy Counsel Review/.test(t), 'regime-correct reviewer in status vocabulary'],
     ],
     checkXml: (x) => [
       [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header suppressed for production posture'],
@@ -215,6 +217,27 @@ const CASES = [
     why: 'v3.1: a declared checklist regime with no conclusion is unfinished; the legacy art36 alias cannot answer for it.',
     exit: 1,
     stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
+  },
+  {
+    name: 'status-vocabulary',
+    why: 'v3.5: the cover status boxes were hard-coded GDPR vocabulary; a Swiss document must offer the FDPIC box and name the Data Protection Advisor, not the DPO/Art. 36 pair.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/☒ Requires FDPIC Consultation/.test(t), 'FDPIC blocking state present and checked'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a Swiss-only cover'],
+      [/Under Data Protection Advisor Review/.test(t), 'Swiss reviewer title in the vocabulary'],
+    ],
+  },
+  {
+    name: 'status-custom',
+    why: 'v3.5: a status outside the derived vocabulary must render as an extra checked box with a note, not silently uncheck every option.',
+    exit: 0,
+    stderr: /outside the derived status vocabulary/,
+    check: (t) => [
+      [/☒ Submitted to Attorney General/.test(t), 'out-of-vocabulary status rendered checked'],
+      [/☐ Draft/.test(t), 'base vocabulary still present'],
+    ],
   },
   {
     name: 'header-suppressed',
