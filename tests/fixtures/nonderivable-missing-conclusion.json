@@ -1,0 +1,21 @@
+{
+  "systemName": "Silent Checklist Regime",
+  "date": "2026-08-04",
+  "jurisdictions": ["us-co"],
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "A declared checklist regime with no conclusion; the legacy art36 alias cannot answer for it.",
+          "likelihood": "Medium",
+          "severity": "Medium",
+          "controls": "Standard controls.",
+          "residualLikelihood": "Low",
+          "residualSeverity": "Medium"
+        }
+      ]
+    }
+  ]
+}

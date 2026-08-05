@@ -1,0 +1,25 @@
+{
+  "systemName": "Missing Regime Conclusion",
+  "date": "2026-08-04",
+  "jurisdictions": ["eu-gdpr", "uk-gdpr"],
+  "regulatorConclusions": {
+    "eu-gdpr": { "priorConsultation": true }
+  },
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual with a declared EU conclusion but silence on the UK.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    }
+  ]
+}

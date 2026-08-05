@@ -1,0 +1,24 @@
+{
+  "systemName": "Three Consultation Regimes",
+  "date": "2026-08-04",
+  "jurisdictions": ["eu-gdpr", "uk-gdpr", "ke-dpa"],
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Three derivable regimes in scope: the footnote must list all three authorities without an 'and ... and' run-on, and the legacy art36 alias must fill Kenya's conclusion too.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    }
+  ]
+}

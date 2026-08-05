@@ -44,7 +44,7 @@ sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read('word/document.xml').decode()
 }
 
 const STAR = /‖\s*High \*\s*‖/;          // a starred rating cell in the register
-const FOOTNOTE = /Article 36 prior consultation .* is engaged/;
+const FOOTNOTE = /Article 36 prior consultation .* (is|are) engaged/;
 
 const CASES = [
   {
@@ -65,8 +65,29 @@ const CASES = [
     check: (t) => [
       [!STAR.test(t), 'no starred rating cell'],
       [!FOOTNOTE.test(t), 'no Art. 36 footnote'],
+      [/AI-GENERATED DRAFT/.test(t), 'generation notice on the cover'],
     ],
     noWarn: true,
+  },
+  {
+    name: 'art36-conditional',
+    why: 'v4.0: a High residual whose post-mitigation score falls below High engages consultation only if the mitigations are not implemented; the conclusion is "conditional", not an unconditional required.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'High-residual row still starred'],
+      [/engaged unless the Section 5 mitigations are implemented/.test(t), 'conditional footnote'],
+      [/Post-mitigation/.test(t), 'post-mitigation register column present'],
+      [/Low x High = Medium/.test(t), 'derived mitigated rating rendered'],
+      [/Post-mitigation residual risk/.test(t), 'mitigated matrix rendered'],
+      [/Prior consultation required unless the Section 5 mitigations are implemented/.test(t), 'conditional label in the engagement table'],
+    ],
+  },
+  {
+    name: 'art36-conditional-mismatch',
+    why: 'v4.0: declaring an unconditional "required" when every High residual is mitigable below High overstates the obligation; the gate forces the honest conditional answer.',
+    exit: 3,
+    stderr: /derives "conditional"[\s\S]*consultation is avoidable/,
   },
   {
     name: 'rating-gate',
@@ -145,6 +166,145 @@ const CASES = [
   { name: 'unknown-block', why: 'Unknown block types fail loudly.', exit: 1, stderr: /unknown block type/ },
   { name: 'bad-date', why: 'Date format is validated before anything is written.', exit: 1, stderr: /must be YYYY-MM-DD/ },
   { name: 'matrix-no-source', why: 'A matrix pointing at no register fails rather than rendering empty.', exit: 1, stderr: /no riskRegister named/ },
+  {
+    name: 'jurisdictions-unknown',
+    why: 'An invented regime code must fail, not silently produce a document claiming coverage.',
+    exit: 1,
+    stderr: /unknown jurisdiction code "atlantis-dpa"/,
+  },
+  {
+    name: 'jurisdictions-proto',
+    why: 'v3.4.1: "__proto__" as a regime code resolved through the prototype chain, bypassing the unknown-code check and garbling the gate diagnosis.',
+    exit: 1,
+    stderr: /unknown jurisdiction code "__proto__"/,
+  },
+  {
+    name: 'matrix-proto-source',
+    why: 'v3.4.1: a matrix source of "constructor" resolved to Function via the prototype chain and crashed the builder with a stack trace instead of exit 1 (latent since v1.1).',
+    exit: 1,
+    stderr: /no riskRegister named "constructor"/,
+  },
+  {
+    name: 'conclusions-missing-regime',
+    why: 'v3.0: every declared jurisdiction needs a conclusion; declaring the EU one does not answer for the UK.',
+    exit: 1,
+    stderr: /regulatorConclusions\["uk-gdpr"\]/,
+  },
+  {
+    name: 'conclusions-contradiction-regime',
+    why: 'v3.0: a per-regime conclusion contradicting the register is the same defect the art36 gate stops, per regime.',
+    exit: 3,
+    stderr: /ARTICLE 36 CONCLUSION GATE FAILED[\s\S]*\[uk-gdpr\]/,
+  },
+  {
+    name: 'regulator-conclusions-explicit',
+    why: 'v3.0 schema without the legacy art36 alias must work end to end, including the complianceMap block.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'register row is starred'],
+      [FOOTNOTE.test(t), 'Art. 36 footnote rendered'],
+      [/prior consultation with the ICO/.test(t), 'multi-regime footnote names the UK authority'],
+      [/Content compliance map — UK GDPR/.test(t), 'compliance map rendered with regime label'],
+      [/Where addressed/.test(t), 'compliance map table present'],
+      [/Engagement mechanism/.test(t), 'regulator-engagement table rendered'],
+      [/Prior consultation required — R1 residual High/.test(t), 'computed conclusion with per-regime note'],
+    ],
+  },
+  {
+    name: 'regulator-table-missing-conclusion',
+    why: 'v3.7: the engagement table is computed from declared conclusions; a declared regime with no conclusion cannot render a row.',
+    exit: 1,
+    stderr: /regulatorConclusions\["uk-gdpr"\]\.priorConsultation is required to render/,
+  },
+  {
+    name: 'compliancemap-bad-section',
+    why: 'A compliance map pointing at a section that does not exist is the checklist version of a fabricated citation.',
+    exit: 1,
+    stderr: /match no heading/,
+  },
+  {
+    name: 'non-gdpr-regime',
+    why: 'v3.1: a checklist-regime-only document must not speak GDPR — no Art. 36 footnote, no status warning, generic high-residual marker instead.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'high residual row is still starred'],
+      [!FOOTNOTE.test(t), 'Art. 36 footnote absent'],
+      [/regulator-engagement analysis/.test(t), 'generic high-residual footnote present'],
+      [/Content compliance map — Colorado CPA/.test(t), 'Colorado compliance map rendered'],
+      [/DATA PROTECTION ASSESSMENT/.test(t), 'regime-correct document title'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a checklist-regime cover'],
+      [/Under DPO Review/.test(t), 'uniform DPO reviewer in status vocabulary'],
+      [/producible to the Colorado AG/.test(t), 'engagement table row from the registry'],
+      [/‖\s*Assessment required/.test(t), 'computed conclusion label rendered'],
+    ],
+    checkXml: (x) => [
+      [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header suppressed for production posture'],
+    ],
+  },
+  {
+    name: 'nonderivable-missing-conclusion',
+    why: 'v3.1: a declared checklist regime with no conclusion is unfinished; the legacy art36 alias cannot answer for it.',
+    exit: 1,
+    stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
+  },
+  {
+    name: 'footnote-three-regimes',
+    why: 'v3.9.1: three consultation regimes produced an "and ... and" run-on in the register footnote; the list join is now Oxford-style, and the art36 alias must fill all three derivable conclusions.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/supervisory authority, UK GDPR Article 36 prior consultation with the ICO, and prior consultation with the Kenyan Data Commissioner/.test(t), 'Oxford-style three-item list'],
+      [!/ and UK GDPR Article 36 prior consultation with the ICO and /.test(t), 'no "and ... and" run-on'],
+      [/are engaged/.test(t), 'plural agreement holds'],
+    ],
+  },
+  {
+    name: 'kenya-derivable',
+    why: 'v3.8: Kenya is the third derivable regime (s. 31 consultation); its footnote, conclusion derivation and ODPC cover status must all work without the Art. 36 machinery firing spuriously.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'high residual row starred'],
+      [/Kenyan Data Commissioner/.test(t), 'Kenya consultation footnote from the registry'],
+      [/☒ Requires ODPC Consultation/.test(t), 'ODPC blocking status present, checked, and coherent (no warning)'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a Kenya-only cover'],
+      [/‖\s*Prior consultation required/.test(t), 'computed conclusion in the engagement table'],
+    ],
+  },
+  {
+    name: 'status-vocabulary',
+    why: 'v3.5: the cover status boxes were hard-coded GDPR vocabulary; a Swiss document must offer the FDPIC box, not the Art. 36 box.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/☒ Requires FDPIC Consultation/.test(t), 'FDPIC blocking state present and checked'],
+      [!/Art\. 36 Prior Consultation/.test(t), 'no Art. 36 status box on a Swiss-only cover'],
+      [/Under DPO Review/.test(t), 'uniform DPO reviewer in the vocabulary'],
+    ],
+  },
+  {
+    name: 'status-custom',
+    why: 'v3.5: a status outside the derived vocabulary must render as an extra checked box with a note, not silently uncheck every option.',
+    exit: 0,
+    stderr: /outside the derived status vocabulary/,
+    check: (t) => [
+      [/☒ Submitted to Attorney General/.test(t), 'out-of-vocabulary status rendered checked'],
+      [/☐ Draft/.test(t), 'base vocabulary still present'],
+    ],
+  },
+  {
+    name: 'header-suppressed',
+    why: 'A document drafted for regulator production must be able to shed the privilege header deliberately.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'privilege header absent from body'],
+      [x.includes('DATA PROTECTION ASSESSMENT'), 'overridden document title present'],
+      [x.includes('AI-GENERATED DRAFT'), 'generation notice survives privilege-header suppression'],
+    ],
+  },
 ];
 
 function run() {

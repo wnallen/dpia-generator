@@ -128,6 +128,87 @@ Best for: any ISS likely to be accessed by under-18s in the UK; useful as a stru
 
 ---
 
+## Non-EU Regulator Guidance and Templates (per-jurisdiction anchors)
+
+Outside the EU/UK, published *completed* assessments are scarce — controllers do not publish
+US state data protection assessments or Chinese PIPIAs. The anchors for Step 1 in these
+regimes are the regulators' own **guides, rules and enforcement decisions**. Entries below are
+UNVERIFIED until fetched (build-time fetches of several of these hosts returned 403; that is
+a proxy condition, not evidence about the source).
+
+### Quebec — CAI companion guide on PIAs (2023)
+
+cai.gouv.qc.ca. The CAI's own methodology for Law 25 PIAs, in French. The closest thing to a
+CNIL-guide analog in North America. Best for: structuring a `ca-qc` PIA; the outside-Quebec
+communication analysis.
+
+### Colorado — CPA Rules, Part 8 and 9 (4 CCR 904-3)
+
+The most prescriptive assessment content list of any US regulator; functions as a de facto
+template. Best for: the `complianceMap` element list for `us-co` and, by over-satisfaction,
+every `us-state` jurisdiction.
+
+### California — CPPA final regulations and supporting materials (2025)
+
+cppa.ca.gov. The regulations themselves plus the CPPA's announcements and any published
+practical guidance. Best for: `us-ca` trigger and content mapping; the ADMT
+notice/opt-out/access architecture; filing mechanics and deadlines.
+
+### Federal Canada — OPC PIA guidance; TBS Directive on PIA
+
+priv.gc.ca / tbs-sct.canada.ca. Best for: public-sector-adjacent processing and
+accountability framing where PIPEDA applies; the TBS directive is a full PIA methodology for
+federal institutions.
+
+### Brazil — ANPD RIPD FAQ and resolutions
+
+gov.br/anpd. The April 2023 FAQ page is preliminary (the RIPD regulation is pending — see the
+volatility banner in the `br-lgpd` module); the small-agents resolution carries the ANPD's
+high-risk criteria. Best for: the `br-lgpd` trigger screen and demand-readiness posture.
+
+### China — GB/T 39335-2020 and CAC cross-border materials
+
+The national methodology standard for PI impact assessment, plus the CAC's security-assessment
+and SCC-filing measures (the PIPIA report is part of the SCC filing package). Best for:
+`cn-pipl` method alignment and the export-route analysis; re-verify thresholds every run.
+
+### Singapore — PDPC Guide to Data Protection Impact Assessments (2021)
+
+pdpc.gov.sg (PDF URL recorded in the `sg-pdpa` module). A complete regulator-authored DPIA
+methodology with worked structure — the best APAC analog anchor. Best for: `sg-pdpa` runs and
+as a structural model for any consent-centric regime.
+
+### Australia — OAIC Guide to undertaking privacy impact assessments
+
+oaic.gov.au. Ten-step regulator methodology; the agencies' published PIA registers
+occasionally surface full public-sector PIAs — the APAC analog of the FOI-released UK
+examples. Best for: `au-privacy` runs; public-sector analogs.
+
+### South Korea — PIPC PIA program materials
+
+pipc.go.kr. The designated-agency assessment criteria are the operative methodology for the
+mandatory public-institution PIA. Best for: `kr-pipa` scoping; understanding what the formal
+agency-run PIA will test.
+
+### Kenya — ODPC Guidance Note on DPIAs
+
+odpc.go.ke. The Data Commissioner's own DPIA methodology, plus a registration regime that
+frames the compliance posture. Best for: `ke-dpa` runs; the reported 60-days-prior
+submission timeline should be pinned to its source here on first fetch.
+
+### Vietnam — MPS dossier forms
+
+The prescribed impact-dossier forms issued under the PDP Law's implementing instruments
+are the operative "template" — a Vietnam filing is made on the ministry's forms, not in
+free prose. Best for: `vn-pdpl` runs; verify current form numbers before any real filing.
+
+### Switzerland — FDPIC DPIA guidance
+
+edoeb.admin.ch. Best for: `ch-fadp` runs and the Art. 23 consultation mechanics, including
+the Art. 23(4) advisor alternative.
+
+---
+
 ## How to Add to This Catalog
 
 When you find a useful published DPIA or DPA decision during a Step 1 web search, add it here in the same format: what it is, URL, what it's good for, what it isn't. Over time this becomes a powerful institutional resource and reduces the per-DPIA research burden.

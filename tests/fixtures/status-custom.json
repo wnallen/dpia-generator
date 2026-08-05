@@ -1,0 +1,12 @@
+{
+  "systemName": "Out Of Vocabulary Status",
+  "date": "2026-08-04",
+  "jurisdictions": ["us-co"],
+  "docTitle": "DATA PROTECTION ASSESSMENT",
+  "headerText": "",
+  "status": "Submitted to Attorney General",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "A status outside the derived vocabulary must still render, checked, with a note — the cover reflects the declared status rather than silently unchecking everything." }
+  ]
+}

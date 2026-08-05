@@ -1,0 +1,23 @@
+{
+  "systemName": "Table Without Conclusion",
+  "date": "2026-08-04",
+  "jurisdictions": [
+    "eu-gdpr",
+    "uk-gdpr"
+  ],
+  "regulatorConclusions": {
+    "eu-gdpr": {
+      "priorConsultation": false
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 5 \u2014 MEASURES"
+    },
+    {
+      "type": "regulatorTable"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "systemName": "Swiss Status Vocabulary",
+  "date": "2026-08-04",
+  "jurisdictions": ["ch-fadp"],
+  "status": "Requires FDPIC Consultation",
+  "regulatorConclusions": {
+    "ch-fadp": { "fdpicConsultation": true }
+  },
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual under Swiss scope; the cover must offer the FDPIC box, not the Art. 36 box, and the reviewer is the Data Protection Advisor.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls; no advisor consultation — FDPIC route taken.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    }
+  ]
+}

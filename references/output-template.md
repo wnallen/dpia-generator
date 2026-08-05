@@ -4,7 +4,7 @@ Read this before authoring the manifest in Step 5. The structure below is the co
 
 ## File and Header
 
-**Filename:** `DPIA_[SystemName]_[YYYY-MM-DD].docx`, saved to `/mnt/user-data/outputs/`.
+**Filename:** `[prefix]_[SystemName]_[YYYY-MM-DD].docx`, saved to `/mnt/user-data/outputs/`. The prefix is derived by the builder from the document title's initials: the default title yields `DPIA_`; a `docTitle` of "DATA PROTECTION ASSESSMENT" yields `DPA_` — a producible record must not ship under a DPIA filename.
 
 **Every page should carry a header (top-right) reading:**
 > PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT
@@ -12,7 +12,7 @@ Read this before authoring the manifest in Step 5. The structure below is the co
 **Every page should carry a footer with:**
 - Page X of Y
 - DPIA reference number (placeholder: `[DPIA-YYYY-NNN]`)
-- "Prepared by Counsel"
+- "AI-generated draft (dpia-generator) — for attorney review"
 
 ## Cover Page
 
@@ -31,10 +31,23 @@ Data Protection Officer: [DPO name — placeholder]
 Counsel of Record: [Counsel name — placeholder]
 DPIA Reference: [DPIA-YYYY-NNN]
 
-Status: ☐ Draft  ☐ Under DPO Review  ☐ Approved  ☐ Requires Art. 36 Prior Consultation
+Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime blocking states]
+
+AI-GENERATED DRAFT — produced by the dpia-generator skill.
 ```
 
 Use a horizontal rule above and below the central block. Leave generous white space.
+
+**Status vocabulary is derived, not fixed.** The builder composes the checkbox row from the
+manifest's `jurisdictions`: the base lifecycle states are `Draft / Under DPO Review /
+Approved` (the review officer's exact statutory title varies by regime — DPO, SRI,
+Encarregado, Person in Charge of PI Protection — but the cover checkbox uses "DPO"
+uniformly), and each declared regime with a consultation-style blocking state contributes
+its checkbox — the Art. 36 box for EU/UK, `Requires FDPIC Consultation` for `ch-fadp`,
+`Requires PIPC-Designated Agency Assessment` for `kr-pipa`. Checklist regimes contribute
+none: a Colorado-only cover offers no Art. 36 box. A manifest `statusOptions` array overrides
+the derived list entirely; a `status` outside the vocabulary renders as an additional checked
+box with a note on stderr, so the cover always reflects the declared status.
 
 ## Executive Summary (1 page)
 
@@ -118,6 +131,11 @@ The register is rendered by the `riskRegister` block; its columns are fixed by t
 5. **Existing / planned controls** — manifest `controls`
 6. **Residual (L × S)** — manifest `residualLikelihood` × `residualSeverity`
 7. **Residual** rating — *derived*, colour-coded, with `*` on any High rating (Art. 36)
+8. **Post-mitigation** — *optional*: appears only when at least one row states
+   `mitigatedLikelihood` + `mitigatedSeverity` (together or not at all) — the residual expected
+   once Section 5's recommended mitigations are implemented. Rendered `L x S = Rating`, derived
+   and colour-coded; a stated `mitigatedRating` is checked like the other ratings (exit 3 on
+   disagreement). This column is what makes a "conditional" consultation conclusion derivable.
 
 The ratings columns are **not** manifest inputs: the builder derives them from `risk-matrix.md`'s mapping. Stating `inherentRating` / `residualRating` in the manifest is optional and is treated as an assertion to be checked — a disagreement stops the build with exit 3. See the risk-rating gate in SKILL.md Step 5.
 
@@ -154,13 +172,20 @@ End the section with the **Article 36 flag**:
 
 The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
 
-## Section 6 — UK / EU Divergence Notes (where applicable)
+**Conditional pathway.** Art. 36(1) keys to high risk *in the absence of mitigating measures*. Where every High-rated residual carries a post-mitigation score below High, the honest statement is conditional, and the builder derives exactly that: "Article 36 prior consultation is required **only if** the controller proceeds without implementing the Section 5 mitigations; with those mitigations implemented before processing commences, no residual risk rates High and consultation is not required." Declare `"conditional"` in the manifest (the gate checks it); the register footnote and engagement table carry the conditional language; the recommended cover status is `Draft` with the executive summary stating the condition. Where any High residual has no post-mitigation score below High, the unconditional flag stands.
 
-Only include this section where the processing has UK scope. Use the analysis framework in `references/uk-divergence.md`. Address:
+A `matrix` block with `"stage": "mitigated"` may follow the residual matrix to show the post-mitigation grid.
 
-- Whether the analysis above applies equally to EU and UK GDPR scope.
-- Where the UK position would permit a different conclusion (and whether the controller is taking advantage of it).
-- For dual-jurisdiction deployments, an explicit statement that the higher standard applies unless carved out.
+Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table**, emitted by one `regulatorTable` block — **never hand-authored as a `table`**. The builder renders Regime | Engagement mechanism | Conclusion for every declared jurisdiction from `regulatorConclusions` plus its registry, appending any per-regime reasoning passed in the block's `notes`; a declared regime with no conclusion fails the build. This is the same computed-not-asserted rule as the matrix: the table a regulator reads cannot disagree with the declared conclusions the gate checks.
+
+## Section 6 — Jurisdictional Divergence (where applicable)
+
+Only include this section where the processing has scope beyond EU GDPR. One subsection per applicable regime, using the analysis framework in that regime's `references/jurisdictions/<code>.md` file — UK/EU divergence first where UK scope exists. Address, per regime:
+
+- Whether the analysis above applies equally under this regime.
+- Where the regime's position would permit or require a different conclusion (and whether the controller is taking advantage of a permissive divergence).
+- For multi-jurisdiction deployments, an explicit statement that the higher standard applies unless carved out.
+- For a regime with no module file: the coverage-fallback statement — screened on the GDPR spine only, own-regime obligations not assessed.
 
 If the processing has only EU scope, omit Section 6 and renumber.
 
@@ -187,29 +212,32 @@ Anything the user could not answer in intake, anything that materially affected 
 
 ## Appendix C — Revision History
 
-Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — Counsel — Initial draft."
+Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — dpia-generator (AI) — initial draft for counsel review." Human reviewers add their own rows on adoption.
 
 ---
 
 ## Template → Manifest Mapping
 
-The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | Prepared by Counsel" footer, the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
+The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | AI-generated draft (dpia-generator) — for attorney review" footer and the cover generation notice (builder-owned, no manifest knob), the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
 
 Author the manifest against this table, then run the builder:
 
 | Template section | Manifest blocks |
 |---|---|
-| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. |
-| Article 36 conclusion | Top-level `art36` — `true` or `false`. **Required** wherever a `riskRegister` block exists. Checked against the register; exit 3 on disagreement. |
+| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes); optional `statusOptions` overrides the per-regime derived status vocabulary (see the cover-page section above). |
+| Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
+| Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
+| Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
+| Regulator-engagement table (§5) | one `regulatorTable` block — `{"notes":{"<code>":"reasoning"}}`; rows computed from `regulatorConclusions` + the registry, exit 1 on a declared regime without a conclusion |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
 | §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
 | §3 Stakeholder consultation | `heading` + `para` |
-| §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one) |
+| §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one); rows may add `mitigatedLikelihood`/`mitigatedSeverity` for the conditional-consultation pathway |
 | §4.3 Risk-by-risk narrative | `heading` + `para` per Medium/High residual risk |
-| §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}`, both with `source` set to the register's `id` |
+| §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}` (plus an optional `{"stage":"mitigated"}` where post-mitigation scores exist), all with `source` set to the register's `id` |
 | §5 Measures | `table` with the mitigation / type / owner / target date / effect columns |
-| §6 UK–EU divergence | `heading` + `para`; omit the block entirely where the processing has no UK scope |
+| §6 Jurisdictional divergence | `heading` + `para` per applicable regime; omit the block entirely where the processing has EU-only scope |
 | §7 Conclusion and approval | `heading` + `para` + one `signature` block |
 | Appendices A–C | `pagebreak`, then `heading` + `bullets` (A, B) and `table` (C) |
 

@@ -1,0 +1,38 @@
+{
+  "systemName": "Conditional Consultation",
+  "date": "2026-08-04",
+  "art36": "conditional",
+  "status": "Draft",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual on existing controls, but the Section 5 mitigations bring it below High — consultation should be conditional, not unconditional.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Perimeter controls only.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High",
+          "mitigatedLikelihood": "Low",
+          "mitigatedSeverity": "High"
+        },
+        {
+          "id": "R2",
+          "risk": "Already below High on existing controls; no mitigated score needed.",
+          "likelihood": "Medium",
+          "severity": "Medium",
+          "controls": "RBAC and logging.",
+          "residualLikelihood": "Low",
+          "residualSeverity": "Medium"
+        }
+      ]
+    },
+    { "type": "matrix", "stage": "mitigated", "source": "main" },
+    { "type": "heading", "level": 1, "text": "SECTION 5 — MEASURES TO ADDRESS RISKS" },
+    { "type": "regulatorTable" }
+  ]
+}

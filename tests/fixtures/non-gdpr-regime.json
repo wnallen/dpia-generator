@@ -1,0 +1,59 @@
+{
+  "systemName": "Colorado Only Assessment",
+  "date": "2026-08-04",
+  "jurisdictions": [
+    "us-co"
+  ],
+  "docTitle": "DATA PROTECTION ASSESSMENT",
+  "headerText": "",
+  "status": "Draft",
+  "regulatorConclusions": {
+    "us-co": {
+      "assessmentRequired": true
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual in a regime with no prior-consultation mechanism; the Art. 36 footnote and status warning must not fire.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 5 \u2014 MEASURES TO ADDRESS RISKS"
+    },
+    {
+      "type": "complianceMap",
+      "regime": "us-co",
+      "rows": [
+        {
+          "element": "Sources and nature of risks of harm to consumers",
+          "section": "SECTION 4"
+        },
+        {
+          "element": "Measures and safeguards to reduce identified risks",
+          "section": "SECTION 5"
+        }
+      ]
+    },
+    {
+      "type": "regulatorTable"
+    }
+  ]
+}

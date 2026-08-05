@@ -1,0 +1,27 @@
+{
+  "systemName": "Kenya Derivable Consultation",
+  "date": "2026-08-04",
+  "jurisdictions": ["ke-dpa"],
+  "status": "Requires ODPC Consultation",
+  "regulatorConclusions": {
+    "ke-dpa": { "priorConsultation": true }
+  },
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual under Kenyan scope; s. 31 consultation must derive from the register and the ODPC status must count as coherent.",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Partial controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High"
+        }
+      ]
+    },
+    { "type": "regulatorTable" }
+  ]
+}

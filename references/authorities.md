@@ -10,7 +10,8 @@ This file separates them.
 
 - **Tier A** entries are statutory and treaty-level instruments with stable public identifiers. Cite them as `[official publication]` using the identifiers below. The article and recital *text* for the GDPR provisions this skill relies on is reproduced in `references/legal-framework.md`; quote from there rather than from recall.
 - **Tier B** entries are guidance, opinions, decisions and case law. They ship **UNVERIFIED**. Cite them as `[model knowledge — verify]` until a run actually fetches the source, and only then upgrade the tag on that citation.
-- **Never upgrade a tag in this file from a search-result snippet.** Upgrading means: the document was fetched, the pinpoint was read, and the exact section reference was captured. Anything less stays UNVERIFIED.
+- **Three tags, three levels of confidence — do not conflate the middle one with the top one.** `[model knowledge — verify]` is pure recall (highest fabrication risk). `[web search — verify]` means the identifier or pinpoint was **corroborated by independent web search but the primary source was not fetched and read** — better than recall, still not authority. `[official publication]` / a fully verified Tier B tag means **the document was fetched, the pinpoint was read, and the exact reference captured**. Moving a citation from recall to `[web search — verify]` is a real improvement and is allowed; moving it to `[official publication]` from a search snippet is **not** — that step requires the fetch.
+- **On 2026-08-04 a corroboration pass ran** with web search available but primary-source fetches blocked (all official portals returned 403 to the fetch tool). It moved the non-EU statutory identifiers below from recall to `[web search — verify]`, filled the DUAA chapter number, and corrected one Brazilian resolution attribution. Every one of those still needs a primary-source fetch to reach `[official publication]`; the tags say so.
 - When a run does verify an entry, update it here — status, exact pinpoint, date checked — the same way `published-dpias.md` grows. That is the whole point of the file: the verification burden should fall once, not once per DPIA.
 
 **Pinpoints below are descriptive, not exact.** They tell you which part of the source to cite for which proposition. Capture the precise section, paragraph or page number when you verify, and record it here. Do not invent a section number to make a citation look precise — an approximate pinpoint honestly labelled is defensible; a precise one that is wrong is not.
@@ -49,7 +50,48 @@ The UK GDPR as it forms part of retained EU law, read with the DPA 2018 (c. 12).
 
 ### Data (Use and Access) Act 2025
 
-**Chapter number not captured — do not cite without it.** `legislation.gov.uk` URLs take the form `/ukpga/{year}/{chapter}`; a bare `/ukpga/2025` identifies nothing. Look the Act up, record the chapter number here, and cite the specific amending section rather than the Act as a whole. Substantive analysis is in `references/uk-divergence.md`.
+`[web search — verify]` **Chapter 18** — Data (Use and Access) Act 2025 (c. 18), Royal Assent **19 June 2025**. Official text: `https://www.legislation.gov.uk/ukpga/2025/18` (the "bare year path" problem is resolved — the chapter number is 18). Cite the specific amending section, not the Act as a whole; corroborated across the ICO's DUAA page and the legislation.gov.uk listing by web search on 2026-08-04, not yet fetched and read. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
+
+### US state statutes and rules (Phase 1 modules)
+
+The **section identifiers** below were corroborated by independent web search on 2026-08-04 (`[web search — verify]`); the LII / Justia / official-portal texts were **not fetched**, so a primary-source read is still required to reach `[official publication]` and to capture sub-paragraph enumerations verbatim.
+
+- **Colorado:** C.R.S. § 6-1-1309 (data protection assessments); Colorado Privacy Act Rules, 4 CCR 904-3 — **Rule 8.02 SCOPE, Rule 8.04 DATA PROTECTION ASSESSMENT CONTENT, Rule 9.06 assessments for profiling** (`[web search — verify]`, section titles confirmed; the enumerated 8.04 element list still to be read verbatim). Official rules PDF: coag.gov.
+- **California:** Cal. Civ. Code § 1798.185(a)(15); CPPA regulations, **11 CCR Article 10 — § 7150 (when a risk assessment is required), § 7152 (risk assessment requirements)** (`[web search — verify]`), OAL-approved 2025-09-23, effective 2026-01-01, first filing due 2028-04-01, review at least every three years. Official statute PDF: `cppa.ca.gov/regulations/pdf/`.
+- **Virginia pattern:** Va. Code § 59.1-580 and state analogs (CT, TX, OR, MT, DE, NH, NJ, MN, TN, IN, KY, NE, RI). Verify per state actually relied on; the list itself rolls forward session to session.
+
+### Canada / Quebec (Phase 1 module)
+
+- **Quebec:** CQLR c. P-39.1 as amended by Law 25 (S.Q. 2021, c. 25). `[web search — verify]` **s. 3.3** (PIA for any project of acquisition/development/redesign of an information system or electronic service delivery) and **s. 17** (PIA before any communication of PI outside Quebec) — **both section numbers confirmed by web search on 2026-08-04**; capture the CAI guide pinpoint on first fetch.
+- **Federal:** PIPEDA, S.C. 2000, c. 5 (no PIA obligation — cite only for the accountability principle); TBS Directive on Privacy Impact Assessment (federal institutions only).
+
+### Brazil (Phase 2 module)
+
+- **Lei nº 13.709/2018 (LGPD)** — `[web search — verify]` RIPD at **Arts. 5(XVII) and 38**; Art. 38 sole paragraph prescribes the minimum content (types of data, collection/security methodology, risk-mitigation analysis). Confirmed by web search on 2026-08-04; official text: planalto.gov.br `/ccivil_03/_ato2015-2018/2018/lei/l13709.htm`.
+- **ANPD resolutions** — **correction from verification (2026-08-04):** Resolução CD/ANPD **nº 2, de 27 de janeiro de 2022** is the **small-agents** regulation ("agentes de tratamento de pequeno porte"), **not** a high-risk-criteria instrument — an earlier recall mis-attributed the high-risk criteria to it. The ANPD's high-risk **indicators are expressly non-exhaustive** (guidance-level), so do not cite a numbered high-risk list as if it were binding. The international-transfer resolution number (recalled "19/2024") is **still unconfirmed** — a 2024 ANPD resolution search surfaced nº 15/2024 (incident communication), a different instrument; do not cite the transfer-resolution number until fetched. RIPD regulation still pending; see the module's volatility banner.
+
+### China (Phase 2 module)
+
+- **PIPL (2021)** — `[web search — verify]` **Art. 55** (the six enumerated PIPIA triggers plus the material-impact catch-all), **Art. 56** (content: lawful/legitimate/necessary; impact and risk; measures lawful/effective/commensurate), **28** (sensitive PI), **38–40** (export routes); the **≥3-year retention** of the PIPIA report is confirmed. All corroborated by web search on 2026-08-04; authoritative text is Chinese — record which translation was relied on.
+- **GB/T 39335-2020** (PI security impact assessment methodology) — `[web search — verify]` national standard confirmed; record how the text was obtained.
+- **CAC cross-border rules** — 2022 security-assessment measures, 2023 SCC measures, March 2024 relaxation provisions. Thresholds move; re-verify per run, not per session.
+
+### Asia-Pacific and Switzerland (Phase 3 modules)
+
+- **India:** `[web search — verify]` DPDP Act, 2023 **s. 10** (SDF designation) and DPDP Rules, 2025 **Rule 13** (SDF additional obligations: DPIA **and** independent audit **once every twelve months**, with significant observations reported to the **Data Protection Board**); Rules notified 2025-11-13. **Rule 13 confirmed by web search on 2026-08-04** (the module previously carried it as recalled). Check SDF designation notifications every India-scope run.
+- **Switzerland:** `[web search — verify]` revFADP, **SR 235.1**, in force 2023-09-01 — **Art. 22** (DPIA on likely high risk to personality/fundamental rights; Ordinance Art. 14), **Art. 23** (FDPIC consultation on residual high risk), **Art. 23(4)** (the data-protection-adviser alternative that lets a controller refrain from consulting the FDPIC — the reason the builder treats this regime as non-derivable). All corroborated by web search on 2026-08-04. FDPIC guidance at edoeb.admin.ch.
+- **Singapore:** PDPA 2012 as amended; PDPC Guide to DPIAs (2021) — PDF URL recorded in the module `[web search — verify]`.
+- **Malaysia:** PDPA 2010 + Amendment Act 2024; JPDP DPIA consultation paper (2025) — watch status, module carries a volatility banner.
+- **Australia:** Privacy Act 1988 + POLA Act 2024 (tort in force 2025-06-10; APP 1.7 ADM transparency 2026-12-10); OAIC PIA guide; agencies APP Code.
+- **South Korea:** PIPA Art. 33 + Enforcement Decree thresholds (public-institution PIA through PIPC-designated agencies, submitted to the PIPC).
+
+### Africa and Southeast Asia (Phase 4+ modules)
+
+All corroborated by web search on 2026-08-04 (`[web search — verify]`); primary texts not fetched.
+
+- **Kenya:** Data Protection Act, 2019 (No. 24 of 2019), s. 31 — DPIA duty, s. 31(4) definition, and the Data Commissioner prior-consultation duty on high risk (the third derivable regime in the builder). Official text at kenyalaw.org; capture the consultation subsection and confirm whether the reported 60-days-prior submission timeline is statutory or ODPC guidance.
+- **Vietnam:** PDP Law No. 91/2025/QH15 (passed 2025-06-26, effective 2026-01-01), replacing Decree 13/2023/ND-CP; transfer impact dossier submitted to the MPS within 60 days of transfer start. Capture the Law's article numbers for both dossiers; the Decree 13 Arts. 24–25 structure is recall-level until then.
+- **Indonesia:** Law No. 27/2022 (UU PDP), Art. 34 — DPIA for high-potential-risk processing with an enumerated high-risk list; implementing regulation pending (module carries a volatility banner).
 
 ### Regulation (EU) 2024/1689 (EU AI Act)
 
@@ -117,6 +159,27 @@ Commission implementing decision on the adequate level of protection under the E
 - **Cited for:** the UK position on workplace biometric time-and-attendance; the Art. 5(1)(a)/6/9 findings.
 - **Capture:** the enforcement notice reference and date.
 - **Status:** UNVERIFIED. Detail in `published-dpias.md`.
+
+### CAI (Quebec) — companion guide on PIAs
+
+- **Cited for:** Quebec Law 25 PIA methodology and the CAI's expectations; the outside-Quebec adequacy analysis.
+- **Verify at:** cai.gouv.qc.ca (published September 2023; French — record translation status when citing to an anglophone reviewer).
+- **Capture:** the guide's title, edition date, and the section on the outside-Quebec communication analysis.
+- **Status:** UNVERIFIED.
+
+### CPPA — final CCPA regulations and filing mechanics
+
+- **Cited for:** California risk-assessment triggers, content, and the attestation/filing calendar (first filing 2028-04-01 covering 2026–2027).
+- **Verify at:** cppa.ca.gov (regulations page and the 2025-09-23 approval announcement).
+- **Capture:** the section numbers for the trigger list, content list, and submission requirements.
+- **Status:** UNVERIFIED (build-time fetches returned 403; dates corroborated by secondary sources only).
+
+### Colorado AG — CPA rules guidance and enforcement
+
+- **Cited for:** Rule 8.04 content expectations; profiling assessment additions (Part 9); AG production mechanics.
+- **Verify at:** coag.gov and the Colorado Secretary of State rules register.
+- **Capture:** the Rule 8.04 sub-paragraph enumeration; the non-waiver provision's exact statutory cite.
+- **Status:** UNVERIFIED.
 
 ### EDPB Guidelines 05/2020 on consent
 
