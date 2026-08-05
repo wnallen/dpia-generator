@@ -45,6 +45,12 @@ dpia-generator/
 ├── SKILL.md                          # Skill instructions and workflow
 ├── README.md
 ├── LICENSE
+├── package.json                      # Pinned docx dependency; `npm test` runs the suite
+├── package-lock.json
+├── .gitignore
+├── docs/
+│   └── eval-prompts.md               # Graded skill-level eval prompts (workflow behaviors
+│                                     #   the regression suite cannot test)
 ├── references/
 │   ├── legal-framework.md            # Art. 35/36 text, recitals, WP248rev01 nine criteria, mandatory lists
 │   ├── risk-matrix.md                # 3×3 matrix, scoring rubrics, inherent → residual transition
@@ -112,6 +118,8 @@ Skill-level eval prompts (the workflow behaviors the regression suite cannot tes
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v4.0.2** — Public-release hygiene, no behavior change. Removes `docs/global-expansion-plan.md`: the plan executed in full as v3.0–v3.4 (with coverage since exceeding it — v3.8), and every rule it carried that still matters lives in a maintained file — the module skeleton in `SKILL.md`'s Reference Files section, the promotion path and volatility rules in this README's Maintenance section, the citation-upgrade pass in `references/authorities.md`. Also completes the project-structure tree (`docs/`, the package files, `.gitignore` were omitted) and syncs `package.json`'s version field, stale at 2.0.2. Suite unchanged at thirty-two cases.
 
 - **v4.0.1** — The cover generation notice is trimmed to its first sentence: "AI-GENERATED DRAFT — produced by the dpia-generator skill." The adoption/not-legal-advice framing already lives in this README's disclaimer and in the delivery summary, so repeating it on every cover was surplus. Footer and file metadata unchanged.
 
