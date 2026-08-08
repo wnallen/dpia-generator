@@ -1,6 +1,8 @@
 # DPIA Generator
 
-A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR (and its analogs in other covered jurisdictions) for a client's privacy register. It gathers a workable processing description, maps the applicable regimes (EU/UK GDPR plus per-jurisdiction modules for the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Australia and South Korea), screens each regime's own trigger, anchors its analysis in real published DPIAs and regulator guidance (ICO, CNIL, EDPB, WP29, CPPA, CAI, ANPD, PDPC, OAIC and peers), scores risks on a 3×3 likelihood × severity matrix, and produces a reasoned Word deliverable — cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, and per-regime regulator-engagement flags (Article 36 prior consultation and its analogs) — with a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
+A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR (and its analogs in other covered jurisdictions) for a client's privacy register.
+
+Given a description of a new or modified processing activity, the Skill gathers what is missing, maps the applicable regimes, and screens each regime's own trigger. Coverage is EU/UK GDPR plus one module per further jurisdiction in `references/jurisdictions/` — currently the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Indonesia, Vietnam, Australia, South Korea, and Kenya; that directory is the authoritative list. The analysis is anchored in real published DPIAs and regulator guidance (ICO, CNIL, EDPB, CPPA, ANPD, and peers), and risks are scored on a 3×3 likelihood × severity matrix. The deliverable is a reasoned Word document: cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, per-regime regulator-engagement flags (Article 36 prior consultation and its analogs), and a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
 
 # Important
 
@@ -18,11 +20,12 @@ This Skill does not represent the creator's legal positions: it is a tool. Where
 - **Risk analysis.** Inherent and residual risk are scored on a 3×3 likelihood × severity matrix (severity from the data subject's perspective, likelihood from threat-actor capability and asset vulnerability), with a controls inventory and the inherent → residual transition shown.
 - **The matrix is computed, not asserted.** The bundled builder derives every rating from the published matrix and plots both grids from the same source, so the register table, the matrices, and the Article 36 flag cannot disagree. Where a stated rating contradicts the derived one, the build hard-fails rather than emitting a document — a mis-stated residual rating is the defect most likely to survive review into a filed DPIA.
 - **Consequential-step gates.** The Skill flags Article 36 prior consultation when residual risk warrants it, checks whether the document is leaving the privilege circle (offering privileged and sanitized versions), and confirms before producing a "ready-to-file" version — but does not file with any authority on the user's behalf.
+- **Consultation duties are noted, not simulated.** Article 35(2) DPO advice and the Article 35(9) data-subject consultation are flagged where they apply, with a note wherever the Skill has substituted its own analysis and a recommendation to confirm.
 
 ## Requirements
 
 - Runs inside the Claude Skills environment with `conversation_search`, `web_search`, and `web_fetch` available (prior-work reconciliation and live citation verification).
-- `node` with the `docx` npm package for the Word deliverable; the public `docx` skill for OOXML validation, which the builder invokes on its own output.
+- `node` with the `docx` npm package for the Word deliverable; OOXML validation via the public `docx` skill where installed (see Testing).
 
 ## Usage
 
@@ -70,14 +73,14 @@ dpia-generator/
 
 ```bash
 npm install                             # installs the pinned docx package
-node scripts/run_regression.js          # 32 cases; exit 0 if all pass, --keep to inspect the .docx files
+node scripts/run_regression.js          # exit 0 if all pass; --keep to inspect the .docx files
 ```
 
-Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
+Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which; the runner fails on a fixture with no case, so the fixture directory cannot silently drift from the suite. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
 
 The builder validates its own OOXML output via the public docx skill's `validate.py` where that skill is installed (`/mnt/skills/public/docx`). The validator is a Python script requiring the `defusedxml` and `lxml` packages; if it is absent or cannot run, the builder skips validation with a warning on stderr rather than failing the build. `--no-validate` disables the validation step entirely.
 
-## Maintenance — keeping seventeen regimes honest
+## Maintenance — keeping the regime modules honest
 
 The skill's coverage is only as good as its most stale module. Four standing rules:
 
@@ -108,16 +111,11 @@ should also execute the `[official publication]` upgrade pass recorded in
 Skill-level eval prompts (the workflow behaviors the regression suite cannot test) live in
 `docs/eval-prompts.md`.
 
-## Notes and limitations
-
-- **Never invents facts or citations.** Unknown processing details become open questions; every cited DPA decision must exist and is verified by web-fetch before it is cited.
-- **Attorney-work-product depends on staying inside the privilege circle.** The Skill flags when a DPIA is heading to a board pack, a vendor, a public page, or a regulator, and offers privileged vs. sanitized versions rather than silently applying the header.
-- **The DPO is not a rubber stamp.** Article 35(2) DPO advice and the Article 35(9) data-subject consultation are noted where they apply and where the Skill has substituted its own analysis, with a recommendation to confirm.
-- A DPIA is a living document: the output ends with a review cadence and the conditions (new sub-processor, material model change, change in law, security incident) that trigger an off-cycle review.
-
 ## Changelog
 
 The `## Version` section of `SKILL.md` is canonical; this is the long-form record and does not contradict it.
+
+- **v4.0.3** — Maintenance pass, no builder behavior change. Live prose no longer hard-codes drift-prone facts: the suite size and regime count are gone from `SKILL.md`'s Reference Files and this README's Testing and Maintenance sections (the runner prints its own count; `references/jurisdictions/` is the regime list), and the per-file version tags in the two scripts are dropped — `SKILL.md`'s `## Version` section is the one version that exists, which also retires the stale "(v3.0)" the Reference Files entry still carried for a v4-era builder. The regression runner now fails on a fixture with no corresponding case, so the fixture directory and the suite are kept in step mechanically. `SKILL.md`'s version entries are condensed to the one-line format this changelog backs. README: the opening is rewritten into readable sentences and its module list corrected (Kenya, Vietnam, and Indonesia — added in v3.8 — were missing), and the Notes-and-limitations section is folded away: two bullets duplicated What-it-does items, and the two that did not now live there. `package.json` synced.
 
 - **v4.0.2** — Public-release hygiene, no behavior change. Removes `docs/global-expansion-plan.md`: the plan executed in full as v3.0–v3.4 (with coverage since exceeding it — v3.8), and every rule it carried that still matters lives in a maintained file — the module skeleton in `SKILL.md`'s Reference Files section, the promotion path and volatility rules in this README's Maintenance section, the citation-upgrade pass in `references/authorities.md`. Also completes the project-structure tree (`docs/`, the package files, `.gitignore` were omitted) and syncs `package.json`'s version field, stale at 2.0.2. Suite unchanged at thirty-two cases.
 

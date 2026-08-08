@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * build_dpia.js — dpia-generator document assembler (v4.0.1)
+ * build_dpia.js — dpia-generator document assembler
+ * (versioned with the skill; SKILL.md's ## Version section is canonical)
  *
  * Renders the DPIA .docx from a JSON content manifest. The structure defined in
  * references/output-template.md is the constant; the manifest supplies only the
