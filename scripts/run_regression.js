@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 /**
- * run_regression.js — regression suite for build_dpia.js (v1.1)
+ * run_regression.js — regression suite for build_dpia.js
+ * (versioned with the skill; SKILL.md's ## Version section is canonical)
  *
  * Every case below is a defect that was actually shipped, or a gate that exists
  * to stop one. Run this after any change to build_dpia.js, references/risk-matrix.md,
  * or the manifest schema — the matrix mapping and the Article 36 flag are the two
- * things in this skill a reader cannot check by eye.
+ * things in this skill a reader cannot check by eye. The suite and the fixture
+ * directory are kept in step mechanically: a case without a fixture fails, and
+ * so does a fixture without a case.
  *
  *   node scripts/run_regression.js [--keep]
  *
@@ -356,6 +359,16 @@ function run() {
     } else {
       console.log(`ok    ${c.name}`);
     }
+  }
+
+  // A fixture with no case is dead weight that reads as coverage; fail loudly.
+  const orphans = fs.readdirSync(FIXTURES)
+    .filter(f => f.endsWith('.json'))
+    .map(f => f.replace(/\.json$/, ''))
+    .filter(n => !CASES.some(c => c.name === n));
+  if (orphans.length) {
+    failed++;
+    console.log(`FAIL  orphaned fixture(s) with no case: ${orphans.join(', ')}`);
   }
 
   console.log(`\n${CASES.length - failed}/${CASES.length} passed. Artifacts: ${tmp}`);
