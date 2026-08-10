@@ -336,6 +336,24 @@ const CASES = [
     ],
   },
   {
+    name: 'register-null-row',
+    why: 'v4.1.1: a null riskRegister row crashed the builder with a TypeError stack trace instead of a clean exit 1 — the v3.4.1 fail-cleanly contract, latent on every rows-consuming block.',
+    exit: 1,
+    stderr: /riskRegister row 1: each row must be an object, got null/,
+  },
+  {
+    name: 'table-null-row',
+    why: 'v4.1.1: same class as register-null-row on the generic table block — a null cell row must name the row, not throw from inside the docx renderer.',
+    exit: 1,
+    stderr: /row 2: each row must be an array of cells, got null/,
+  },
+  {
+    name: 'notice-check-null-row',
+    why: 'v4.1.1: the new noticeCheck block inherited the null-row crash from the pattern it copied; pinned so the guard travels with the block.',
+    exit: 1,
+    stderr: /noticeCheck\) row 1: each row must be an object, got null/,
+  },
+  {
     name: 'header-suppressed',
     why: 'A document drafted for regulator production must be able to shed the privilege header deliberately.',
     exit: 0,

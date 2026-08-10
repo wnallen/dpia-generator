@@ -216,6 +216,22 @@ function own(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
 }
 
+// Row-shape guards for manifest-supplied "rows" arrays. A null or mis-typed
+// entry must fail with a clean exit 1 and a named row, never a TypeError stack
+// trace from the first member access — same contract as the v3.4.1 hardening.
+function rowObject(r, ctx) {
+  if (typeof r !== 'object' || r === null || Array.isArray(r)) {
+    fail(1, `${ctx}: each row must be an object, got ${r === null ? 'null' : Array.isArray(r) ? 'an array' : typeof r}`);
+  }
+  return r;
+}
+function rowArray(r, ctx) {
+  if (!Array.isArray(r)) {
+    fail(1, `${ctx}: each row must be an array of cells, got ${r === null ? 'null' : typeof r}`);
+  }
+  return r;
+}
+
 const D = loadDocx();
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
@@ -451,6 +467,7 @@ function isArt36(likelihood, severity) { return rate(likelihood, severity) === '
 function resolveRegister(rows) {
   const violations = [];
   const out = rows.map((r, i) => {
+    rowObject(r, `riskRegister row ${i + 1}`);
     const ctx = `riskRegister row ${i + 1} (${r.id || 'no id'})`;
     const iL = norm(r.likelihood, 'likelihood', ctx);
     const iS = norm(r.severity, 'severity', ctx);
@@ -717,6 +734,7 @@ function build(manifest, state) {
         }))); break;
       case 'table':
         if (!b.columns || !b.rows) fail(1, `${ctx}: needs "columns" and "rows"`);
+        (b.rows || []).forEach((r, j) => rowArray(r, `${ctx} row ${j + 1}`));
         children.push(dataTable(b.columns, b.rows, b.widths));
         children.push(p('', { after: 120 })); break;
       case 'riskRegister': {
@@ -766,6 +784,7 @@ function build(manifest, state) {
           .map(x => String(x.text || '').toLowerCase());
         const missing = [];
         const rows = b.rows.map((r, j) => {
+          rowObject(r, `${ctx} row ${j + 1}`);
           const el = r.element, sec = String(r.section || '').trim();
           if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
           const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
@@ -836,7 +855,10 @@ function build(manifest, state) {
         }
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
         if (b.notice.date !== undefined && b.notice.date !== null) {
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.notice.date))) fail(1, `${ctx}: "notice.date" must be YYYY-MM-DD`);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.notice.date)) || isNaN(new Date(String(b.notice.date)))) {
+            fail(1, `${ctx}: "notice.date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(b.notice.date)} — ` +
+                    'a date that does not parse silently disables the staleness check.');
+          }
           // Staleness is a check-by date, not a hard stop: the check still
           // renders, but a profile older than ~6 months may pass against
           // commitments the published notice no longer makes.
@@ -850,6 +872,7 @@ function build(manifest, state) {
         let unresolved = false;
         const rows = b.rows.map((r, j) => {
           const rctx = `${ctx} row ${j + 1}`;
+          rowObject(r, rctx);
           if (!r.commitment || !String(r.commitment).trim() || !r.processing || !String(r.processing).trim()) {
             fail(1, `${rctx}: needs "commitment" (verbatim from the notice) and "processing" (the new reality it is checked against)`);
           }
@@ -866,7 +889,9 @@ function build(manifest, state) {
             commitment: String(r.commitment) + (r.section ? ` (${r.section})` : ''),
             processing: String(r.processing),
             label: v.label, style: v.style,
-            action: inconsistent ? String(r.action) : '—',
+            // A consistent row needs no resolution, but one the manifest states
+            // anyway (e.g. "monitor at next notice refresh") is kept, not dropped.
+            action: (r.action && String(r.action).trim()) ? String(r.action) : '—',
           };
         });
         const prov = [String(b.notice.source)];
@@ -900,7 +925,7 @@ function build(manifest, state) {
         break;
       }
       case 'signature': {
-        const rows = (b.rows || []).map(r => r.map(v => String(v)));
+        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => String(v)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
         break;

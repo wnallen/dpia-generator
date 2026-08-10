@@ -1,0 +1,11 @@
+{
+  "systemName": "Table Null Row",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": ["A", "B"],
+      "rows": [["1", "2"], null]
+    }
+  ]
+}
