@@ -363,6 +363,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v4.0.4** — Catalog expansion, no behavior change: `references/published-dpias.md` gains the Dutch SLM Rijk / SURF / Privacy Company vendor-DPIA corpus (M365, Copilot, Zoom), UK health DPIAs (NHS COVID-19 app, Federated Data Platform), further police and Scottish Government publications, two more ICO children's-code samples, and a Discovery Corpora section (WhatDoTheyKnow, Canadian PIA summaries, Australian PIA registers); catalog header now states the per-entry verification convention.
 - **v4.0.3** — Maintenance pass, no builder behavior change: live prose no longer hard-codes the suite size or regime count; per-file version tags dropped (this section is the one canonical version); regression runner fails on orphaned fixtures; version entries here condensed to one line each per the house convention; README opening corrected (Kenya, Vietnam, Indonesia were missing from the module list) and de-duplicated.
 - **v4.0.2** — Public-release hygiene: removed the executed `docs/global-expansion-plan.md` design record, completed the README project-structure tree, synced `package.json`. No behavior change.
 - **v4.0.1** — Cover generation notice trimmed to its first sentence ("AI-GENERATED DRAFT — produced by the dpia-generator skill."); footer and metadata unchanged.

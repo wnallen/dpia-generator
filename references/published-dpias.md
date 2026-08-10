@@ -1,6 +1,6 @@
 # Published DPIAs and DPA Decisions — Reference Catalog
 
-Consult this catalog in Step 1 before web-searching for analogs. These entries have been verified as live and useful for DPIA work. Where the analog fits the processing under assessment, prefer the analog to a fresh web search; where it does not, web-search for closer fits and add good finds back to this file over time.
+Consult this catalog in Step 1 before web-searching for analogs. Entries are useful for DPIA work and verified as live except where an entry carries its own `[web search — verify]` or UNVERIFIED flag — those were surfaced by search from an environment that could not fetch them, and must be fetched (and the flag removed) before being cited in a DPIA. Where the analog fits the processing under assessment, prefer the analog to a fresh web search; where it does not, web-search for closer fits and add good finds back to this file over time.
 
 For each entry: what it is, where it lives, what it's good for, and what it's not good for.
 
@@ -114,17 +114,58 @@ Best for: AI in hiring, AI in performance evaluation, AI in promotion/terminatio
 
 Best for: any DPIA involving a non-EU SaaS vendor, cloud provider, or sub-processor; transfers to non-adequacy jurisdictions.
 
+### Enterprise SaaS / Cloud Vendor Adoption (the most common real-world DPIA scenario)
+
+The Dutch government (SLM Rijk, the central vendor-management office in the Ministry of Justice and Security) and SURF (the Dutch research-and-education ICT cooperative) commission full professional DPIAs from Privacy Company on the major SaaS/cloud vendors, negotiate remediations with the vendor, and **publish the complete DPIAs in English**. This is the closest thing that exists to a public corpus of "controller adopts Vendor X" DPIAs — the scenario most user requests to this skill will resemble. Entries below were surfaced by web search 2026-08-10; the build environment could not fetch them directly (egress proxy), so treat each as `[web search — verify]` until fetched on a live run.
+
+**SURF / Privacy Company DPIA on Microsoft 365 Copilot (December 2024)**
+URL: https://www.surf.nl/files/2024-12/20241218-dpia-microsoft-365-copilot.pdf
+A full DPIA on a generative-AI assistant embedded in a productivity suite — the single best analog for any "we want to roll out an AI copilot/assistant" DPIA. SURF's accompanying position (risks remained "orange" despite Microsoft improvements) models honest residual-risk scoring: https://www.surf.nl/en/news/privacy-risks-microsoft-365-copilot-remain-orange-despite-improvements
+
+**SURF / Privacy Company DPIA on Zoom (public versions: Feb 2022, updated April 2024)**
+URLs: https://www.surf.nl/files/2022-03/dpia-zoom-25-february-2022_0.pdf and https://www.surf.nl/files/2024-04/20240403-final-public-version-updated-zoom-dpia.pdf
+The pair is more valuable than either alone: the 2020/2021 assessment found 9 high risks; the 2022 and 2024 updates show the risks being negotiated down to zero through contractual and technical measures. A worked example of the inherent → residual → post-mitigation arc this skill's Step 3 item 9 encodes.
+
+**SLM Rijk DPIAs on Microsoft Office 365 / Teams / OneDrive / SharePoint** — published via open.overheid.nl and the Privacy Company blog (index of public DPIAs and follow-ups): https://www.privacycompany.eu/blog/new-dpia-for-the-dutch-government-and-universities-on-microsoft-teams-onedrive-and-sharepoint-online ; example full text: https://open.overheid.nl/documenten/ronl-aba85735-5a7a-4a8c-9c7a-7755d6bef118/pdf
+The Google Workspace and Google Cloud DPIAs/DTIAs followed the same publish-and-remediate pattern (announcements: https://workspace.google.com/blog/identity-and-security/eu-public-sector-dutch-approval-and-new-capabilities).
+
+Best for: any SaaS, cloud, videoconferencing, productivity-suite, or embedded-AI-assistant adoption DPIA; diagnostic-telemetry risk analysis; vendor-negotiation mitigations (contractual controls with named vendor commitments); the DTIA (transfer) companion pattern.
+
+### Health / Public-Health Technology
+
+All UK entries are Crown-copyright publications on government domains; surfaced by web search 2026-08-10, `[web search — verify]` until fetched.
+
+**NHS COVID-19 App DPIA (full text, versioned)** — one of the most scrutinized DPIAs ever published, revised across releases. URL (Oct 2021 release): https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1028998/NHS_COVID_19_App_DPIA.pdf (the gov.uk publication page is marked withdrawn since the app closed in April 2023 — the document remains a first-rate structural model). Best for: consumer health apps, proximity/location processing, large-scale voluntary public-health processing.
+
+**NHS England — Overarching DPIA for the Federated Data Platform (live programme)** — https://www.england.nhs.uk/long-read/overarching-data-protection-impact-assessment-dpia-for-the-federated-data-platform-fdp/ plus per-product DPIAs at https://www.england.nhs.uk/digitaltechnology/nhs-federated-data-platform/security-privacy/nhs-fdp-information-governance-framework/national-fdp-products/ — a current, maintained example of a layered DPIA architecture (overarching + product-level) for a national data platform with a controversial commercial processor. Best for: platform/programme DPIAs, layered DPIA structure, health data at national scale.
+
+**NHS England — COVID-19 Data Store DPIA** (https://www.england.nhs.uk/publication/data-protection-impact-assessment-nhs-covid-19-data-store/) and **NHS England Digital — GPES Data for Pandemic Planning and Research DPIA** (https://digital.nhs.uk/coronavirus/gpes-data-for-pandemic-planning-and-research/data-protection-impact-assessment). Best for: secondary use of health data, research/planning reuse, emergency-powers processing.
+
+**Ireland — HSE COVID Tracker App DPIA** — published in full with the app's source code (announcement: https://www.gov.ie/en/press-release/bb5d9-department-of-health-and-the-hse-today-announce-the-publication-of-the-covid-tracker-app-data-protection-impact-assessment-and-source-code/ ; documents on hse.ie). Best for: an Irish-DPC-supervised analog; transparency-by-publication posture.
+
 ### Public-Sector / Government Processing of Sensitive Data
 
 **UK Home Office "Migrant Help" DPIA (partial, FOI-released)** — a real DPIA for asylum-seeker support processing, useful as a structural model for public-sector DPIAs touching vulnerable populations. URL: https://privacyinternational.org/sites/default/files/2022-02/FOI%2067544%20Annex%202%20-%20Redacted%20Migrant%20Help%20v0.3.pdf
 
 Best for: public-sector DPIAs, processing of vulnerable populations, processing where the data subject cannot meaningfully consent.
 
+**UK police published DPIAs beyond the Met RFR** `[web search — verify]` — **NPCC Police National Database DPIA v8** (https://www.npcc.police.uk/SysSiteAssets/media/downloads/publications/publications-log/national-crime-coordination-committee/2025/dpia-pnd-v8.pdf), the **Met Violence Harm Assessment DPIA** (https://www.met.police.uk/SysSiteAssets/media/downloads/met/about-us/violence-harm-index/violence-harm-assessment-data-protection-impact-assessment.pdf), the **Scottish Police Authority DESC (Digital Evidence Sharing Capability) DPIA, FOI-released** (https://www.spa.police.uk/publication-library/foi-2023-015-desc-dpia-and-supporting-information/), and force publication schemes that list DPIAs as a class (e.g. Dyfed-Powys: https://www.dyfed-powys.police.uk/foi-ai/dyfed-powys-police/publication-scheme/data-protection-impact-assessments/). Best for: national database processing, algorithmic risk-scoring of individuals, evidence-sharing platforms, LED-context structure.
+
+**Scottish Government published DPIAs (gov.scot)** `[web search — verify]` — the Scottish Government routinely publishes full DPIAs for bills, regulations, and programmes (e.g. https://www.gov.scot/publications/data-protection-impact-assessment-dpia-scotlands-proof-concept-fund/). Searchable via gov.scot publications with type "impact assessment". Best for: legislative/policy-driven processing; a steady supply of ordinary, non-exotic DPIAs — useful precisely because most catalog entries are high-drama.
+
 ### Children's Online Services / Information Society Services
 
 **ICO Sample DPIA — Online Retail Service for Children (Age-Appropriate Design Code)** — the ICO published a worked sample DPIA for a fictional SME online retailer aimed at meeting Standard 2 of the Children's Code. Adapted from the ICO's general DPIA template. URL: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/dpia-tools/online-retail/
 
 Best for: any ISS likely to be accessed by under-18s in the UK; useful as a structural model even for non-UK child-directed services.
+
+**ICO Sample DPIA — Mobile Gaming App** `[web search — verify]` — same series, Standard 2. URL: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/dpia-tools/mobile-gaming-app/
+
+Best for: games, in-app purchases/engagement mechanics aimed at children, age assurance.
+
+**ICO Sample DPIA — Connected Toy** `[web search — verify]` — same series, Standards 2 and 14. URL: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/dpia-tools/connected-toy/
+
+Best for: IoT/connected devices for children, voice capture in the home, device + app + cloud processing chains.
 
 ---
 
@@ -208,6 +249,15 @@ edoeb.admin.ch. Best for: `ch-fadp` runs and the Art. 23 consultation mechanics,
 the Art. 23(4) advisor alternative.
 
 ---
+
+## Discovery Corpora — Where to Hunt When the Catalog Has No Fit
+
+These are not single analogs but standing collections of published assessments, useful in Step 1 when nothing above matches the processing. Surfaced by web search 2026-08-10; verify on use.
+
+- **WhatDoTheyKnow (UK FOI archive)** — https://www.whatdotheyknow.com — searchable archive of FOI requests and responses; searching "data protection impact assessment" plus the processing type surfaces FOI-released DPIAs from UK police forces, councils, NHS bodies, and departments (e.g. the Home Office View & Prove / Person Centric Data Platform DPIA thread: https://www.whatdotheyknow.com/request/data_protection_impact_assessmen_91). Quality varies; redactions common; provenance is excellent because the releasing authority is on the page.
+- **Canada — federal PIA summaries (mandatory publication)** — the TBS Directive on PIA requires institutions to publish at least PIA summaries. Entry points: the Open Government Portal (e.g. https://open.canada.ca/data/en/dataset/2bd435b1-304c-418e-910c-5592754280ce for Shared Services Canada) and per-department pages (IRCC, Statistics Canada, Public Safety, Justice). Summaries, not full PIAs — best for scoping how a Canadian federal analog framed purposes and flows, and as the public-sector anchor for `ca-qc`-adjacent runs.
+- **Australia — agency PIA registers (mandatory under the Privacy Code)** — since 1 July 2018, s. 15.1 of the Privacy (Australian Government Agencies – Governance) APP Code 2017 requires every agency to publish a register of its PIAs; some agencies publish full PIAs. Entry points: the OAIC's own register (https://www.oaic.gov.au/about-the-OAIC/access-our-information/our-privacy-impact-assessment-register) and any agency site + "privacy impact assessment register". The APAC public-sector analog supply for `au-privacy` runs.
+- **New Zealand — Ministry of Health per-release PIAs for NZ COVID Tracer** — a PIA was published for every major app release and reviewed by the Privacy Commissioner; search health.govt.nz for "COVID Tracer privacy impact assessment". Best for: iterative PIA-per-release cadence as a living-document model.
 
 ## How to Add to This Catalog
 
