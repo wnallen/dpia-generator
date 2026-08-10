@@ -1,0 +1,13 @@
+{
+  "systemName": "Notice Check Null Row",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy"
+      },
+      "rows": [null]
+    }
+  ]
+}

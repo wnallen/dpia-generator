@@ -1,0 +1,19 @@
+{
+  "systemName": "Notice Check Missing Action",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy"
+      },
+      "rows": [
+        {
+          "commitment": "We do not sell personal data",
+          "processing": "New feature shares identifiers with an advertising partner",
+          "verdict": "conflict"
+        }
+      ]
+    }
+  ]
+}

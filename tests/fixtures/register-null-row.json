@@ -1,0 +1,11 @@
+{
+  "systemName": "Register Null Row",
+  "date": "2026-08-10",
+  "art36": false,
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [null]
+    }
+  ]
+}

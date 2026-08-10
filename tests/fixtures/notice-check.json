@@ -1,0 +1,46 @@
+{
+  "systemName": "Notice Check",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 1 — DESCRIPTION OF PROCESSING"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "1.10 Privacy policy consistency check"
+    },
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy",
+        "audience": "customers",
+        "date": "2026-06-01",
+        "profile": "acme-notice-profile.yaml"
+      },
+      "rows": [
+        {
+          "commitment": "We collect only your name, email address and order history",
+          "section": "s. 3.1",
+          "processing": "The sentiment engine additionally processes support-call transcripts",
+          "verdict": "drift",
+          "action": "Amend s. 3.1 to name call transcripts before deployment — owner: Privacy PM"
+        },
+        {
+          "commitment": "We do not use your data to train AI models",
+          "section": "s. 5.2",
+          "processing": "Vendor-side model fine-tuning on customer transcripts is enabled by default",
+          "verdict": "conflict",
+          "action": "Disable vendor training contractually, or amend s. 5.2 and re-notify — owner: Counsel"
+        },
+        {
+          "commitment": "We retain support records for 24 months",
+          "processing": "Transcripts and derived scores are deleted at 18 months",
+          "verdict": "consistent"
+        }
+      ]
+    }
+  ]
+}

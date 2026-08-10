@@ -1,0 +1,20 @@
+{
+  "systemName": "Notice Check Stale",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy",
+        "date": "2025-10-01"
+      },
+      "rows": [
+        {
+          "commitment": "We retain support records for 24 months",
+          "processing": "Transcripts are deleted at 18 months",
+          "verdict": "consistent"
+        }
+      ]
+    }
+  ]
+}

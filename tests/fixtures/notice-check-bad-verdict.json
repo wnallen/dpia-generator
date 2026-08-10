@@ -1,0 +1,19 @@
+{
+  "systemName": "Notice Check Bad Verdict",
+  "date": "2026-08-10",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy"
+      },
+      "rows": [
+        {
+          "commitment": "We collect only X and Y",
+          "processing": "New feature also collects W",
+          "verdict": "constructor"
+        }
+      ]
+    }
+  ]
+}
