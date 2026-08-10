@@ -78,19 +78,19 @@ Sub-sections:
 
 Drift between the controller's published privacy policy and a newly-proposed processing is one of the most common (and most overlooked) failure modes in DPIA practice. The new feature is approved; the policy is not updated; the controller is now operating outside its own representations to data subjects and to regulators. A DPIA that does not surface this drift is incomplete.
 
-Include this section as a short table cross-checking each material commitment in the controller's published privacy policy against the proposed processing. Common drift patterns to test for:
+This section cross-checks each material commitment in the controller's published privacy policy against the proposed processing. Where the notice (or a notice profile — `references/notice-profile.md`) is available, the table is **emitted by the builder's `noticeCheck` block, never hand-authored as a `table`**: the manifest states the notice's provenance (`notice.source`, plus `audience` / `date` / `profile` where known) and one row per commitment checked — the verbatim `commitment` with its `section` pinpoint, the new `processing` reality, a `verdict` of `consistent` / `drift` / `conflict`, and, for any drift or conflict, the committed `action`. The builder colour-codes the verdicts (green / amber / red, from the same palette as the ratings), refuses an inconsistent row with no resolution, and appends the resolution footnote itself. Common drift patterns to test for:
 
-| Policy commitment | New processing reality | Consistent? |
+| Policy commitment | New processing reality | Verdict |
 |---|---|---|
-| "We collect [X, Y, Z]" | New feature also collects [W] | 🟢 / 🟡 / 🔴 |
-| "We don't sell personal data" | New feature shares with [advertising partner] — may be a "sale" under CCPA/CPRA | 🟢 / 🟡 / 🔴 |
-| "We retain data for the lifetime of your account" | New feature retains derived inferences for [longer period] | 🟢 / 🟡 / 🔴 |
-| "We don't use AI to make decisions about you" | New feature uses ML scoring with human review | 🟢 / 🟡 / 🔴 |
-| "We don't transfer data outside [region]" | New sub-processor in [non-listed jurisdiction] | 🟢 / 🟡 / 🔴 |
+| "We collect [X, Y, Z]" | New feature also collects [W] | consistent / drift / conflict |
+| "We don't sell personal data" | New feature shares with [advertising partner] — may be a "sale" under CCPA/CPRA | consistent / drift / conflict |
+| "We retain data for the lifetime of your account" | New feature retains derived inferences for [longer period] | consistent / drift / conflict |
+| "We don't use AI to make decisions about you" | New feature uses ML scoring with human review | consistent / drift / conflict |
+| "We don't transfer data outside [region]" | New sub-processor in [non-listed jurisdiction] | consistent / drift / conflict |
 
-Resolution rule: any amber or red entry must be addressed before deployment — either by amending the privacy policy (the usual answer) or by changing the processing to come back into line with the existing policy. Flag this in the executive summary if any drift is identified, and add the policy-update action to Section 5's mitigations table with the policy owner named.
+Resolution rule: any drift or conflict entry must be addressed before deployment — either by amending the privacy policy (the usual answer) or by changing the processing to come back into line with the existing policy. The builder enforces the row-level half of this (an inconsistent row with no committed `action` is exit 1); the rest is on the manifest author: flag the drift in the executive summary, and repeat every resolution in Section 5's mitigations table with the policy owner named and a target date.
 
-If the controller's privacy policy is not available to counsel at the time of the DPIA, note this as an open question in Appendix B and recommend the check be completed before sign-off.
+If the controller's privacy policy is not available to counsel at the time of the DPIA — no notice profile, no pasted or fetchable notice — note this as an open question in Appendix B and recommend the check be completed before sign-off. Never populate the check from a notice reconstructed from memory: an invented commitment is a fabricated citation.
 
 ## Section 2 — Necessity and Proportionality (Art. 35(7)(b))
 
@@ -230,7 +230,8 @@ Author the manifest against this table, then run the builder:
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
 | Regulator-engagement table (§5) | one `regulatorTable` block — `{"notes":{"<code>":"reasoning"}}`; rows computed from `regulatorConclusions` + the registry, exit 1 on a declared regime without a conclusion |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
-| §1 Description, incl. §1.10 policy check | `heading` per sub-section + `para`; `table` for §1.5 data categories, §1.7 recipients, and the §1.10 consistency check |
+| §1 Description | `heading` per sub-section + `para`; `table` for §1.5 data categories and §1.7 recipients |
+| §1.10 policy consistency check | one `noticeCheck` block — `{"notice":{"source":"...","audience":"...","date":"...","profile":"..."},"rows":[{"commitment":"...","section":"...","processing":"...","verdict":"consistent|drift|conflict","action":"..."}]}`; verdicts colour-coded by the builder, `action` required on drift/conflict (exit 1), stale `notice.date` warns. Falls back to a `para` recording the Appendix B open question where no notice is available |
 | §2 Necessity and proportionality | `heading` + `para` throughout — prose, not tables |
 | §3 Stakeholder consultation | `heading` + `para` |
 | §4.2 Risk register | one `riskRegister` block (give it an `id` if the DPIA needs more than one); rows may add `mitigatedLikelihood`/`mitigatedSeverity` for the conditional-consultation pathway |

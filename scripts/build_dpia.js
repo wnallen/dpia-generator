@@ -166,6 +166,24 @@
  *         registry (never hand-authored — same rule as the matrix). A declared
  *         jurisdiction with no conclusion is exit 1. "notes" appends per-regime
  *         reasoning to the conclusion cell.
+ *   {"type":"noticeCheck","title":"...",                            // title optional
+ *    "notice":{"source":"https://acme.example/privacy",            // required: the notice URL or
+ *              "audience":"customers",                             //   document the commitments
+ *              "date":"2026-03-01",                                //   were read from; "date" =
+ *              "profile":"acme-notice-profile.yaml"},              //   when it was indexed
+ *    "rows":[{"commitment":"We collect only X and Y",              // verbatim from the notice
+ *             "section":"s. 4.2",                                  // optional pinpoint
+ *             "processing":"New feature also collects W",          // the new processing reality
+ *             "verdict":"consistent"|"drift"|"conflict",
+ *             "action":"Amend s. 4.2 - owner: Privacy PM"}]}       // REQUIRED on drift|conflict
+ *      -- renders the Section 1.10 privacy-notice consistency table, computed
+ *         per row: verdict cells are colour-coded from the same palette as the
+ *         ratings, a drift/conflict row with no "action" is exit 1 (the
+ *         resolution rule — inconsistency must be resolved before deployment —
+ *         is a gate, not advice), any drift/conflict appends the builder-owned
+ *         resolution footnote, and a notice indexed more than six months before
+ *         the assessment date warns on stderr. Rows come from the controller's
+ *         notice profile (references/notice-profile.md) where one exists.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
  */
 
@@ -217,6 +235,14 @@ const RATING_STYLE = {
   Low:    { fill: 'C6EFCE', color: '006100' },
   Medium: { fill: 'FFEB9C', color: '9C5700' },
   High:   { fill: 'FFC7CE', color: '9C0006' },
+};
+
+// noticeCheck verdict vocabulary. Colour-coded from the same palette as the
+// ratings so a reviewer reads drift severity the way they read risk severity.
+const VERDICTS = {
+  consistent: { label: 'Consistent', style: RATING_STYLE.Low },
+  drift:      { label: 'Drift',      style: RATING_STYLE.Medium },
+  conflict:   { label: 'Conflict',   style: RATING_STYLE.High },
 };
 
 // ------------------------------------------------------- jurisdiction registry
@@ -794,6 +820,82 @@ function build(manifest, state) {
         });
         children.push(p(b.title || 'Regulator engagement — conclusions by jurisdiction', { bold: true, after: 100 }));
         children.push(dataTable(['Regime', 'Engagement mechanism', 'Conclusion'], rows, [18, 46, 36]));
+        children.push(p('', { after: 120 }));
+        break;
+      }
+      case 'noticeCheck': {
+        // Section 1.10 privacy-notice consistency check, computed per row — the
+        // drift table a DPO reads must carry the resolution the manifest
+        // committed to, never a bare red cell. Rows come from the controller's
+        // notice profile (references/notice-profile.md) where one exists;
+        // "notice" records the provenance that makes each commitment quotable.
+        if (!b.notice || typeof b.notice !== 'object' || Array.isArray(b.notice) ||
+            !b.notice.source || !String(b.notice.source).trim()) {
+          fail(1, `${ctx}: needs "notice.source" — the published notice (URL or document) the commitments ` +
+                  'were read from. A consistency check with no stated notice is not checkable.');
+        }
+        if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
+        if (b.notice.date !== undefined && b.notice.date !== null) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.notice.date))) fail(1, `${ctx}: "notice.date" must be YYYY-MM-DD`);
+          // Staleness is a check-by date, not a hard stop: the check still
+          // renders, but a profile older than ~6 months may pass against
+          // commitments the published notice no longer makes.
+          const ageDays = (new Date(manifest.date) - new Date(String(b.notice.date))) / 86400000;
+          if (ageDays > 183) {
+            process.stderr.write(`build_dpia: WARNING — the notice behind ${ctx} was indexed ${b.notice.date}, ` +
+              `more than six months before this assessment (${manifest.date}). Re-fetch the published notice and ` +
+              're-verify the profile before relying on the consistency check.\n');
+          }
+        }
+        let unresolved = false;
+        const rows = b.rows.map((r, j) => {
+          const rctx = `${ctx} row ${j + 1}`;
+          if (!r.commitment || !String(r.commitment).trim() || !r.processing || !String(r.processing).trim()) {
+            fail(1, `${rctx}: needs "commitment" (verbatim from the notice) and "processing" (the new reality it is checked against)`);
+          }
+          const v = own(VERDICTS, String(r.verdict === undefined || r.verdict === null ? '' : r.verdict).toLowerCase());
+          if (!v) fail(1, `${rctx}: "verdict" must be consistent|drift|conflict, got ${JSON.stringify(r.verdict)}`);
+          const inconsistent = v !== VERDICTS.consistent;
+          if (inconsistent && !(r.action && String(r.action).trim())) {
+            fail(1, `${rctx}: a ${JSON.stringify(String(r.verdict).toLowerCase())} verdict requires an "action" — ` +
+                    'the resolution rule (amend the notice or change the processing before deployment, with a named ' +
+                    'owner) is a gate, not advice. An inconsistency with no committed resolution is an unfinished check.');
+          }
+          if (inconsistent) unresolved = true;
+          return {
+            commitment: String(r.commitment) + (r.section ? ` (${r.section})` : ''),
+            processing: String(r.processing),
+            label: v.label, style: v.style,
+            action: inconsistent ? String(r.action) : '—',
+          };
+        });
+        const prov = [String(b.notice.source)];
+        if (b.notice.audience) prov.push(`${b.notice.audience} notice`);
+        if (b.notice.date) prov.push(`indexed ${b.notice.date}`);
+        if (b.notice.profile) prov.push(`profile: ${b.notice.profile}`);
+        children.push(p(b.title || 'Privacy policy consistency check', { bold: true, after: 100 }));
+        children.push(p('Checked against: ' + prov.join(' — '), { italic: true, size: 18 }));
+        const w = [30, 30, 12, 28];
+        const head = new TableRow({
+          tableHeader: true,
+          children: ['Policy commitment', 'New processing reality', 'Verdict', 'Resolution']
+            .map((c, i) => cell(c, { bold: true, fill: 'D9E2F3', width: w[i] })),
+        });
+        const body = rows.map(r => new TableRow({
+          children: [
+            cell(r.commitment, { width: w[0] }),
+            cell(r.processing, { width: w[1] }),
+            cell(r.label, { width: w[2], align: AlignmentType.CENTER, bold: true, ...r.style }),
+            cell(r.action, { width: w[3] }),
+          ],
+        }));
+        children.push(table([head, ...body]));
+        if (unresolved) {
+          children.push(p('* One or more published-notice commitments are inconsistent with the proposed processing. ' +
+            'The processing must not deploy until each is resolved — by amending the notice or changing the ' +
+            'processing — and each resolution above must appear in Section 5’s mitigations with a named ' +
+            'owner and target date. Flag the drift in the executive summary.', { italic: true, size: 18 }));
+        }
         children.push(p('', { after: 120 }));
         break;
       }
