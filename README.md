@@ -1,5 +1,7 @@
 # DPIA Generator
 
+[![tests](https://github.com/wnallen/dpia-generator/actions/workflows/test.yml/badge.svg)](https://github.com/wnallen/dpia-generator/actions/workflows/test.yml)
+
 A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR (and its analogs in other covered jurisdictions) for a client's privacy register.
 
 Given a description of a new or modified processing activity, the Skill gathers what is missing, maps the applicable regimes, and screens each regime's own trigger. Coverage is EU/UK GDPR plus one module per further jurisdiction in `references/jurisdictions/` — currently the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Indonesia, Vietnam, Australia, South Korea, and Kenya; that directory is the authoritative list. The analysis is anchored in real published DPIAs and regulator guidance (ICO, CNIL, EDPB, CPPA, ANPD, and peers), and risks are scored on a 3×3 likelihood × severity matrix. The deliverable is a reasoned Word document: cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, per-regime regulator-engagement flags (Article 36 prior consultation and its analogs), and a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
@@ -53,6 +55,9 @@ dpia-generator/
 ├── package.json                      # Pinned docx dependency; `npm test` runs the suite
 ├── package-lock.json
 ├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── test.yml                  # CI: runs the regression suite on every push and PR
 ├── docs/
 │   └── eval-prompts.md               # Graded skill-level eval prompts (workflow behaviors
 │                                     #   the regression suite cannot test)
