@@ -1,0 +1,17 @@
+{
+  "systemName": "Bad Calendar Date",
+  "date": "2026-02-31",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": { "source": "https://acme.example/privacy", "date": "2025-01-01" },
+      "rows": [
+        {
+          "commitment": "We collect only account data",
+          "processing": "Unchanged",
+          "verdict": "consistent"
+        }
+      ]
+    }
+  ]
+}

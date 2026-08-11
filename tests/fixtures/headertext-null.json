@@ -1,0 +1,11 @@
+{
+  "systemName": "Null Header",
+  "date": "2026-08-11",
+  "headerText": null,
+  "blocks": [
+    {
+      "type": "para",
+      "text": "A manifest carrying the schema's documented default literally must get the derived default header, not a page header reading \"null\"."
+    }
+  ]
+}
