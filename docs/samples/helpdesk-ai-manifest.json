@@ -1,0 +1,176 @@
+{
+  "systemName": "HelpDesk AI Assistant",
+  "date": "2026-08-11",
+  "version": "1.0 — DRAFT FOR DPO REVIEW",
+  "controller": "Meridian Retail Ltd",
+  "dpo": "A. Okafor, Data Protection Officer",
+  "reference": "[DPIA-2026-014]",
+  "status": "Draft",
+  "jurisdictions": ["eu-gdpr", "uk-gdpr"],
+  "regulatorConclusions": {
+    "eu-gdpr": {"priorConsultation": "conditional"},
+    "uk-gdpr": {"priorConsultation": "conditional"}
+  },
+  "blocks": [
+    {"type": "heading", "level": 1, "text": "EXECUTIVE SUMMARY"},
+    {"type": "para", "text": "This DPIA assesses the HelpDesk AI Assistant, a customer-facing support chatbot that answers order, delivery, returns and account questions for Meridian Retail Ltd customers in the EU and the UK by processing chat transcripts, account identifiers, order history and any personal data customers volunteer in free text, using a third-party large language model hosted by Nimbus AI Inc. (United States) as a processor."},
+    {"type": "para", "text": "A DPIA is mandatory. The processing meets at least two of the WP29 nine criteria endorsed by the EDPB (Guidelines wp248rev.01): innovative use of a new technological solution (generative AI in a consumer-facing channel) and data processed on a large scale (approximately 1.2 million customer contacts per year across 14 EU member states and the UK). Free-text input also creates a realistic likelihood of incidental special-category data (Article 9) entering the system, which the ICO's screening checklist treats as an independent trigger. The assessment is therefore conducted under Article 35(1) GDPR and Article 35 UK GDPR, not as a voluntary accountability artifact."},
+    {"type": "para", "text": "Top residual risks after existing controls:"},
+    {"type": "bullets", "items": [
+      "R2 — Incidental special-category data volunteered in free text is transmitted to the vendor LLM and retained in transcripts (residual HIGH — drives the conditional Article 36 conclusion; falls to Medium once the Section 5 input-redaction mitigation is implemented).",
+      "R5 — Compromise of the transcript store exposing up to 30 days of customer conversations (residual MEDIUM).",
+      "R1 — Vendor use of customer transcripts to train or improve its models beyond the contract (residual LOW after the no-training clause and zero-retention API configuration).",
+      "R3 — Hallucinated or inaccurate chatbot statements causing customer detriment, e.g. wrong refund or cancellation information (residual LOW after human escalation and disclaimer controls).",
+      "R4 — Cross-border transfer of transcripts to the United States without adequate safeguards (residual LOW under the vendor's EU–US Data Privacy Framework certification, with SCCs and a transfer impact assessment as fallback)."
+    ]},
+    {"type": "para", "text": "Article 36 prior consultation: conditional. One residual risk (R2) rates High, but its post-mitigation score falls to Medium once the pre-transmission redaction filter in Section 5 is implemented before launch. Prior consultation with the competent supervisory authority (lead authority: the Irish DPC for EU establishment; the ICO for UK processing) is therefore required only if the controller proceeds to processing without implementing that mitigation. With the mitigation implemented before processing commences, no residual risk rates High and consultation is not required."},
+    {"type": "para", "text": "Recommendation: proceed conditionally. The controller should implement the Section 5 mitigations — in particular the input-redaction filter (R2) and the privacy-notice amendment resolving the drift identified in Section 1.10 — before the HelpDesk AI Assistant is put into production. On that basis the processing is proportionate to its purpose and defensible under Article 35."},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION OF THE PROCESSING (ART. 35(7)(a))"},
+    {"type": "heading", "level": 2, "text": "1.1 Nature of the processing"},
+    {"type": "para", "text": "The HelpDesk AI Assistant is embedded in the controller's website and mobile app. On each customer contact it collects the chat text, links the session to the customer's account where the customer is signed in, retrieves order and delivery records to ground its answers, transmits the conversation context to Nimbus AI Inc.'s hosted large language model for response generation, and stores the transcript for 30 days for quality assurance and dispute handling. Processing operations: collection, structuring, retrieval, AI inference, transmission to a processor, storage, and scheduled erasure."},
+    {"type": "heading", "level": 2, "text": "1.2 Scope"},
+    {"type": "para", "text": "Approximately 1.2 million customer contacts per year; an estimated 700,000 unique data subjects across 14 EU member states and the UK; continuous availability. The chatbot handles first-line contact only; an estimated 22% of sessions escalate to human agents."},
+    {"type": "heading", "level": 2, "text": "1.3 Context"},
+    {"type": "para", "text": "Data subjects are retail customers in an ordinary consumer relationship with the controller. Customers reasonably expect their questions to be answered and their order data to be used for that purpose; they do not reasonably expect their conversations to be used to train third-party AI models, which the controls in Section 4 and the vendor contract exclude. The chat interface discloses at session start that the customer is talking to an AI assistant and offers a route to a human agent."},
+    {"type": "heading", "level": 2, "text": "1.4 Purposes"},
+    {"type": "para", "text": "(i) Answering customer service enquiries (lawful basis: Article 6(1)(b), performance of the contract, for account and order matters); (ii) quality assurance and dispute handling over a 30-day window (Article 6(1)(f), legitimate interests); (iii) aggregate service analytics on de-identified data (Article 6(1)(f)). No purpose involves advertising, profiling for marketing, or automated decisions with legal or similarly significant effect."},
+    {"type": "heading", "level": 2, "text": "1.5 Categories of personal data"},
+    {"type": "table", "columns": ["Data category", "Examples", "Special category (Y/N)", "Source"], "rows": [
+      ["Identity and account data", "Name, customer ID, email", "N", "Customer account"],
+      ["Order and transaction data", "Order history, delivery address, refund status", "N", "Controller's order system"],
+      ["Chat transcript free text", "Whatever the customer types, including volunteered health or other sensitive references", "Incidentally Y", "Data subject"],
+      ["Technical/session data", "Device type, session ID, timestamps", "N", "Collected automatically"]
+    ], "widths": [22, 34, 18, 26]},
+    {"type": "heading", "level": 2, "text": "1.6 Categories of data subjects"},
+    {"type": "para", "text": "Retail customers and prospective customers using the chat channel. The service is not directed at children, but the retail site has no age gate; the possibility of child users is recorded as an open question in Appendix B."},
+    {"type": "heading", "level": 2, "text": "1.7 Recipients and processors"},
+    {"type": "table", "columns": ["Recipient", "Role", "Location", "Lawful basis for sharing"], "rows": [
+      ["Nimbus AI Inc.", "Processor (LLM inference)", "United States", "Art. 28 DPA; transfer per §1.9"],
+      ["CloudPrime EU S.à r.l.", "Sub-processor (transcript storage)", "Luxembourg (EU)", "Art. 28(2) authorised sub-processor"],
+      ["Internal support agents", "Controller personnel", "EU/UK", "Internal access under Art. 6(1)(b)/(f)"]
+    ], "widths": [25, 27, 20, 28]},
+    {"type": "heading", "level": 2, "text": "1.8 Retention"},
+    {"type": "para", "text": "Chat transcripts: 30 days, then automatic deletion (quality assurance and dispute window). Vendor-side: zero retention — the Nimbus AI API is configured for no persistence of prompts or outputs beyond the inference call. Aggregate analytics: retained indefinitely in de-identified form only. Account and order data follow the controller's existing retention schedule and are not extended by this processing."},
+    {"type": "heading", "level": 2, "text": "1.9 Cross-border transfers"},
+    {"type": "para", "text": "Transcript context is transmitted to Nimbus AI Inc. in the United States at inference time. Nimbus AI is certified under the EU–US Data Privacy Framework and its UK Extension; the parties have additionally executed the 2021 EU SCCs (Module 2) and the UK IDTA Addendum as fallback mechanisms, supported by a transfer impact assessment completed 2026-06-30. No other third-country transfer occurs; storage is EU-resident."},
+    {"type": "heading", "level": 2, "text": "1.10 Privacy policy consistency check"},
+    {"type": "noticeCheck",
+     "notice": {"source": "https://www.meridianretail.example/privacy", "audience": "customers", "date": "2026-05-10"},
+     "rows": [
+       {"commitment": "We use your order information to provide customer support.", "section": "s. 3", "processing": "Chatbot retrieves order history to ground answers — same purpose, new channel.", "verdict": "consistent"},
+       {"commitment": "We do not share your personal data with third parties except delivery partners and payment providers.", "section": "s. 6", "processing": "Chat transcripts and account context are now transmitted to Nimbus AI Inc., an AI processor not named in the notice.", "verdict": "drift", "action": "Amend s. 6 to name AI service providers as a processor category before launch — owner: Privacy PM, target 2026-09-01."},
+       {"commitment": "We keep chat and contact records only as long as needed to resolve your query.", "section": "s. 7", "processing": "Fixed 30-day transcript retention for QA extends beyond some query resolutions.", "verdict": "drift", "action": "State the 30-day QA retention window in s. 7 in the same amendment — owner: Privacy PM, target 2026-09-01."}
+     ]},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 2 — NECESSITY AND PROPORTIONALITY (ART. 35(7)(b))"},
+    {"type": "heading", "level": 2, "text": "2.1 Necessity"},
+    {"type": "para", "text": "The purpose — resolving customer enquiries at scale — cannot be met by the existing human-agent channel alone without service degradation the controller has documented (median first-response time of 14 hours at peak). Less-intrusive alternatives considered: (i) a rules-based FAQ bot — rejected as unable to handle order-specific queries, which are 60% of contacts; (ii) an LLM without account linkage — rejected because unlinked sessions cannot answer order questions and push customers to the slower channel; (iii) an EU-hosted open-weights model — evaluated and retained as a medium-term option in Section 5, but current quality is materially lower for the languages required. Account linkage is limited to signed-in sessions; anonymous chat remains available."},
+    {"type": "heading", "level": 2, "text": "2.2 Lawful basis"},
+    {"type": "para", "text": "Article 6(1)(b) covers processing needed to answer account and order enquiries within the customer contract. Quality assurance and dispute handling rely on Article 6(1)(f); the legitimate-interests assessment (necessity, balancing, safeguards) is summarised here: the controller's interest in accurate service and dispute defence is real and lawful, 30-day retention is the least intrusive workable window, and data subjects retain an unconditional route to a human agent. Incidental special-category data volunteered by customers is not sought, is not used for any inference or decision, and is addressed under Article 9(2)(e) only where manifestly made public — which cannot be assumed — so the operative control is prevention and minimisation (the R2 redaction mitigation), not a claimed Article 9 basis. This is deliberately conservative: the design position is that no Article 9 processing purpose exists, and any special-category data in transcripts is an incident to be minimised, not an asset."},
+    {"type": "heading", "level": 2, "text": "2.3 Data minimization"},
+    {"type": "para", "text": "The inference payload is limited to the current conversation, the customer's open orders, and delivery status — not the full order history or browsing data. Session data is limited to what session continuity requires. The Section 5 redaction filter will strip detected special-category references and payment card data before transmission to the vendor."},
+    {"type": "heading", "level": 2, "text": "2.4 Accuracy"},
+    {"type": "para", "text": "LLM outputs about a data subject's order are generated from retrieved records, which bounds hallucination for factual account matters; nonetheless the model can misstate policy or invent commitments (R3). Controls: answers citing order data are template-constrained; policy answers carry a visible accuracy disclaimer; customers can escalate to a human agent at any time; QA review samples 2% of transcripts weekly. Model outputs are not written back into customer records."},
+    {"type": "heading", "level": 2, "text": "2.5 Storage limitation"},
+    {"type": "para", "text": "The 30-day transcript window in §1.8 is tied to the QA and dispute purposes; deletion is automated and verified monthly. Vendor-side zero retention is contractual and configuration-enforced."},
+    {"type": "heading", "level": 2, "text": "2.6 Purpose limitation"},
+    {"type": "para", "text": "The principal function-creep risk is re-use of transcripts for model training or marketing analytics. Both are contractually excluded (no-training clause; DPA purpose limitation) and technically constrained (zero-retention API). Any future training use would be a new purpose requiring a revised DPIA — recorded as a review trigger in §7.3."},
+    {"type": "heading", "level": 2, "text": "2.7 Data subject rights"},
+    {"type": "para", "text": "Access (Art. 15): transcripts are account-linked and retrievable within the 30-day window. Erasure (Art. 17): deletion on request is supported ahead of the automatic 30-day deletion. Objection (Art. 21): customers can opt for the human channel at any point, which stops chatbot processing for that contact. Article 22 is not engaged: the chatbot makes no decision with legal or similarly significant effect — refunds and account actions above €25 require human agent confirmation. Rights information is surfaced in the chat interface footer."},
+    {"type": "heading", "level": 2, "text": "2.8 Proportionality conclusion"},
+    {"type": "para", "text": "The processing as designed is conditionally proportionate to its purpose: proportionate once the Section 5 mitigations — pre-transmission redaction (R2) and the privacy-notice amendments (§1.10) — are implemented before launch, because the remaining intrusion is limited, expected by data subjects in a support context, and bounded by short retention and contractual purpose limits."},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 3 — CONSULTATION OF STAKEHOLDERS (ART. 35(2), (9))"},
+    {"type": "heading", "level": 2, "text": "3.1 DPO consultation"},
+    {"type": "para", "text": "The DPO (A. Okafor) was consulted on 2026-07-28 and 2026-08-06; the DPO's advice — that launch be conditioned on the R2 redaction filter and the notice amendment — is reflected in Sections 5 and 7 and adopted in this draft. Formal DPO sign-off is pending on the cover status."},
+    {"type": "heading", "level": 2, "text": "3.2 Data subject consultation"},
+    {"type": "para", "text": "No direct consultation of customers has been conducted. Justification: the processing is a support-channel change within customers' reasonable expectations, and the controller relies on the June 2026 customer-panel research on chatbot acceptance (68% preference for instant AI response with a human fallback) as a proxy. This is a substituted analysis; a targeted question set in the next scheduled customer panel is recommended and recorded in Appendix B."},
+    {"type": "heading", "level": 2, "text": "3.3 Other stakeholders"},
+    {"type": "para", "text": "CISO (security review of the vendor integration, completed 2026-07-15); Head of Customer Care (business owner); the vendor-management function (DPA and no-training clause negotiation). No ethics committee exists; AI-governance review falls to the DPO under the controller's interim AI policy."},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT (ART. 35(7)(c))"},
+    {"type": "heading", "level": 2, "text": "4.1 Methodology"},
+    {"type": "para", "text": "Risks are assessed per the CNIL PIA methodology aligned with WP29 guidance, on a 3×3 likelihood × severity matrix; severity is judged from the data subject's perspective and likelihood from threat-actor capability and asset vulnerability. Ratings in the register are derived mechanically from the published matrix; the post-mitigation column scores the residual expected once the Section 5 mitigations are implemented."},
+    {"type": "heading", "level": 2, "text": "4.2 Risk register"},
+    {"type": "riskRegister", "id": "main", "rows": [
+      {"id": "R1", "risk": "Vendor uses customer transcripts to train or improve its models beyond the contracted inference purpose", "likelihood": "High", "severity": "Medium", "controls": "Contractual no-training clause; zero-retention API configuration; annual vendor audit right", "residualLikelihood": "Low", "residualSeverity": "Medium"},
+      {"id": "R2", "risk": "Incidental special-category data volunteered in free text (health, etc.) is transmitted to the vendor and retained in transcripts", "likelihood": "High", "severity": "High", "controls": "Chat-start guidance not to share sensitive details; 30-day transcript deletion; access controls on transcripts", "residualLikelihood": "Medium", "residualSeverity": "High", "mitigatedLikelihood": "Low", "mitigatedSeverity": "High"},
+      {"id": "R3", "risk": "Hallucinated or inaccurate chatbot statements cause customer detriment (wrong refund, cancellation or policy information)", "likelihood": "Medium", "severity": "Medium", "controls": "Template-constrained answers for account facts; accuracy disclaimer; unconditional human escalation; 2% weekly QA sampling", "residualLikelihood": "Low", "residualSeverity": "Medium"},
+      {"id": "R4", "risk": "US transfer of transcript context exposes customer data to access incompatible with EU/UK protection", "likelihood": "Medium", "severity": "Medium", "controls": "EU–US DPF certification (+UK Extension); SCCs Module 2 and UK Addendum as fallback; TIA completed 2026-06-30; zero vendor retention", "residualLikelihood": "Low", "residualSeverity": "Medium"},
+      {"id": "R5", "risk": "Compromise of the transcript store exposes up to 30 days of customer conversations including volunteered sensitive content", "likelihood": "Medium", "severity": "High", "controls": "Encryption at rest and in transit; role-based access; EU-resident storage; 30-day rolling deletion; SIEM monitoring", "residualLikelihood": "Low", "residualSeverity": "High"}
+    ]},
+    {"type": "heading", "level": 2, "text": "4.3 Risk-by-risk narrative"},
+    {"type": "para", "text": "R2 (residual High; post-mitigation Medium). Threat scenario: customers volunteer health, family or financial circumstances in free text (\"I missed the delivery because I was in hospital\"); that content is transmitted to the US vendor at inference time and sits in the transcript store for 30 days. The data subjects affected are any chat users, with severity judged High because volunteered content can include Article 9 data whose exposure the data subject cannot undo. Existing controls reduce frequency and retention but do not prevent transmission — hence residual High and the conditional Article 36 conclusion. The Section 5 redaction filter strips detected special-category and payment references before transmission, cutting likelihood to Low; severity is unchanged, honestly leaving a Medium post-mitigation rating rather than laundering the score."},
+    {"type": "para", "text": "R5 (residual Medium). Threat scenario: an external attacker or over-privileged insider reaches the transcript store; up to 30 days of conversations for active users are exposed. Severity stays High from the data subject's perspective (volunteered sensitive content), but encryption, role-based access, EU residency and the rolling deletion window bring likelihood to Low, rating Medium. The narrative for the remaining Low-rated risks (R1, R3, R4) is carried in Sections 2.4, 2.6 and 1.9 respectively."},
+    {"type": "heading", "level": 2, "text": "4.4 Risk matrix visualization"},
+    {"type": "matrix", "title": "Inherent risk distribution", "stage": "inherent", "source": "main"},
+    {"type": "matrix", "title": "Residual risk distribution (existing controls)", "stage": "residual", "source": "main"},
+    {"type": "matrix", "title": "Post-mitigation distribution (Section 5 measures implemented)", "stage": "mitigated", "source": "main"},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 5 — MEASURES TO ADDRESS RISKS (ART. 35(7)(d))"},
+    {"type": "table", "columns": ["Mitigation", "Type", "Owner", "Target date", "Effect on residual rating"], "rows": [
+      ["Pre-transmission redaction filter stripping detected special-category and payment-card references from chat text before vendor transmission, with quarterly recall testing", "Technical", "Engineering Lead, Chat Platform", "Before launch (target 2026-09-15)", "R2: Medium×High (High) → Low×High (Medium)"],
+      ["Amend privacy notice s. 6 (AI processor category) and s. 7 (30-day QA retention) per §1.10", "Transparency", "Privacy PM", "2026-09-01", "Resolves §1.10 drift; supports R1/R2 transparency"],
+      ["Add chat-interface just-in-time notice discouraging sharing of sensitive details, linked to the amended notice", "Transparency", "UX Lead", "Before launch", "R2 likelihood support"],
+      ["Contractual commitment review at vendor renewal: re-verify no-training clause and DPF certification status", "Contractual", "Vendor Management", "2027-06-30 (renewal)", "Sustains R1, R4 at Low"],
+      ["Evaluate EU-hosted model option at 12-month review to remove the US transfer", "Technical", "CTO", "2027-08-11", "Would retire R4"]
+    ], "widths": [34, 12, 18, 16, 20]},
+    {"type": "para", "text": "Article 36 Prior Consultation: conditional. Based on the residual risk assessment in Section 4, prior consultation with the competent supervisory authority under Article 36 GDPR (and Article 36 UK GDPR with the ICO) is required only if the controller proceeds without implementing the Section 5 mitigations: R2's residual rating is High, and its post-mitigation rating falls to Medium once the pre-transmission redaction filter is implemented before processing commences. With that mitigation in place at launch, no residual risk rates High and consultation is not required. The controller's stated intention is to implement before launch; the cover status remains Draft accordingly."},
+    {"type": "regulatorTable", "title": "Regulator engagement", "notes": {
+      "eu-gdpr": "R2 residual High with a scored post-mitigation pathway to Medium; lead authority Irish DPC.",
+      "uk-gdpr": "Same register and pathway; ICO consultation only if launched without the R2 mitigation."
+    }},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 6 — JURISDICTIONAL DIVERGENCE (UK GDPR)"},
+    {"type": "para", "text": "The analysis above applies under both EU GDPR and UK GDPR; the register, matrix and conclusions are shared. Divergence checked against the UK module: (i) the ICO's mandatory-DPIA list independently captures innovative-technology processing, confirming the mandatory conclusion in the UK; (ii) UK transfers rely on the UK Extension to the EU–US DPF with the IDTA Addendum as fallback — mechanism differs, outcome does not; (iii) the Data (Use and Access) Act 2025 changes to ADM do not alter the result because Article 22 is not engaged (§2.7); (iv) prior-consultation mechanics differ procedurally (ICO consultation practice) but the conditional trigger is the same. No divergence changes the substantive conclusion; the higher common standard is applied across both regimes."},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "SECTION 7 — CONCLUSION AND APPROVAL"},
+    {"type": "heading", "level": 2, "text": "7.1 Conclusion"},
+    {"type": "para", "text": "Proceed conditionally. The HelpDesk AI Assistant may enter production once the pre-transmission redaction filter and the privacy-notice amendments are implemented; on that basis no residual risk rates High, Article 36 consultation is not required in either regime, and the processing is proportionate under Article 35(7)(b)."},
+    {"type": "heading", "level": 2, "text": "7.2 Open items before sign-off"},
+    {"type": "bullets", "items": [
+      "Confirm implementation and recall-test results of the R2 redaction filter (Engineering, before launch).",
+      "Publish the amended privacy notice and confirm §1.10 drift rows are resolved (Privacy PM, 2026-09-01).",
+      "Assess child-user exposure on the chat channel and whether age-appropriate design duties apply (Appendix B).",
+      "Complete the targeted customer-panel questions substituting for Art. 35(9) consultation."
+    ]},
+    {"type": "heading", "level": 2, "text": "7.3 Review cadence"},
+    {"type": "para", "text": "Annual review (next: 2027-08-11), plus material-change triggers: any new sub-processor; any change to the vendor's training or retention terms; model replacement or major-version change; invalidation or material change of the EU–US DPF or UK Extension; any security incident touching the chat channel; any new purpose for transcripts (in particular training use, which requires a revised DPIA before it begins)."},
+    {"type": "heading", "level": 2, "text": "7.4 Sign-off"},
+    {"type": "signature", "rows": [
+      ["Controller (Meridian Retail Ltd)", "", ""],
+      ["Data Protection Officer", "", ""]
+    ]},
+    {"type": "pagebreak"},
+
+    {"type": "heading", "level": 1, "text": "APPENDIX A — REFERENCE DPIAS AND AUTHORITIES CITED"},
+    {"type": "bullets", "items": [
+      "Regulation (EU) 2016/679 (GDPR), Articles 5, 6, 9, 12–22, 28, 35, 36; Recitals 84, 89–95 [official publication]",
+      "UK GDPR and Data Protection Act 2018; Data (Use and Access) Act 2025 (ADM provisions) [official publication — DUAA commencement status: verify]",
+      "WP29 Guidelines on DPIA (wp248rev.01), as endorsed by the EDPB — nine-criteria screen [official publication]",
+      "CNIL PIA methodology (knowledge base and templates) — risk rubric [regulator site]",
+      "ICO DPIA guidance and mandatory-DPIA list [regulator site]",
+      "Analog: Dutch SLM Rijk / Privacy Company vendor DPIA programme on Microsoft 365 / Copilot (vendor-LLM contact-data pattern: contractual purpose limitation, telemetry minimisation, conditional launch) — used for the vendor-risk framing and the no-training contractual control; departures: consumer retail context, 3×3 rather than the programme's qualitative scale [verify — pattern applied from the published corpus, entry-level URL check pending]",
+      "EU–US Data Privacy Framework adequacy decision (2023) and UK Extension [official publication]"
+    ]},
+    {"type": "heading", "level": 1, "text": "APPENDIX B — OPEN QUESTIONS AND FOLLOW-UP ITEMS"},
+    {"type": "bullets", "items": [
+      "Child users: the retail site has no age gate; determine whether the chat channel needs age-appropriate design measures (ICO Children's Code applicability) before launch.",
+      "Vendor audit: the annual audit right has not yet been exercised; first audit scheduled for renewal (2027-06) — confirm the zero-retention configuration independently before then.",
+      "Art. 35(9): targeted customer-panel questions to replace the substituted acceptance research.",
+      "Confirm the DUAA 2025 ADM provisions' commencement status at the next review — marked verify in Appendix A."
+    ]},
+    {"type": "heading", "level": 1, "text": "APPENDIX C — REVISION HISTORY"},
+    {"type": "table", "columns": ["Version", "Date", "Author", "Summary of changes"], "rows": [
+      ["1.0", "2026-08-11", "dpia-generator (AI)", "Initial draft for DPO review."]
+    ], "widths": [12, 16, 28, 44]}
+  ]
+}
