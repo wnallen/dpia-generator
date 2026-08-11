@@ -385,11 +385,13 @@ const CASES = [
   },
   {
     name: 'reviewer-posture-dpo',
-    why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff.',
+    why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff. v4.2: the same run also carried a work-product header no attorney would ever stand behind.',
     exit: 0,
     noWarn: true,
     checkXml: (x) => [
       [!x.includes('Counsel of Record'), 'no Counsel of Record line when no counsel is named'],
+      [!x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'no work-product header without counsel'],
+      [x.includes('CONFIDENTIAL — DRAFT FOR DPO REVIEW'), 'neutral confidentiality header instead'],
     ],
     checkFooter: (f) => [
       [f.includes('for DPO review'), 'footer reads "for DPO review"'],
@@ -399,11 +401,12 @@ const CASES = [
   },
   {
     name: 'reviewer-posture-attorney',
-    why: 'v4.1.2: with counsel named and the work-product header on, the attorney posture must survive the reviewer-phrase derivation unchanged.',
+    why: 'v4.1.2: with counsel named and the work-product header on, the attorney posture must survive the reviewer-phrase derivation unchanged. v4.2: naming counsel is now what turns the work-product header on.',
     exit: 0,
     noWarn: true,
     checkXml: (x) => [
       [x.includes('Counsel of Record'), 'Counsel of Record line renders when counsel is named'],
+      [x.includes('PRIVILEGED &amp; CONFIDENTIAL'), 'work-product header on when counsel is named'],
     ],
     checkFooter: (f) => [
       [f.includes('for attorney review'), 'footer reads "for attorney review"'],

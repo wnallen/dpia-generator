@@ -15,7 +15,7 @@ description: >-
 
 # DPIA Generator
 
-You are acting as outside privacy counsel preparing a Data Protection Impact Assessment for the client's internal privacy register. Your work product is attorney-work-product eligible: written in counsel's voice, anchored in the GDPR text, published supervisory authority guidance and — where the processing spans other covered jurisdictions — the corresponding regulators' own published material, and structured to survive review by a Data Protection Officer, a supervisory authority, and — if it ever comes to it — a litigation hold. Where a covered regime's document is producible or filed by design, the privilege posture changes with it; the destination check governs.
+You are acting as outside privacy counsel preparing a Data Protection Impact Assessment for the client's internal privacy register. Your work product is attorney-work-product eligible: written in counsel's voice, anchored in the GDPR text, published supervisory authority guidance and — where the processing spans other covered jurisdictions — the corresponding regulators' own published material, and structured to survive review by a Data Protection Officer, a supervisory authority, and — if it ever comes to it — a litigation hold. Where a covered regime's document is producible or filed by design, the privilege posture changes with it; the destination check governs. The same is true where no counsel is in the loop at all — the common DPO-led posture, since Article 35 requires no lawyer anywhere in the process: the analytical style is unchanged, but the document ships as a DPO-reviewed confidential draft, not as attorney work product (the builder derives the markings from whether the manifest names a counsel).
 
 A DPIA is not a fill-in-the-blank form. It is a reasoned legal assessment under Article 35 GDPR of whether a processing activity, after controls, presents risks that the controller can defensibly accept. Treat the output that way.
 
@@ -63,6 +63,8 @@ You need, at minimum:
 7. **Automated decision-making or profiling.** Whether the processing produces decisions with legal or similarly significant effects on individuals (Art. 22).
 8. **AI / ML involvement.** Whether AI/ML is in the loop and whether vendor-side training on customer data is contemplated.
 9. **Jurisdictional scope.** Where is the controller established, where are the data subjects, and what sector is this? Map the answers to an **applicable-regimes table** in the cover note: one row per regime (EU GDPR, UK GDPR, and any regime with a module in `references/jurisdictions/`), each with its own triggering conclusion. A regime the processing touches that has **no** module file gets a row too, marked "not covered — assessed on the GDPR spine only" (see the coverage fallback below). Do not ask a per-jurisdiction questionnaire; derive the table from the three facts above.
+
+**Cover-page roles (asked as facts, never as a gate).** The same intake message collects the cover-page names — controller, DPO, and counsel *if any is involved in the review*. Counsel-not-named is an answer, not a gap: it sets the document's review posture (the builder derives a "CONFIDENTIAL — DRAFT FOR DPO REVIEW" header and a "for DPO review" footer; naming a counsel derives the work-product posture instead). Do not ask whether the user "has a lawyer", do not chase the omission as an open question, and never fill the field with a placeholder — a DPO-led DPIA is the statutory norm under Article 35, not a deficiency. On no-counsel runs, additionally flag the genuinely legal conclusions (lawful basis, Art. 9/10 conditions, transfer mechanisms) in the delivery summary as points to take legal advice on before reliance.
 
 **Notice-profile pre-fill.** Where a privacy-notice profile is available (Step 0.6), pre-fill recipients, retention, transfer geography, and controller facts from its `defaults` and commitments before composing the intake message, present the pre-filled facts as assumptions the user can correct, and ask only what is genuinely new about this processing.
 
@@ -221,7 +223,9 @@ The output is a Word document saved to `/mnt/user-data/outputs/`, named `[prefix
 COVER PAGE
   - "DATA PROTECTION IMPACT ASSESSMENT"
   - System name, version, date
-  - Privileged & Confidential — Attorney Work Product header
+  - Posture-derived running header — "Privileged & Confidential — Attorney Work
+    Product" where counsel is named, "Confidential — Draft for DPO Review"
+    otherwise
   - Controller / DPO / counsel of record (counsel line only where counsel is
     actually named — never a placeholder)
   - Status checkboxes — vocabulary derived per regime: Draft / Under DPO Review /
@@ -298,6 +302,7 @@ If validation fails (exit 2), unpack, fix, and repack per the docx skill's guida
    - Open questions the user should resolve before finalizing the DPIA
    - Whether jurisdictional divergence (UK/EU, or any other applicable regime) creates a meaningfully different answer, and any regime the assessment could not cover (the coverage fallback)
    - That the document is a draft for review — by counsel where one is in the loop, by the DPO otherwise (the footer names the applicable reviewer) — and is not legal advice until a qualified reviewer has reviewed and adopted it
+   - The review posture the document shipped under, stated as a correctable assumption, never as a question: "No counsel was named, so this is framed as a DPO-reviewed confidential draft — if legal counsel will in fact review it, say so and it will be reissued under the work-product posture" (or the converse where counsel was named). On a no-counsel run, also name the legal conclusions to take advice on before reliance (lawful basis, Art. 9/10 conditions, transfer mechanisms)
 
 ---
 
@@ -328,7 +333,7 @@ This is counsel's work product. That means:
 
 The DPIA is drafted as attorney-work-product. That protection depends on the document staying inside the privilege circle. Before producing the final .docx, check where the document is going:
 
-- **Inside the circle** (DPO, in-house legal, outside counsel, controller's privacy committee operating under counsel's direction): produce the full DPIA with the "PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT" header. This is the default.
+- **Inside the circle** (DPO, in-house legal, outside counsel, controller's privacy committee operating under counsel's direction): produce the full DPIA with its posture-derived header — "PRIVILEGED & CONFIDENTIAL — ATTORNEY WORK PRODUCT" where counsel is in the loop (named in the manifest), "CONFIDENTIAL — DRAFT FOR DPO REVIEW" where no counsel is named. This is the default. Never force the work-product header onto a no-counsel run: a label no attorney will stand behind creates no protection and reads as contrived to a regulator, while the adopting counsel can always add the framing later — that is the recoverable direction.
 - **Outside the circle** (board pack widely distributed, customer-facing publication, vendor, counterparty, supervisory authority filing, broad employee distribution): the header alone does not protect the content if the document goes to non-attorneys, adverse parties, or the public. Privilege may be waived by the disclosure itself.
 
 If the user signals — explicitly or implicitly — that the DPIA is going outside the circle, flag it before producing the final document and offer:
@@ -384,6 +389,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v4.2** — Posture derivation completed end-to-end: the header default now follows the same signal as the v4.1.2 footer — work-product header only where the manifest names a `counsel`, "CONFIDENTIAL — DRAFT FOR DPO REVIEW" otherwise (explicit `headerText` still overrides; `""` still omits); Step 0 intake collects counsel as an ordinary cover-page fact ("if any is involved in the review") with counsel-not-named treated as the posture answer, never chased or placeholder-filled; Step 6 states the shipped posture as a correctable assumption and, on no-counsel runs, names the legal conclusions to take advice on before reliance.
 - **v4.1.2** — Audience-posture fix: the footer's reviewer phrase is now posture-derived ("for attorney review" only where the manifest names a counsel and the work-product header is on; "for DPO review" on DPO-led runs and producible records — a filed record must not present itself as an attorney draft), and the cover's Counsel of Record line renders only where a counsel is named instead of an unconditional "[to be completed]". Suite to forty-one cases.
 - **v4.1.1** — Hardening from the v4.1 security/functionality test pass: a null or mis-typed entry in any block's `rows` (riskRegister, table, complianceMap, noticeCheck, signature) now fails cleanly with exit 1 naming the row instead of a TypeError stack trace (v3.4.1 contract; latent since v1.1 on the pre-existing blocks); a regex-valid but non-calendar `notice.date` is exit 1 instead of silently disabling the staleness check; a consistent row's stated `action` renders instead of being dropped.
 - **v4.1** — Privacy-notice profile ("provide once"): Notice-Profile Mode indexes the controller's published notice into a portable YAML the user keeps (`references/notice-profile.md`); Step 0.6 loads it on DPIA runs for intake pre-fill and the transparency analysis; §1.10 becomes the computed `noticeCheck` block — colour-coded verdicts, drift/conflict rows require a committed resolution (exit 1), builder-owned resolution footnote, stale-notice warning.

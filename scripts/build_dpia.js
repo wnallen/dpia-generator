@@ -120,10 +120,12 @@
  *                                              //   regimes that name the instrument
  *                                              //   differently (e.g. a US state
  *                                              //   "DATA PROTECTION ASSESSMENT")
- *   "headerText": null,                        // optional; default "PRIVILEGED &
- *                                              //   CONFIDENTIAL — ATTORNEY WORK
- *                                              //   PRODUCT". Set to "" to omit —
- *                                              //   deliberate for documents drafted
+ *   "headerText": null,                        // optional; default is posture-derived:
+ *                                              //   "PRIVILEGED & CONFIDENTIAL — ATTORNEY
+ *                                              //   WORK PRODUCT" where "counsel" is
+ *                                              //   named, "CONFIDENTIAL — DRAFT FOR
+ *                                              //   DPO REVIEW" otherwise. Set to "" to
+ *                                              //   omit — deliberate for documents drafted
  *                                              //   for regulator production where the
  *                                              //   privilege header cannot be
  *                                              //   sustained (see the destination
@@ -709,14 +711,22 @@ function coverPage(m, jur) {
 
 const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator skill.';
 
-// The privilege header is the default because the DPIA is drafted as counsel's
-// work product. It is parameterized because the default is not sustainable
-// everywhere: a document drafted for production to a regulator (a Colorado
-// assessment producible to the AG; a CPPA filing) must not carry a header the
-// disclosure itself would falsify. "" deliberately omits the header; the
-// per-regime privilege notes in references/jurisdictions/ say when to do that.
+// The header default is posture-derived (v4.2), like the footer's reviewer
+// phrase: the work-product header renders only where the manifest names a
+// counsel \u2014 a label no attorney will ever stand behind cannot create
+// protection and reads as contrived if a regulator sees it. A DPO-led run
+// (no counsel) gets a plain confidentiality marking instead; the adopting
+// counsel can always add the work-product framing, which is the recoverable
+// direction. An explicit "headerText" still overrides either default, and ""
+// deliberately omits the header entirely \u2014 for documents drafted for
+// regulator production where any confidentiality banner would be falsified
+// by the disclosure itself; the per-regime privilege notes in
+// references/jurisdictions/ say when to do that.
 function headerTextOf(m) {
-  return m.headerText !== undefined ? String(m.headerText) : 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT';
+  if (m.headerText !== undefined) return String(m.headerText);
+  return m.counsel
+    ? 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT'
+    : 'CONFIDENTIAL \u2014 DRAFT FOR DPO REVIEW';
 }
 function docTitleOf(m) {
   return m.docTitle ? String(m.docTitle) : 'DATA PROTECTION IMPACT ASSESSMENT';
