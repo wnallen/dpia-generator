@@ -1,0 +1,20 @@
+{
+  "systemName": "Orphan Mitigated Rating",
+  "date": "2026-08-11",
+  "art36": false,
+  "blocks": [
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Reidentification of pseudonymised records",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "Access controls",
+          "mitigatedRating": "Low"
+        }
+      ]
+    }
+  ]
+}

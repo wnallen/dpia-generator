@@ -182,7 +182,13 @@ const CASES = [
     ],
   },
   { name: 'unknown-block', why: 'Unknown block types fail loudly.', exit: 1, stderr: /unknown block type/ },
-  { name: 'bad-date', why: 'Date format is validated before anything is written.', exit: 1, stderr: /must be YYYY-MM-DD/ },
+  { name: 'bad-date', why: 'Date format is validated before anything is written.', exit: 1, stderr: /must be a real YYYY-MM-DD calendar date/ },
+  {
+    name: 'bad-calendar-date',
+    why: 'v4.2.1: a regex-valid but non-calendar manifest "date" ("2026-02-31" rolls over to March 3rd in V8) shipped on the cover and turned the notice-staleness arithmetic into a silent NaN no-op — the defect class v4.1.1 fixed for notice.date, latent on manifest.date.',
+    exit: 1,
+    stderr: /"date" must be a real YYYY-MM-DD calendar date, got "2026-02-31"/,
+  },
   { name: 'matrix-no-source', why: 'A matrix pointing at no register fails rather than rendering empty.', exit: 1, stderr: /no riskRegister named/ },
   {
     name: 'jurisdictions-unknown',
@@ -382,6 +388,22 @@ const CASES = [
       [f.includes('for DPO review') && !f.includes('for attorney review'),
         'producible record footer does not claim attorney review even with counsel named'],
     ],
+  },
+  {
+    name: 'headertext-null',
+    why: 'v4.2.1: "headerText": null — the schema\'s documented default, copied literally by a manifest author — rendered a page header (and cover banner) reading "null" instead of falling through to the posture-derived default.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!/>null</.test(x), 'no literal "null" text run in the document'],
+      [x.includes('CONFIDENTIAL — DRAFT FOR DPO REVIEW'), 'posture-derived default header applies'],
+    ],
+  },
+  {
+    name: 'mitigated-rating-orphan',
+    why: 'v4.2.1: a stated mitigatedRating with no mitigatedLikelihood/Severity failed the rating gate (exit 3) with "derived \\"null\\" from (null x null)", telling the user to re-examine scores that were never stated; it is a manifest error (exit 1) naming the missing fields.',
+    exit: 1,
+    stderr: /"mitigatedRating" requires "mitigatedLikelihood" and "mitigatedSeverity"/,
   },
   {
     name: 'reviewer-posture-dpo',

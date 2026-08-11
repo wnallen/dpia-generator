@@ -427,6 +427,18 @@ const REGIMES = {
   },
 };
 
+// Calendar-date check for manifest-supplied YYYY-MM-DD fields. The regex alone
+// is not enough ("2026-13-99" passes it), and neither is isNaN(new Date(...)):
+// V8 rolls an out-of-range day over into the next month ("2026-02-31" parses as
+// March 3rd), so the parsed date must round-trip to the exact input string. A
+// date that fails either way would put nonsense on the cover and silently
+// disable the NaN-vulnerable staleness arithmetic downstream.
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !isNaN(d) && d.toISOString().slice(0, 10) === s;
+}
+
 function norm(v, field, ctx) {
   if (v === undefined || v === null) fail(1, `${ctx}: missing "${field}"`);
   const s = String(v).trim();
@@ -495,6 +507,13 @@ function resolveRegister(rows) {
     const mL = hasML ? norm(r.mitigatedLikelihood, 'mitigatedLikelihood', ctx) : null;
     const mS = hasMS ? norm(r.mitigatedSeverity, 'mitigatedSeverity', ctx) : null;
     const mitigated = mL ? rate(mL, mS) : null;
+    // A stated mitigatedRating with no scores to derive from is a manifest
+    // error (exit 1), not a rating-gate contradiction: comparing it against a
+    // null derivation produced an exit 3 telling the user to re-examine
+    // likelihood/severity scores that were never stated.
+    if (r.mitigatedRating && !mitigated) {
+      fail(1, `${ctx}: "mitigatedRating" requires "mitigatedLikelihood" and "mitigatedSeverity" — the rating is derived from those scores, never stated alone`);
+    }
     if (r.inherentRating && String(r.inherentRating).trim() !== inherent) {
       violations.push(`${ctx}: stated inherentRating "${r.inherentRating}" != derived "${inherent}" from (${iL} x ${iS})`);
     }
@@ -723,7 +742,10 @@ const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator
 // by the disclosure itself; the per-regime privilege notes in
 // references/jurisdictions/ say when to do that.
 function headerTextOf(m) {
-  if (m.headerText !== undefined) return String(m.headerText);
+  // null means "no override, use the derived default" — the schema documents
+  // null as the field's default, so a manifest carrying it literally must not
+  // render a page header reading "null". Only "" suppresses the header.
+  if (m.headerText !== undefined && m.headerText !== null) return String(m.headerText);
   return m.counsel
     ? 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT'
     : 'CONFIDENTIAL \u2014 DRAFT FOR DPO REVIEW';
@@ -884,7 +906,7 @@ function build(manifest, state) {
         }
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
         if (b.notice.date !== undefined && b.notice.date !== null) {
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.notice.date)) || isNaN(new Date(String(b.notice.date)))) {
+          if (!isRealDate(String(b.notice.date))) {
             fail(1, `${ctx}: "notice.date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(b.notice.date)} — ` +
                     'a date that does not parse silently disables the staleness check.');
           }
@@ -1014,7 +1036,7 @@ function main() {
   try { m = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); }
   catch (e) { fail(1, 'manifest is not valid JSON: ' + e.message); }
   ['systemName', 'date'].forEach(k => { if (!m[k]) fail(1, `manifest: missing required "${k}"`); });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(m.date)) fail(1, 'manifest: "date" must be YYYY-MM-DD');
+  if (!isRealDate(String(m.date))) fail(1, `manifest: "date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(m.date)}`);
 
   // The manifest is authored from instructions that may include untrusted
   // ingested content (vendor pages, pasted specs), so both "outputDir" and
