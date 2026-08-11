@@ -12,7 +12,11 @@ Read this before authoring the manifest in Step 5. The structure below is the co
 **Every page should carry a footer with:**
 - Page X of Y
 - DPIA reference number (placeholder: `[DPIA-YYYY-NNN]`)
-- "AI-generated draft (dpia-generator) — for attorney review"
+- "AI-generated draft (dpia-generator) — [for attorney review / for DPO review]" — the reviewer
+  phrase is derived by the builder, not a manifest knob: "for attorney review" only where the
+  manifest names a `counsel` **and** the work-product header is on; "for DPO review" otherwise
+  (a DPO-led run with no counsel, or a producible record built with `"headerText": ""`). The
+  "AI-generated draft" half never varies.
 
 ## Cover Page
 
@@ -28,7 +32,7 @@ Version 1.0 — DRAFT FOR DPO REVIEW
 
 Controller: [Controller name — placeholder if unknown]
 Data Protection Officer: [DPO name — placeholder]
-Counsel of Record: [Counsel name — placeholder]
+Counsel of Record: [only when the manifest names a counsel — omitted otherwise]
 DPIA Reference: [DPIA-YYYY-NNN]
 
 Status: ☐ Draft  ☐ Under [reviewer] Review  ☐ Approved  [+ per-regime blocking states]
@@ -218,13 +222,13 @@ Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.
 
 ## Template → Manifest Mapping
 
-The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | AI-generated draft (dpia-generator) — for attorney review" footer and the cover generation notice (builder-owned, no manifest knob), the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
+The document is built by `scripts/build_dpia.js`, which owns everything on this list so that no run has to re-derive it: A4 portrait with 1100-twip margins, Calibri 11pt body, navy headings, the running "PRIVILEGED & CONFIDENTIAL" header, the "Page X of Y | reference | AI-generated draft (dpia-generator) — [reviewer phrase]" footer (reviewer phrase posture-derived; see File and Header above) and the cover generation notice (builder-owned, no manifest knob), the cover page and its status checkboxes, the register and matrix colour fills, and the likelihood × severity → rating mapping. None of that belongs in the manifest, and none of it should be reimplemented per run.
 
 Author the manifest against this table, then run the builder:
 
 | Template section | Manifest blocks |
 |---|---|
-| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes); optional `statusOptions` overrides the per-regime derived status vocabulary (see the cover-page section above). |
+| Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. `counsel` is genuinely optional: omit it on a DPO-led run and the cover carries no Counsel of Record line (and the footer says "for DPO review") — never fill it with a placeholder name. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the privileged header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes); optional `statusOptions` overrides the per-regime derived status vocabulary (see the cover-page section above). |
 | Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
 | Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |

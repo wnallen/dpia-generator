@@ -222,7 +222,8 @@ COVER PAGE
   - "DATA PROTECTION IMPACT ASSESSMENT"
   - System name, version, date
   - Privileged & Confidential — Attorney Work Product header
-  - Controller / DPO / counsel of record
+  - Controller / DPO / counsel of record (counsel line only where counsel is
+    actually named — never a placeholder)
   - Status checkboxes — vocabulary derived per regime: Draft / Under DPO Review /
     Approved, plus each declared regime's blocking state (Art. 36 box for EU/UK
     scope, FDPIC box for Swiss, agency-assessment box for Korean public-sector
@@ -296,7 +297,7 @@ If validation fails (exit 2), unpack, fix, and repack per the docx skill's guida
    - Whether the DPIA recommends Art. 36 prior consultation — required, not required, or conditional (required only if the Section 5 mitigations are not implemented)
    - Open questions the user should resolve before finalizing the DPIA
    - Whether jurisdictional divergence (UK/EU, or any other applicable regime) creates a meaningfully different answer, and any regime the assessment could not cover (the coverage fallback)
-   - That the document is a draft for attorney review — not legal advice until counsel has reviewed and adopted it
+   - That the document is a draft for review — by counsel where one is in the loop, by the DPO otherwise (the footer names the applicable reviewer) — and is not legal advice until a qualified reviewer has reviewed and adopted it
 
 ---
 
@@ -383,6 +384,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 Canonical version for this skill. `README.md`'s Changelog, where present, is the long-form
 record and must not contradict this section.
 
+- **v4.1.2** — Audience-posture fix: the footer's reviewer phrase is now posture-derived ("for attorney review" only where the manifest names a counsel and the work-product header is on; "for DPO review" on DPO-led runs and producible records — a filed record must not present itself as an attorney draft), and the cover's Counsel of Record line renders only where a counsel is named instead of an unconditional "[to be completed]". Suite to forty-one cases.
 - **v4.1.1** — Hardening from the v4.1 security/functionality test pass: a null or mis-typed entry in any block's `rows` (riskRegister, table, complianceMap, noticeCheck, signature) now fails cleanly with exit 1 naming the row instead of a TypeError stack trace (v3.4.1 contract; latent since v1.1 on the pre-existing blocks); a regex-valid but non-calendar `notice.date` is exit 1 instead of silently disabling the staleness check; a consistent row's stated `action` renders instead of being dropped.
 - **v4.1** — Privacy-notice profile ("provide once"): Notice-Profile Mode indexes the controller's published notice into a portable YAML the user keeps (`references/notice-profile.md`); Step 0.6 loads it on DPIA runs for intake pre-fill and the transparency analysis; §1.10 becomes the computed `noticeCheck` block — colour-coded verdicts, drift/conflict rows require a committed resolution (exit 1), builder-owned resolution footnote, stale-notice warning.
 - **v4.0.4** — Catalog expansion, no behavior change: `references/published-dpias.md` gains the Dutch SLM Rijk / SURF / Privacy Company vendor-DPIA corpus (M365, Copilot, Zoom), UK health DPIAs (NHS COVID-19 app, Federated Data Platform), further police and Scottish Government publications, two more ICO children's-code samples, and a Discovery Corpora section (WhatDoTheyKnow, Canadian PIA summaries, Australian PIA registers); catalog header now states the per-entry verification convention.

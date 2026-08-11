@@ -84,8 +84,12 @@
  *
  * GENERATION TRANSPARENCY (v4.0, no manifest knob)
  * Every document self-identifies as an AI-generated draft of the dpia-generator
- * skill — cover notice, footer line, and file metadata — for attorney review
- * and adoption. This is builder-owned text and deliberately not overridable.
+ * skill — cover notice, footer line, and file metadata — for human review and
+ * adoption. This is builder-owned text and deliberately not overridable. The
+ * footer's reviewer phrase is posture-derived, not a knob (v4.1.2): "for
+ * attorney review" only where counsel is named AND the work-product header is
+ * on; "for DPO review" otherwise — a DPO-led run has no attorney to review it,
+ * and a producible record must not tell a regulator it is an attorney draft.
  *
  * MANIFEST SCHEMA
  * {
@@ -93,7 +97,9 @@
  *   "date": "2026-07-25",                      // required, YYYY-MM-DD
  *   "version": "1.0 - DRAFT FOR DPO REVIEW",   // optional
  *   "controller": "Acme Ltd",                  // optional; placeholder if omitted
- *   "dpo": "...", "counsel": "...",            // optional
+ *   "dpo": "...", "counsel": "...",            // optional; "counsel" also gates the
+ *                                              //   cover's Counsel of Record line and
+ *                                              //   the footer's reviewer phrase
  *   "reference": "[DPIA-2026-001]",            // optional
  *   "status": "Draft",                         // cover checkbox vocabulary is DERIVED
  *                                              //   from "jurisdictions": Draft | Under
@@ -681,7 +687,10 @@ function coverPage(m, jur) {
     p(m.date, { align: AlignmentType.CENTER, after: 500 }),
     line('Controller', m.controller),
     line('Data Protection Officer', m.dpo),
-    line('Counsel of Record', m.counsel),
+    // Counsel of Record renders only where counsel exists: an unconditional
+    // "[to be completed]" implies a role many controllers do not staff and
+    // invites attributing the draft to a person before adoption.
+    ...(m.counsel ? [line('Counsel of Record', m.counsel)] : []),
     line('DPIA Reference', m.reference || '[DPIA-YYYY-NNN]'),
     p('', { after: 400 }),
     p(statusLine, { align: AlignmentType.CENTER, size: 20 }),
@@ -711,6 +720,16 @@ function headerTextOf(m) {
 }
 function docTitleOf(m) {
   return m.docTitle ? String(m.docTitle) : 'DATA PROTECTION IMPACT ASSESSMENT';
+}
+
+// The footer's reviewer phrase follows the document's posture rather than a
+// manifest knob. "for attorney review" is only honest where the run actually
+// has counsel in the loop and the document keeps the work-product header; a
+// DPO-led run (no counsel named) or a producible record (header suppressed)
+// gets "for DPO review" — the reviewing officer the cover already names
+// uniformly across regimes. The "AI-generated draft" half never varies.
+function reviewerTextOf(m) {
+  return headerTextOf(m) && m.counsel ? 'for attorney review' : 'for DPO review';
 }
 
 // ---------------------------------------------------------------- build
@@ -962,7 +981,7 @@ function build(manifest, state) {
             alignment: AlignmentType.CENTER,
             children: [new TextRun({
               children: ['Page ', PageNumber.CURRENT, ' of ', PageNumber.TOTAL_PAGES,
-                `   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   AI-generated draft (dpia-generator) — for attorney review`],
+                `   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   AI-generated draft (dpia-generator) — ${reviewerTextOf(manifest)}`],
               font: FONT, size: 16, color: '595959',
             })],
           })],

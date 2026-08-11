@@ -46,6 +46,21 @@ sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read('word/document.xml').decode()
   return execFileSync('python3', ['-c', py, docxPath], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 }
 
+// footerText(doc) -> visible runs of every footer part, joined. The reviewer
+// phrase lives in word/footer*.xml, which docText/rawXml never see.
+function footerText(docxPath) {
+  const py = `
+import sys, zipfile, re
+z = zipfile.ZipFile(sys.argv[1])
+out = []
+for n in z.namelist():
+    if re.match(r'word/footer\\d*\\.xml$', n):
+        x = z.read(n).decode()
+        out += [re.sub(r'<[^>]+>', '', s) for s in re.findall(r'<w:t[^>]*>(.*?)</w:t>', x, re.S)]
+sys.stdout.write(' \\u2016 '.join(r.strip() for r in out if r.strip()))`;
+  return execFileSync('python3', ['-c', py, docxPath], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+}
+
 const STAR = /‖\s*High \*\s*‖/;          // a starred rating cell in the register
 const FOOTNOTE = /Article 36 prior consultation .* (is|are) engaged/;
 
@@ -363,6 +378,36 @@ const CASES = [
       [x.includes('DATA PROTECTION ASSESSMENT'), 'overridden document title present'],
       [x.includes('AI-GENERATED DRAFT'), 'generation notice survives privilege-header suppression'],
     ],
+    checkFooter: (f) => [
+      [f.includes('for DPO review') && !f.includes('for attorney review'),
+        'producible record footer does not claim attorney review even with counsel named'],
+    ],
+  },
+  {
+    name: 'reviewer-posture-dpo',
+    why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!x.includes('Counsel of Record'), 'no Counsel of Record line when no counsel is named'],
+    ],
+    checkFooter: (f) => [
+      [f.includes('for DPO review'), 'footer reads "for DPO review"'],
+      [!f.includes('for attorney review'), 'footer does not claim attorney review'],
+      [f.includes('AI-generated draft (dpia-generator)'), 'generation-transparency half of the footer intact'],
+    ],
+  },
+  {
+    name: 'reviewer-posture-attorney',
+    why: 'v4.1.2: with counsel named and the work-product header on, the attorney posture must survive the reviewer-phrase derivation unchanged.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [x.includes('Counsel of Record'), 'Counsel of Record line renders when counsel is named'],
+    ],
+    checkFooter: (f) => [
+      [f.includes('for attorney review'), 'footer reads "for attorney review"'],
+    ],
   },
 ];
 
@@ -397,6 +442,7 @@ function run() {
         const asserts = []
           .concat(c.check ? c.check(docText(outPath)) : [])
           .concat(c.checkXml ? c.checkXml(rawXml(outPath)) : [])
+          .concat(c.checkFooter ? c.checkFooter(footerText(outPath)) : [])
           .concat(c.checkPath ? c.checkPath(outPath, tmp) : []);
         asserts.forEach(([ok, label]) => { if (!ok) problems.push(label); });
       }
