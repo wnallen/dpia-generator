@@ -51,6 +51,7 @@ applies for the statutory assessments. UNVERIFIED.
 
 ## 4. Source notes
 
-- PDPA 2012 (as amended 2020) — sso.agc.gov.sg. UNVERIFIED.
-- PDPC, Guide to DPIAs (2021) — URL above. `[web search — verify]`.
+- PDPA 2012 (as amended 2020) — sso.agc.gov.sg. UNVERIFIED. (No 2025–2026 amendments surfaced by the 2026-08-11 corroboration pass.)
+- PDPC, Guide to DPIAs (2021) — URL above. `[web search — verify]`. Still the current edition (14 September 2021) as of 2026-08-11 — no revision found.
 - PDPC advisory guidelines on the legitimate interests exception and deemed consent. UNVERIFIED.
+- PDPC Advisory Guidelines on use of personal data in **AI recommendation and decision systems** (2024-03-01) and on **Children's Personal Data** (2024-03-28 — encourages DPIAs for child-accessible services). `[web search — verify]` (corroborated 2026-08-11); cite for AI- or child-scope Singapore runs.

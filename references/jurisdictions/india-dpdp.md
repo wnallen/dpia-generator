@@ -6,12 +6,20 @@ processing activity, and it runs on a **calendar**, not a launch gate. If the cl
 Significant Data Fiduciary, the correct output is a clean "no DPDP DPIA duty attaches" — which
 is itself a valuable conclusion to record.
 
-> **Sourcing status (2026-08-04):** a web-search corroboration pass on 2026-08-04 **confirmed
-> Act s. 10 (SDF designation) and DPDP Rules 2025 Rule 13 (SDF additional obligations: DPIA +
-> independent audit every twelve months, significant observations reported to the Data
-> Protection Board)**; Rules notified 2025-11-13. Those carry `[web search — verify]`; primary
-> texts (indiacode.nic.in, the Gazette) were not fetched. SDF designations and Board practice
-> are new and forming; re-verify the client's designation status and phase-in dates every run.
+> **Sourcing status (2026-08-04; supplemented 2026-08-11):** a web-search corroboration pass
+> on 2026-08-04 **confirmed Act s. 10 (SDF designation) and DPDP Rules 2025 Rule 13 (SDF
+> additional obligations: DPIA + independent audit every twelve months, significant
+> observations reported to the Data Protection Board)**; Rules notified 2025-11-13. Those
+> carry `[web search — verify]`; primary texts (indiacode.nic.in, the Gazette) were not
+> fetched. **Phase-in (corroborated 2026-08-11): Rule 13 is NOT yet in force.** The Rules
+> commence in three phases: Phase I immediate (Board establishment, Rules 1–2, 17–21);
+> Phase II 2026-11-13 (Rule 4 consent-manager registration); Phase III **2027-05-13** (Rules
+> 3, 5–16, 22–23 — including Rule 13's SDF DPIA/audit duty). So as of August 2026 the SDF
+> DPIA obligation is **incoming, not live**. No SDF designation notifications had issued as
+> of 2026-08-11, and a January 2026 MeitY stakeholder proposal to compress the timeline to
+> 12 months (full compliance by 2026-11-13) remained a proposal only — treat the
+> commencement date as volatile and re-verify designation status and phase-in every run.
+> `[web search — verify]`
 
 ## 1. Instrument and statute
 
@@ -86,5 +94,5 @@ preferably with outside counsel in the loop for the India limb.
 ## 7. Source notes
 
 - DPDP Act, 2023 (s. 10) — indiacode.nic.in / MeitY. `[web search — verify]`; fetch for the exact s. 10 text.
-- DPDP Rules, 2025, **Rule 13** — Gazette notification of 2025-11-13; PIB summary. `[web search — verify]` (Rule 13 = SDF additional obligations, confirmed 2026-08-04); capture the phase-in schedule on first fetch.
-- SDF designation notifications — none confirmed at build; check before every India-scope run.
+- DPDP Rules, 2025, **Rule 13** — Gazette notification of 2025-11-13; PIB summary. `[web search — verify]` (Rule 13 = SDF additional obligations, confirmed 2026-08-04; phase-in corroborated 2026-08-11 — Rule 13 commences **2027-05-13** unless the MeitY acceleration proposal is notified); fetch the commencement notification for the exact date.
+- SDF designation notifications — none as of 2026-08-11; check before every India-scope run.

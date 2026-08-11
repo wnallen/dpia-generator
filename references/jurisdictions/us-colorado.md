@@ -68,6 +68,17 @@ the GDPR spine (verify the exact sub-paragraph enumeration before citing it):
 Part 9 adds profiling-specific content (training data, logic, outputs, human involvement,
 fairness/disparate-impact evaluation) for assessments triggered by profiling. `[model knowledge — verify]`
 
+**Colorado AI Act — do not cite it (status corroborated 2026-08-11).** SB 24-205 (the
+"Colorado AI Act", with its own AI impact-assessment duty) **never took effect**: its start
+date was delayed to 2026-06-30 (special session, Aug 2025), enforcement was then suspended by
+the federal district court in the xAI litigation (~April 2026, DOJ intervening), and the Act
+was **repealed in May 2026 by SB 26-189** before commencement. Its replacement, the Colorado
+**Automated Decision-Making Technology Act** (effective 2027-01-01), is a
+transparency/disclosure regime with **no impact-assessment obligation**. The CPA's Rule 8
+data protection assessment duty is unchanged and remains the only Colorado assessment
+instrument. `[web search — verify]` (the SB 26-189 signing date is reported as mid-May 2026
+with minor source disagreement — verify against leg.colorado.gov before citing a date).
+
 **Rendering:** produce the register and 3×3 matrix as usual — they satisfy the risk element —
 and add a `complianceMap` block (`"regime": "us-co"`) mapping each Rule 8.04 element to the
 DPIA section that carries it. The two elements GDPR practice under-produces (benefits

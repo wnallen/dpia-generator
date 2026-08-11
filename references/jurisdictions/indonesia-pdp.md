@@ -3,10 +3,13 @@
 **Regime code:** `id-pdp` (divergence overlay — Model A, thin).
 
 > **VOLATILITY BANNER — re-verify before relying.** The PDP Law's **implementing
-> regulation is still pending** (as corroborated 2026-08-04), and the supervisory
-> authority it contemplates was still being stood up at this module's build. When the
-> implementing regulation lands, rebuild this module from it. Statutory statements below
-> are `[web search — verify]`; everything about procedure is provisional.
+> regulation is still pending** (re-confirmed 2026-08-11: none of the nine mandated
+> implementing regulations enacted), and the supervisory authority (Lembaga PDP) **has not
+> been established** — a draft Presidential Regulation was published February 2026 and was
+> awaiting signature as of mid-2026, with interim enforcement sitting with Komdigi's
+> Directorate General of Digital Space Supervision. When the implementing regulation lands,
+> rebuild this module from it. Statutory statements below are `[web search — verify]`;
+> everything about procedure is provisional.
 
 ## 1. Instrument and statute
 

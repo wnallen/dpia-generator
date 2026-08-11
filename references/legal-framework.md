@@ -63,6 +63,8 @@ The Article 29 Working Party identified nine criteria. WP29's rule: meeting two 
 
 Source: Article 29 Working Party, "Guidelines on Data Protection Impact Assessment (DPIA) and determining whether processing is 'likely to result in a high risk' for the purposes of Regulation 2016/679," wp248rev.01, adopted 4 October 2017. Endorsed by the EDPB on 25 May 2018.
 
+**EDPB harmonised DPIA template (2026).** The EDPB adopted a harmonised DPIA template v1.0 on 10 March 2026 (published 14 April 2026 with an Explainer; public consultation closed 9 June 2026). It standardises DPIA *documentation structure* — methodology remains the controller's choice — and supervisory authorities are expected to adopt or align national templates with it. It complements, and does not supersede, WP248rev01. `[web search — verify]` (corroborated 2026-08-11). Before an EU-scope DPIA is finalised, check whether the competent SA has adopted the template and, where it has, map this skill's output sections to the template's structure in the cover note.
+
 ## Triggering Logic to Apply in Step 0
 
 Document your triggering analysis in this exact form in the DPIA cover note:
@@ -94,14 +96,18 @@ For any DPIA touching cross-border transfers to a non-adequacy jurisdiction:
 A separate Transfer Impact Assessment (TIA) is required alongside the DPIA, following the EDPB's six-step methodology (know your transfer; identify the transfer tool; assess third-country law; identify supplementary measures; take procedural steps; re-evaluate periodically). The CNIL's published TIA guide operationalizes this for French-led assessments.
 
 For transfers to the United States:
-- If the importer is **EU-US Data Privacy Framework certified**, the DPF provides adequacy and a separate TIA is not strictly required — but document that the certification was verified on the DPF list, and note the Schrems III litigation risk.
+- If the importer is **EU-US Data Privacy Framework certified**, the DPF provides adequacy and a separate TIA is not strictly required — but document that the certification was verified on the DPF list, and note the Schrems III litigation risk. The concrete posture as of August 2026: the General Court **dismissed** the first annulment challenge (T-553/23 *Latombe v Commission*, 3 September 2025), but an **appeal is pending before the CJEU (C-703/25 P)**, and US oversight-body concerns (PCLOB quorum loss) persist; the adequacy decision has not been suspended. `[web search — verify]` (corroborated 2026-08-11)
 - If the importer is **not DPF certified**, SCCs plus a TIA are required, with supplementary measures (most commonly customer-managed encryption keys) addressing FISA 702 and EO 12333 risks identified in Schrems II.
 
 The TIA can live as an appendix to the DPIA where the transfer is one component of a broader processing assessment, or as a standalone document. Either way, the DPIA must reference it.
 
 ## EU AI Act Intersection
 
-For DPIAs covering high-risk AI systems (Annex III categories include employment/HR, biometric identification, education, credit scoring, law enforcement, critical infrastructure), the AI Act imposes a separate Fundamental Rights Impact Assessment (FRIA) obligation on deployers (Art. 27 EU AI Act). The DPIA and FRIA cover overlapping but distinct ground:
+For DPIAs covering high-risk AI systems (Annex III categories include employment/HR, biometric identification, education, credit scoring, law enforcement, critical infrastructure), the AI Act imposes a separate Fundamental Rights Impact Assessment (FRIA) obligation on deployers (Art. 27 EU AI Act).
+
+**Timing (corroborated by web search 2026-08-11):** the "Digital Omnibus on AI" — **Regulation (EU) 2026/1744**, published OJ 24 July 2026, in force 27 July 2026 — **postponed the Annex III high-risk obligations (including Art. 27 FRIA) from 2 August 2026 to 2 December 2027**, and the Annex I embedded high-risk obligations to 2 August 2028; the final text sets fixed calendar dates (the proposed standards-readiness trigger was dropped) and leaves Art. 27's substance unchanged. The Art. 50 transparency duties (AI-interaction disclosure, deepfake labelling, emotion-recognition notification) did apply from 2 August 2026 as originally scheduled. `[web search — verify]` — so as of now the FRIA is an *incoming* obligation to flag with its 2027 date, not a live one. The separate "Data Omnibus" (proposed GDPR/ePrivacy amendments, including an AI-training legitimate-interest basis and Art. 22 tweaks) remained **unadopted as of August 2026** — GDPR Arts. 22 and 35 are unchanged in force; do not cite the proposal as law.
+
+The DPIA and FRIA cover overlapping but distinct ground:
 
 - **DPIA**: GDPR-driven, focused on personal data processing risks to data subjects.
 - **FRIA**: AI Act-driven, broader fundamental rights scope, including non-personal-data harms (discrimination, dignity, freedom of expression).

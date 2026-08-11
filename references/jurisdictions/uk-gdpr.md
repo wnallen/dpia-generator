@@ -8,7 +8,7 @@ Consult this whenever the user's processing has UK or dual UK/EU scope; its anal
 
 ## The Data (Use and Access) Act 2025 (DUAA)
 
-The DUAA came into force in stages from 2025. It amended the UK GDPR and the Data Protection Act 2018. The amendments most relevant to DPIA work:
+The DUAA came into force in stages from 2025. It amended the UK GDPR and the Data Protection Act 2018. **Commencement status (corroborated by web search 2026-08-11):** the main data-protection provisions — recognised legitimate interests, the Art. 22A–22D automated-decision-making reform, and the new international-transfers regime — commenced **5 February 2026** via the Commencement No. 6 Regulations (SI 2026/82); the complaints provisions commenced 19 June 2026; the restructuring of the ICO into an **Information Commission** had **not** been commenced as of August 2026 (expected 2026/27) — the regulator is still the ICO. `[web search — verify]` The amendments most relevant to DPIA work:
 
 ### Lawful basis changes — recognized legitimate interests
 
@@ -16,7 +16,7 @@ DUAA introduces a list of "recognised legitimate interests" in a new UK GDPR Ann
 
 ### Article 22 — automated decision-making
 
-DUAA loosened the UK Art. 22. Under EU GDPR, Art. 22(1) creates a default right not to be subject to a solely automated decision producing legal or similarly significant effects, with three narrow exceptions. The UK position now permits more solely-automated decision-making provided the controller implements safeguards (notification, human review on request, ability to contest) — except where special-category data is processed, where the EU-style default still applies.
+DUAA loosened the UK Art. 22, replacing it with **new Articles 22A–22D** (in force 5 February 2026). Under EU GDPR, Art. 22(1) creates a default right not to be subject to a solely automated decision producing legal or similarly significant effects, with three narrow exceptions. The UK position now permits more solely-automated decision-making provided the controller implements safeguards (notification, human review on request, ability to contest) — except where special-category data is processed, where the EU-style default still applies. The ICO consulted (March–May 2026) on draft ADM and profiling guidance under the new regime — including ADM in recruitment — and the draft states a **DPIA will be required for most ADM activities**; SI 2026/425 (in force 12 May 2026) also places the Commissioner under a statutory duty to prepare a code of practice on AI and ADM. `[web search — verify]`
 
 **Practical DPIA effect:**
 - A solely automated decision touching only non-special-category data may be permissible under UK GDPR where it would not be under EU GDPR.
@@ -26,11 +26,13 @@ DUAA loosened the UK Art. 22. Under EU GDPR, Art. 22(1) creates a default right 
 
 ### International transfers
 
-DUAA recasts the UK approach to international transfers around a "data protection test" — broadly equivalent to adequacy but framed more flexibly. The UK government has greater discretion to recognize a third country as providing adequate protection. **Practical effect:** the UK's adequacy list and the EU's adequacy list will diverge over time, and a transfer that is permissible under UK GDPR may still require SCCs and a TIA under EU GDPR.
+DUAA recasts the UK approach to international transfers around a "data protection test" (protection "not materially lower" than the UK standard) — broadly equivalent to adequacy but framed more flexibly; in force 5 February 2026, with the ICO's **updated international-transfers guidance published 15 January 2026** operationalizing a three-step restricted-transfer test. `[web search — verify]` The UK government has greater discretion to recognize a third country as providing adequate protection. **Practical effect:** the UK's adequacy list and the EU's adequacy list will diverge over time, and a transfer that is permissible under UK GDPR may still require SCCs and a TIA under EU GDPR.
 
 For UK transfers: use the UK International Data Transfer Agreement (IDTA) or the UK Addendum to the EU SCCs, plus a Transfer Risk Assessment (TRA) — the ICO's UK equivalent of the EDPB Recommendations 01/2020 TIA.
 
 For EU transfers: use the EU SCCs (2021 modular version) plus an EDPB-style TIA.
+
+**EU→UK direction:** the European Commission renewed both UK adequacy decisions on 19 December 2025 (after a six-month bridge), extending them to **27 December 2031** — the post-DUAA UK regime was assessed as still adequate. `[web search — verify]` (corroborated 2026-08-11)
 
 ### Cookies and electronic communications (PECR-equivalent)
 
@@ -38,9 +40,9 @@ DUAA narrowed the consent requirements for certain low-risk cookie purposes (sta
 
 ### DPO and DPIA process
 
-DUAA replaced the EU GDPR's DPO role with a "Senior Responsible Individual" (SRI) concept for UK GDPR purposes, with a slightly modified set of responsibilities. The Art. 35(2) requirement to seek the DPO/SRI's advice on a DPIA still applies, but the title and the precise statutory duties differ.
+**Correction (2026-08-11): the DUAA did NOT replace the DPO.** An earlier version of this module stated that DUAA introduced a "Senior Responsible Individual" (SRI) in place of the DPO — that was a feature of the **failed DPDI Bill**, not of the DUAA as enacted. The DUAA **retained the DPO, RoPA and DPIA regimes unchanged**. `[web search — verify]` (corroborated 2026-08-11 across multiple DUAA-vs-DPDI comparisons)
 
-For dual-jurisdiction controllers, the practical answer is to retain a DPO meeting the EU GDPR criteria; that person can also fulfil the UK SRI role.
+The Art. 35(2) requirement to seek the DPO's advice on a DPIA therefore applies identically in both regimes, and a dual-jurisdiction controller needs no separate UK role.
 
 ## Where the DPIA's Conclusion Could Materially Differ
 
@@ -52,7 +54,7 @@ When writing Section 6 of the DPIA, focus on the places where UK and EU position
 | Legitimate interests for recognised categories | Three-part LIA required | LIA balancing step not required for recognised interests | Shorter LIA permissible for UK-scope recognised interests |
 | Transfers to a "non-adequate" third country | EU SCCs + TIA + supplementary measures | UK IDTA / UK Addendum + TRA + supplementary measures (UK position on specific countries may differ) | Watch for cases where UK has recognized adequacy but EU has not (or vice versa) |
 | Workplace biometric processing | EU-wide pattern of restrictive enforcement (CNIL, AEPD, GPDP, APDD) | ICO has signaled equivalent restrictiveness (Serco 2024 enforcement) | Effectively aligned — both jurisdictions hostile to workplace biometric T&A |
-| DPO consultation | Required where DPO designated (Art. 35(2)) | Required for SRI under DUAA | Substantively similar; document under whichever applies |
+| DPO consultation | Required where DPO designated (Art. 35(2)) | Unchanged — DUAA retained the DPO regime | No divergence; one DPO serves both regimes |
 
 ## Default Position for Dual-Jurisdiction DPIAs
 
@@ -63,6 +65,7 @@ State the exception clearly: where the controller wants the benefit of UK diverg
 ## Source Notes
 
 - Data (Use and Access) Act 2025 — UK Parliament. `[web search — verify]` **Chapter 18** — the Act is Data (Use and Access) Act 2025 (c. 18), Royal Assent 19 June 2025; cite `https://www.legislation.gov.uk/ukpga/2025/18` (the bare-year-path problem is resolved). Chapter number corroborated by web search on 2026-08-04 against the ICO's DUAA page and the legislation.gov.uk listing, not yet fetched and read; cite the specific amending section rather than the Act as a whole.
-- ICO published guidance on DUAA changes — refresh from https://ico.org.uk before each material DPIA touching UK scope, as ICO's interpretation continues to evolve
-- ICO's "When do we need to do a DPIA?" page — the UK-specific Art. 35(4) list of mandatory DPIA triggers
+- DUAA Commencement No. 6 Regulations, SI 2026/82 (main data-protection provisions in force 2026-02-05); Commencement No. 5, SI 2026/31. `[web search — verify]` (corroborated 2026-08-11) — `https://www.legislation.gov.uk/uksi/2026/82/contents/made`
+- ICO published guidance on DUAA changes — refresh from https://ico.org.uk before each material DPIA touching UK scope, as ICO's interpretation continues to evolve; updated international-transfers guidance published 2026-01-15; draft ADM/profiling guidance consulted on March–May 2026 (final pending — check status)
+- ICO's "When do we need to do a DPIA?" page — the UK-specific Art. 35(4) list of mandatory DPIA triggers (no change to the list surfaced by the 2026-08-11 corroboration pass)
 - ICO Transfer Risk Assessment Tool — the UK equivalent of the EDPB TIA methodology

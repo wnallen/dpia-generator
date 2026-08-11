@@ -12,6 +12,7 @@ This file separates them.
 - **Tier B** entries are guidance, opinions, decisions and case law. They ship **UNVERIFIED**. Cite them as `[model knowledge — verify]` until a run actually fetches the source, and only then upgrade the tag on that citation.
 - **Three tags, three levels of confidence — do not conflate the middle one with the top one.** `[model knowledge — verify]` is pure recall (highest fabrication risk). `[web search — verify]` means the identifier or pinpoint was **corroborated by independent web search but the primary source was not fetched and read** — better than recall, still not authority. `[official publication]` / a fully verified Tier B tag means **the document was fetched, the pinpoint was read, and the exact reference captured**. Moving a citation from recall to `[web search — verify]` is a real improvement and is allowed; moving it to `[official publication]` from a search snippet is **not** — that step requires the fetch.
 - **On 2026-08-04 a corroboration pass ran** with web search available but primary-source fetches blocked (all official portals returned 403 to the fetch tool). It moved the non-EU statutory identifiers below from recall to `[web search — verify]`, filled the DUAA chapter number, and corrected one Brazilian resolution attribution. Every one of those still needs a primary-source fetch to reach `[official publication]`; the tags say so.
+- **On 2026-08-11 a currency-review pass ran** (web search only; primary fetches still blocked). Headline corrections applied across the modules: the EU AI Act's Annex III / Art. 27 FRIA date moved to 2027-12-02 (Reg. (EU) 2026/1744); the DUAA "Senior Responsible Individual" claim was **deleted as an error** (DUAA retained the DPO — SRI was the failed DPDI Bill); DUAA main provisions commenced 2026-02-05 (SI 2026/82); the Brazilian transfer resolution is confirmed as **Resolução CD/ANPD nº 19/2024**; Malaysia's final DPIA Guideline issued (Apr/May 2026); Vietnam's Decree 13 was replaced by **Decree 356/2025/ND-CP**; India's Rule 13 SDF duty commences **2027-05-13**; Maryland MODPA added to the US-state roster; the Colorado AI Act was repealed May 2026 before taking effect; EU–Brazil mutual adequacy adopted 2026-01-27; EDPB adopted a harmonised DPIA template (Mar/Apr 2026). Details live in the affected module files.
 - When a run does verify an entry, update it here — status, exact pinpoint, date checked — the same way `published-dpias.md` grows. That is the whole point of the file: the verification burden should fall once, not once per DPIA.
 
 **Pinpoints below are descriptive, not exact.** They tell you which part of the source to cite for which proposition. Capture the precise section, paragraph or page number when you verify, and record it here. Do not invent a section number to make a citation look precise — an approximate pinpoint honestly labelled is defensible; a precise one that is wrong is not.
@@ -50,7 +51,7 @@ The UK GDPR as it forms part of retained EU law, read with the DPA 2018 (c. 12).
 
 ### Data (Use and Access) Act 2025
 
-`[web search — verify]` **Chapter 18** — Data (Use and Access) Act 2025 (c. 18), Royal Assent **19 June 2025**. Official text: `https://www.legislation.gov.uk/ukpga/2025/18` (the "bare year path" problem is resolved — the chapter number is 18). Cite the specific amending section, not the Act as a whole; corroborated across the ICO's DUAA page and the legislation.gov.uk listing by web search on 2026-08-04, not yet fetched and read. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
+`[web search — verify]` **Chapter 18** — Data (Use and Access) Act 2025 (c. 18), Royal Assent **19 June 2025**. Official text: `https://www.legislation.gov.uk/ukpga/2025/18` (the "bare year path" problem is resolved — the chapter number is 18). Main data-protection provisions commenced **2026-02-05** via the Commencement No. 6 Regulations, **SI 2026/82** (corroborated 2026-08-11). Cite the specific amending section, not the Act as a whole; not yet fetched and read. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
 
 ### US state statutes and rules (Phase 1 modules)
 
@@ -58,7 +59,7 @@ The **section identifiers** below were corroborated by independent web search on
 
 - **Colorado:** C.R.S. § 6-1-1309 (data protection assessments); Colorado Privacy Act Rules, 4 CCR 904-3 — **Rule 8.02 SCOPE, Rule 8.04 DATA PROTECTION ASSESSMENT CONTENT, Rule 9.06 assessments for profiling** (`[web search — verify]`, section titles confirmed; the enumerated 8.04 element list still to be read verbatim). Official rules PDF: coag.gov.
 - **California:** Cal. Civ. Code § 1798.185(a)(15); CPPA regulations, **11 CCR Article 10 — § 7150 (when a risk assessment is required), § 7152 (risk assessment requirements)** (`[web search — verify]`), OAL-approved 2025-09-23, effective 2026-01-01, first filing due 2028-04-01, review at least every three years. Official statute PDF: `cppa.ca.gov/regulations/pdf/`.
-- **Virginia pattern:** Va. Code § 59.1-580 and state analogs (CT, TX, OR, MT, DE, NH, NJ, MN, TN, IN, KY, NE, RI). Verify per state actually relied on; the list itself rolls forward session to session.
+- **Virginia pattern:** Va. Code § 59.1-580 and state analogs (CT, TX, OR, MT, DE, NH, NJ, MN, TN, IN, KY, NE, RI, and — with stricter, per-algorithm assessment duties — **MD** (MODPA, eff. 2025-10-01)). Enacted 2026 with future effective dates: OK, LA (2027-01-01), AL (2027-05-01, reportedly no DPA duty), VT (2028-01-01). Verify per state actually relied on; the list rolls forward session to session (roster notes in `us-other-states.md`, updated 2026-08-11).
 
 ### Canada / Quebec (Phase 1 module)
 
@@ -68,7 +69,7 @@ The **section identifiers** below were corroborated by independent web search on
 ### Brazil (Phase 2 module)
 
 - **Lei nº 13.709/2018 (LGPD)** — `[web search — verify]` RIPD at **Arts. 5(XVII) and 38**; Art. 38 sole paragraph prescribes the minimum content (types of data, collection/security methodology, risk-mitigation analysis). Confirmed by web search on 2026-08-04; official text: planalto.gov.br `/ccivil_03/_ato2015-2018/2018/lei/l13709.htm`.
-- **ANPD resolutions** — **correction from verification (2026-08-04):** Resolução CD/ANPD **nº 2, de 27 de janeiro de 2022** is the **small-agents** regulation ("agentes de tratamento de pequeno porte"), **not** a high-risk-criteria instrument — an earlier recall mis-attributed the high-risk criteria to it. The ANPD's high-risk **indicators are expressly non-exhaustive** (guidance-level), so do not cite a numbered high-risk list as if it were binding. The international-transfer resolution number (recalled "19/2024") is **still unconfirmed** — a 2024 ANPD resolution search surfaced nº 15/2024 (incident communication), a different instrument; do not cite the transfer-resolution number until fetched. RIPD regulation still pending; see the module's volatility banner.
+- **ANPD resolutions** — **correction from verification (2026-08-04):** Resolução CD/ANPD **nº 2, de 27 de janeiro de 2022** is the **small-agents** regulation ("agentes de tratamento de pequeno porte"), **not** a high-risk-criteria instrument — an earlier recall mis-attributed the high-risk criteria to it. The ANPD's high-risk **indicators are expressly non-exhaustive** (guidance-level), so do not cite a numbered high-risk list as if it were binding. **Resolved (2026-08-11):** the international-transfer regulation and Brazilian SCCs are **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** (`[web search — verify]` — number/date confirmed against the gov.br listing surfaced by search; SCC grace period ended 2025-08-23). RIPD regulation still pending as of 2026-08-11; see the module's volatility banner. **EU–Brazil mutual adequacy adopted 2026-01-27** — see the module's transfer notes.
 
 ### China (Phase 2 module)
 
@@ -78,24 +79,24 @@ The **section identifiers** below were corroborated by independent web search on
 
 ### Asia-Pacific and Switzerland (Phase 3 modules)
 
-- **India:** `[web search — verify]` DPDP Act, 2023 **s. 10** (SDF designation) and DPDP Rules, 2025 **Rule 13** (SDF additional obligations: DPIA **and** independent audit **once every twelve months**, with significant observations reported to the **Data Protection Board**); Rules notified 2025-11-13. **Rule 13 confirmed by web search on 2026-08-04** (the module previously carried it as recalled). Check SDF designation notifications every India-scope run.
+- **India:** `[web search — verify]` DPDP Act, 2023 **s. 10** (SDF designation) and DPDP Rules, 2025 **Rule 13** (SDF additional obligations: DPIA **and** independent audit **once every twelve months**, with significant observations reported to the **Data Protection Board**); Rules notified 2025-11-13. **Rule 13 confirmed by web search on 2026-08-04**; phase-in corroborated 2026-08-11 — **Rule 13 commences 2027-05-13** (Phase III), so the SDF DPIA duty is not yet live; no SDF designations issued. Check designation notifications and the pending MeitY timeline-acceleration proposal every India-scope run.
 - **Switzerland:** `[web search — verify]` revFADP, **SR 235.1**, in force 2023-09-01 — **Art. 22** (DPIA on likely high risk to personality/fundamental rights; Ordinance Art. 14), **Art. 23** (FDPIC consultation on residual high risk), **Art. 23(4)** (the data-protection-adviser alternative that lets a controller refrain from consulting the FDPIC — the reason the builder treats this regime as non-derivable). All corroborated by web search on 2026-08-04. FDPIC guidance at edoeb.admin.ch.
-- **Singapore:** PDPA 2012 as amended; PDPC Guide to DPIAs (2021) — PDF URL recorded in the module `[web search — verify]`.
-- **Malaysia:** PDPA 2010 + Amendment Act 2024; JPDP DPIA consultation paper (2025) — watch status, module carries a volatility banner.
-- **Australia:** Privacy Act 1988 + POLA Act 2024 (tort in force 2025-06-10; APP 1.7 ADM transparency 2026-12-10); OAIC PIA guide; agencies APP Code.
-- **South Korea:** PIPA Art. 33 + Enforcement Decree thresholds (public-institution PIA through PIPC-designated agencies, submitted to the PIPC).
+- **Singapore:** PDPA 2012 as amended; PDPC Guide to DPIAs (2021 — still current edition as of 2026-08-11) — PDF URL recorded in the module `[web search — verify]`.
+- **Malaysia:** PDPA 2010 + Amendment Act 2024 (fully in force 2025-06-01); **final JPDP DPIA Guideline issued Apr/May 2026** (with DPbD and ADM/Profiling guidelines) — `[web search — verify]` (corroborated 2026-08-11); module still carries a volatility banner pending a read of the guideline text.
+- **Australia:** Privacy Act 1988 + POLA Act 2024 (tort in force 2025-06-10, first applied in *Kurraba Group v Williams* [2025] NSWDC 396; APP 1.7 ADM transparency 2026-12-10); OAIC PIA guide; agencies APP Code.
+- **South Korea:** PIPA Art. 33 + Enforcement Decree thresholds (public-institution PIA through PIPC-designated agencies, submitted to the PIPC); PIPA amendment promulgated 2026-03-10, effective 2026-09-11 (fines to 10% of turnover) — `[web search — verify]` (corroborated 2026-08-11).
 
 ### Africa and Southeast Asia (Phase 4+ modules)
 
 All corroborated by web search on 2026-08-04 (`[web search — verify]`); primary texts not fetched.
 
-- **Kenya:** Data Protection Act, 2019 (No. 24 of 2019), s. 31 — DPIA duty, s. 31(4) definition, and the Data Commissioner prior-consultation duty on high risk (the third derivable regime in the builder). Official text at kenyalaw.org; capture the consultation subsection and confirm whether the reported 60-days-prior submission timeline is statutory or ODPC guidance.
-- **Vietnam:** PDP Law No. 91/2025/QH15 (passed 2025-06-26, effective 2026-01-01), replacing Decree 13/2023/ND-CP; transfer impact dossier submitted to the MPS within 60 days of transfer start. Capture the Law's article numbers for both dossiers; the Decree 13 Arts. 24–25 structure is recall-level until then.
+- **Kenya:** Data Protection Act, 2019 (No. 24 of 2019), s. 31 — DPIA duty, s. 31(4) definition, and the Data Commissioner prior-consultation duty on high risk (the third derivable regime in the builder). Official text at kenyalaw.org. **Resolved 2026-08-11:** the 60-day consultation machinery (incl. deemed approval after 60 days' silence) sits in the **Data Protection (General) Regulations, 2021 (LN 263/2021)** plus the ODPC Guidance Note — not in the Act; cite the Regulations for the timeline.
+- **Vietnam:** PDP Law No. 91/2025/QH15 (passed 2025-06-26, effective 2026-01-01), implemented by **Decree 356/2025/ND-CP** (effective 2026-01-01, replacing Decree 13/2023/ND-CP and its dossier forms; 15-day appraisal / 30-day cure mechanics) — corroborated 2026-08-11; transfer impact dossier submitted to the MPS within 60 days of transfer start. Capture the Law's and Decree 356's article numbers for both dossiers on first fetch.
 - **Indonesia:** Law No. 27/2022 (UU PDP), Art. 34 — DPIA for high-potential-risk processing with an enumerated high-risk list; implementing regulation pending (module carries a volatility banner).
 
-### Regulation (EU) 2024/1689 (EU AI Act)
+### Regulation (EU) 2024/1689 (EU AI Act), as amended by Regulation (EU) 2026/1744
 
-Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Verify the CELEX identifier and the Annex III sub-paragraph before citing** — this instrument is newer than the rest of this register and its numbering is the one most often misremembered.
+Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics, education, credit, law enforcement); Art. 27 deployer Fundamental Rights Impact Assessment, which is additional to and not satisfied by a DPIA. **Timing (corroborated 2026-08-11):** the "Digital Omnibus on AI" — **Regulation (EU) 2026/1744**, OJ 24 July 2026, in force 27 July 2026 — postponed the Annex III high-risk obligations (incl. Art. 27) to **2027-12-02** and Annex I embedded high-risk to 2028-08-02, as fixed dates; Art. 50 transparency duties applied from 2026-08-02 as originally scheduled. `[web search — verify]` — the amending regulation's text has not been fetched. **Verify the CELEX identifiers and the Annex III sub-paragraph before citing** — this instrument pair is newer than the rest of this register and its numbering is the one most often misremembered.
 
 ---
 
@@ -144,9 +145,19 @@ Data Protection Commissioner v Facebook Ireland and Maximillian Schrems, judgmen
 Commission implementing decision on the adequate level of protection under the EU–US DPF, 10 July 2023; EDPB Opinion 5/2023.
 
 - **Cited for:** whether a US importer's transfer needs SCCs and a TIA; the Schrems III monitoring point.
+- **Litigation posture (corroborated 2026-08-11):** General Court dismissed the first annulment challenge (T-553/23 *Latombe v Commission*, 3 September 2025); **appeal pending before the CJEU, C-703/25 P**; the adequacy decision has not been suspended; US oversight (PCLOB quorum) concerns persist. `[web search — verify]`
 - **Verify at:** the DPF Active list, `https://www.dataprivacyframework.gov/list`
 - **Standing rule:** a vendor's certification is verified against the live list **at the time the DPIA is written**, never against the vendor's representation, and never against this file. This entry records where to look; it is not itself evidence of anyone's certification.
 - **Status:** UNVERIFIED (and inherently time-sensitive — the underlying adequacy decision is subject to challenge).
+
+### EDPB harmonised DPIA template (v1.0, 2026)
+
+Adopted 10 March 2026, published 14 April 2026 with an Explainer; consultation closed 9 June 2026.
+
+- **Cited for:** the standardised DPIA documentation structure SAs are expected to adopt or align with; complements (does not supersede) WP248rev01.
+- **Verify at:** edpb.europa.eu (news and public-consultation pages).
+- **Capture:** the template's section headings and the Explainer's guidance on mapping existing DPIA formats, so this skill's output template can carry an explicit crosswalk.
+- **Status:** `[web search — verify]` (existence and dates corroborated 2026-08-11; document not fetched).
 
 ### ICO — DPIA guidance and the Art. 35(4) list
 

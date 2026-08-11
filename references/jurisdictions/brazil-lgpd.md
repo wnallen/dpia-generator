@@ -65,10 +65,13 @@ spine**; nothing in it is surplus for Brazil. Additions:
 - **Sensitive data (Art. 11)** roughly tracks Art. 9 but includes no employment-context
   derogation regime; verify the applicable Art. 11 hypothesis.
 - **Transfers (Arts. 33–36):** the ANPD's international-transfer regulation (with Brazilian
-  SCCs) governs; the resolution number recalled as "19/2024" is **unconfirmed** (see the
-  Source notes) — cite it only once fetched. A transfer limb in §1.9 should
-  identify the mechanism. Brazil recognizes no adequacy list equivalent to the EU's as of
-  recall — verify current state. UNVERIFIED.
+  SCCs) governs — **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** (number and date
+  confirmed by web search 2026-08-11; the SCC-incorporation grace period for pre-existing
+  contracts ended 2025-08-23). `[web search — verify]` A transfer limb in §1.9 should
+  identify the mechanism. **EU–Brazil mutual adequacy adopted 2026-01-27** (coordinated
+  unilateral decisions): the EU limb's transfer to Brazil no longer needs SCCs + TIA, and
+  the Brazil→EU leg has an adequacy route — check each direction's instrument before citing.
+  `[web search — verify]` (corroborated 2026-08-11)
 - **Children (Art. 14):** best-interests standard; processing of children's data was loosened
   from consent-only by later amendment/interpretation — verify before relying.
 
@@ -101,5 +104,7 @@ delivery may be expected on an ANPD demand; record translation status.
 ## 7. Source notes
 
 - Lei nº 13.709/2018 — planalto.gov.br. UNVERIFIED; stable statutory identifier, capture URL on first fetch.
-- ANPD RIPD FAQ page (April 2023) — gov.br/anpd. UNVERIFIED; preliminary, superseded when the RIPD regulation lands.
-- Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**, `[web search — verify]` (confirmed 2026-08-04; **not** a high-risk-criteria instrument — see §2). The international-transfer resolution number (recalled "19/2024") is **unconfirmed** — a 2024-resolution search surfaced nº 15/2024 (incident communication), a different instrument; do not cite the transfer-resolution number until fetched.
+- ANPD RIPD FAQ page (April 2023) — gov.br/anpd. UNVERIFIED; preliminary, superseded when the RIPD regulation lands. **Status re-checked 2026-08-11: the RIPD regulation is still on the ANPD's regulatory agenda ("under analysis"), unfinalized — the volatility banner stands.** A guide on "high risk and large scale" definitions was reported pending board approval.
+- Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**, `[web search — verify]` (confirmed 2026-08-04; **not** a high-risk-criteria instrument — see §2).
+- **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** — the international-transfer regulation and Brazilian SCCs. `[web search — verify]` (number/date confirmed 2026-08-11 against the gov.br listing surfaced by search; the earlier "unconfirmed" flag is resolved). Official page: `gov.br/anpd/.../resolucao-cd-anpd-no-19-de-23-de-agosto-de-2024`.
+- 2025–2026 watch items (`[web search — verify]`, corroborated 2026-08-11): Resoluções CD/ANPD nº 30 e 31/2025 (December 2025 — regulatory-agenda update and the 2026–2027 inspection priority themes: data-subject rights incl. biometrics, children/ECA Digital, public sector, AI); the **ECA Digital** children's statute with an ANPD enforcement role and the ANPD's preliminary guide on age-assurance mechanisms (2026-03-20). Flag on any Brazil-scope DPIA touching children or AI.

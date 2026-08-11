@@ -71,9 +71,13 @@ failures before quoting either number in a deliverable.
 - **PIPEDA** (private sector, rest of Canada) imposes **no PIA obligation**; the OPC treats
   PIAs as accountability best practice. If the processing is federal-works-scope or
   multi-province, note PIPEDA's accountability principle and move on — there is no separate
-  instrument to produce. Bill C-27 (CPPA), which would have modernized this, **died on the
-  order paper** with the January 2025 prorogation; check status before asserting anything
-  about a successor. `[model knowledge — verify]`
+  instrument to produce. Bill C-27 (CPPA) died on the order paper with the January 2025
+  prorogation; its successor, **Bill C-36 (Protecting Privacy and Consumer Data Act)**, was
+  introduced at first reading **2026-06-15** — privacy-only (no bundled AI act), penalties to
+  $25M, enforcement via a new Digital Safety and Data Protection Commission. **Not law**; do
+  not assert its obligations, but flag it as incoming for long-lived processing. Also note
+  the OPC's joint **OpenAI/ChatGPT findings (PIPEDA #2026-002, ~May 2026)** as persuasive
+  guidance for AI-training assessments. `[web search — verify]` (corroborated 2026-08-11)
 - **Federal public sector:** the Treasury Board **Directive on Privacy Impact Assessment**
   makes PIAs mandatory for government institutions; relevant only when the client is or
   serves a federal institution.
@@ -101,5 +105,11 @@ analysis, per the destination check.
 - CQLR c. P-39.1 (as amended) — legisquebec.gouv.qc.ca. `[web search — verify]`; **ss. 3.3
   (system-project PIA) and 17 (communication outside Quebec) confirmed 2026-08-04**; fetch for
   the verbatim statutory text.
-- CAI, companion guide on PIAs (Sept 2023) — cai.gouv.qc.ca. `[web search — verify]`.
+- CAI, companion guide on PIAs (EFVP) — cai.gouv.qc.ca (`CAI_GU_EFVP.pdf`). `[web search — verify]`.
+  The CAI released a reorganized, more user-friendly edition (2024, refreshed 2025) that
+  **keeps the same orientations as the September 2023 guide**, plus a non-mandatory generic
+  PIA report template — cite the current edition, substance unchanged. (corroborated 2026-08-11)
+- Quebec **anonymization regulation** (adopted May 2024): the anonymization-register duty
+  applies from **2025-01-01** — a Section 6 line where the processing relies on
+  anonymization. `[web search — verify]` (corroborated 2026-08-11)
 - OPC PIA guidance; TBS Directive on Privacy Impact Assessment — priv.gc.ca / tbs-sct.canada.ca. UNVERIFIED.
