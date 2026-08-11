@@ -4,14 +4,34 @@
 Virginia-pattern **data protection assessment** obligation that most post-2021 state
 comprehensive privacy laws share: Virginia (CDPA), Connecticut (CTDPA), Texas (TDPSA), Oregon,
 Montana, Delaware, New Hampshire, New Jersey, Minnesota, Tennessee, Indiana, Kentucky,
-Nebraska, Rhode Island and successors. Colorado and California are carried by their own
-modules (`us-co`, `us-ca`) because their regulators have issued prescriptive content rules;
-the states here have statutes but (as of build) no equivalent rulemaking.
+Nebraska, Rhode Island, **Maryland** and successors. Colorado and California are carried by
+their own modules (`us-co`, `us-ca`) because their regulators have issued prescriptive content
+rules; the states here have statutes but (as of build) no equivalent rulemaking.
 
-> **Sourcing status (2026-08-04):** statutes not fetched at build time; the pattern below is
-> `[model knowledge — verify]` and the state list changes session to session — new states'
-> laws take effect on a rolling calendar. Verify the specific state's statute and effective
-> date before declaring the regime applicable.
+> **Sourcing status (2026-08-04; roster updated 2026-08-11):** statutes not fetched; the
+> pattern below is `[model knowledge — verify]` and the state list changes session to session.
+> Roster notes from the 2026-08-11 web-search pass (`[web search — verify]`):
+>
+> - **Maryland (MODPA, effective 2025-10-01)** was missing from earlier versions of this
+>   roster and is **not** a clean Virginia-pattern member: assessments are required **per
+>   processing activity, including for each algorithm used**, with stricter sensitive-data
+>   and profiling rules and data-minimization duties beyond the pattern. Treat Maryland as
+>   Colorado-grade prescriptive until its text is read; do not rely on the harmonized screen
+>   alone.
+> - **Kentucky:** the KCDPA's assessment obligations apply to processing occurring **on or
+>   after 2026-06-01** (amended pre-effectiveness).
+> - **Connecticut:** SB 1295 (2025) materially amends the CTDPA — most changes effective
+>   2026-07-01, with **impact-assessment provisions applying to processing created or
+>   generated on or after 2026-08-01**, an expanded sensitive-data list (incl. neural data)
+>   and lower thresholds. Re-screen Connecticut against the amended text.
+> - **Enacted 2026, not yet effective:** Oklahoma (SB 546, eff. 2027-01-01, requires DPAs);
+>   Louisiana (SB 386, eff. 2027-01-01, requires DPAs); Vermont (S.71/Act 145, eff.
+>   2028-01-01, requires DPAs **plus** a content-prescribed profiling impact assessment);
+>   Alabama (HB 351, eff. 2027-05-01, **reportedly no formal DPA duty — verify against the
+>   text before relying on the outlier**).
+>
+> Verify the specific state's statute and effective date before declaring the regime
+> applicable.
 
 ## 1. The shared pattern (Virginia CDPA as archetype)
 

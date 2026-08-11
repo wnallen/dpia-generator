@@ -7,13 +7,17 @@ Protection Agency's regulations approved by the Office of Administrative Law on
 **scheduled filing obligation** — the regulator does not merely demand on request; summaries
 and attestations are submitted on a calendar.
 
-> **Sourcing status (2026-08-04):** cppa.ca.gov returns HTTP 403 to the fetch tool. A
-> web-search corroboration pass on 2026-08-04 **confirmed the risk-assessment article structure**
-> — 11 CCR **Article 10, § 7150 (when a risk assessment is required) and § 7152 (risk-assessment
-> requirements)** — plus the effective date (2026-01-01), the first filing deadline (2028-04-01),
-> and the three-year review cycle; those carry `[web search — verify]`. The **enumerated content
-> list below is still descriptive**: corroborated in outline, not read verbatim. Fetch the
-> regulations before citing a sub-paragraph.
+> **Sourcing status (2026-08-04; re-corroborated 2026-08-11):** cppa.ca.gov returns HTTP 403
+> to the fetch tool. Web-search corroboration passes **confirmed the risk-assessment article
+> structure** — 11 CCR **Article 10, §§ 7150–7157 (§ 7150 when a risk assessment is required;
+> § 7152 risk-assessment requirements)** — plus the OAL approval (2025-09-23), effective date
+> (2026-01-01), first filing deadline (2028-04-01), and the three-year review cycle; those
+> carry `[web search — verify]`. Additional mechanics corroborated 2026-08-11: **pre-existing
+> significant-risk activities must be assessed by 2027-12-31**, and **ADMT substantive
+> compliance begins 2027-01-01**. No litigation or injunction affecting the risk-assessment /
+> ADMT regulations was found as of 2026-08-11 — the regs are operative as written. The
+> **enumerated content list below is still descriptive**: corroborated in outline, not read
+> verbatim. Fetch the regulations before citing a sub-paragraph.
 
 ## 1. Instrument and statute
 

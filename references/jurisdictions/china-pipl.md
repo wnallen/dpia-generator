@@ -7,11 +7,14 @@ a **three-year retention rule**, and — uniquely in this skill — a PIPIA repo
 the regulator as part of the SCC route for cross-border transfers**. The authoritative text is
 Chinese; treat every English rendering, including this module, as a working translation.
 
-> **Sourcing status (2026-08-04):** primary sources return HTTP 403 to the fetch tool. A
-> web-search corroboration pass on 2026-08-04 **confirmed Arts. 55 and 56 (verbatim structure),
-> the ≥3-year report retention, and GB/T 39335-2020**; those carry `[web search — verify]`. The
-> CAC's cross-border rules were materially relaxed in March 2024 and continue to move — those
-> thresholds stay `[model knowledge — verify]` and must be re-verified on every China-scope run.
+> **Sourcing status (2026-08-04; supplemented 2026-08-11):** primary sources return HTTP 403
+> to the fetch tool. A web-search corroboration pass on 2026-08-04 **confirmed Arts. 55 and 56
+> (verbatim structure), the ≥3-year report retention, and GB/T 39335-2020**; those carry
+> `[web search — verify]`. The CAC's cross-border rules were materially relaxed in March 2024
+> and continue to move — those thresholds stay `[model knowledge — verify]` and must be
+> re-verified on every China-scope run. A 2026-08-11 pass added the 2025–2026 instruments in
+> §7a below — notably the **compliance-audit Measures (effective 2025-05-01)** and the
+> **cross-border certification Measures (effective 2026-01-01)**.
 
 ## 1. Instrument and statute
 
@@ -100,8 +103,30 @@ the SCC route, filed**. Hard rules:
   (`"headerText": ""`), and the privileged analysis held outside China scope.
 - Assume the record may be reviewed by the CAC in Chinese; record translation status.
 
+## 7a. 2025–2026 instruments (corroborated by web search 2026-08-11 — all `[web search — verify]`)
+
+- **Compliance-audit Measures:** CAC Measures for the Administration of Personal Information
+  Protection Compliance Audits (promulgated 2025-02-14, **effective 2025-05-01**, with an
+  audit-guidelines annex): handlers processing PI of **>10 million individuals** must audit
+  at least every two years; regulator-ordered audits on significant risk or breaches
+  affecting >1M individuals (>100k for sensitive PI). Audit findings interact with the
+  PIPIA record — note the cadence in §7.3-style review planning.
+- **Certification export route completed:** CAC + SAMR Measures for Certification of
+  Cross-Border Personal Information Transfer, issued 2025-10-14, **effective 2026-01-01** —
+  the third PIPL transfer pathway is now operational; detailed technical specs still pending.
+- **GB/T 45574-2025** — Security Requirements for Processing of Sensitive Personal
+  Information (recommended standard, **effective 2025-11-01**); narrows the working sensitive
+  list vs. GB/T 35273-2020 (removes ID-card number per se, marital status,
+  deposit/transaction records). Use alongside Art. 28's harm-based definition in §2.
+- **Cybersecurity Law amendment** adopted 2025-10-28, **effective 2026-01-01** — AI
+  provisions, higher penalties, express alignment with PIPL. Context for the security limb.
+- **FTZ negative lists are proliferating, not consolidating** (Shanghai/Lin-gang Feb 2025,
+  Beijing May 2025, Jiangsu, Guangxi, ~7 provinces by Aug 2025); CAC published cross-border
+  FAQs (2025-04-09 and mid-2025) encouraging more. Check the applicable FTZ list per run.
+
 ## 7. Source notes
 
 - PIPL (2021) — npc.gov.cn (Chinese authoritative text; unofficial translations vary on Art. 55–56 wording). `[web search — verify]` (Arts. 55–56 and 3-year retention confirmed 2026-08-04; fetch the authoritative text for verbatim wording).
 - GB/T 39335-2020 — SAC national standard. `[web search — verify]` (existence/number confirmed 2026-08-04); paywalled distribution is common — record how the text was obtained.
 - CAC: Measures on Security Assessment (2022); SCC Measures (2023); Provisions on Promoting and Regulating Cross-Border Data Flows (March 2024). UNVERIFIED; thresholds move — re-verify per run.
+- 2025–2026 instruments listed in §7a — all `[web search — verify]` (corroborated 2026-08-11); fetch each before citing a pinpoint.

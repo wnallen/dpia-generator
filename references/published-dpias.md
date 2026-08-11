@@ -26,6 +26,12 @@ URL: https://ec.europa.eu/newsroom/article29/items/611236
 
 Best for: triggering analysis (Step 0), criteria for an acceptable DPIA (the WP29 Annex 2 acceptance criteria are what a regulator will check against), and the discussion of vulnerable data subjects (employees as a vulnerable category).
 
+### EDPB Harmonised DPIA Template (v1.0, 2026) `[web search — verify]`
+
+Adopted 10 March 2026, published 14 April 2026 with an Explainer (consultation closed 9 June 2026); surfaced by web search 2026-08-11, not fetched. Standardises DPIA documentation structure across SAs (methodology stays free choice); national templates are expected to converge on it.
+
+Best for: checking whether the competent SA has adopted the template before finalising an EU-scope DPIA, and mapping this skill's output sections to the harmonised structure in the cover note. Entry point: edpb.europa.eu.
+
 ### ICO DPIA Guidance and Sample Template
 
 ICO's hub: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/accountability-and-governance/data-protection-impact-assessments-dpias/
@@ -203,9 +209,12 @@ federal institutions.
 
 ### Brazil — ANPD RIPD FAQ and resolutions
 
-gov.br/anpd. The April 2023 FAQ page is preliminary (the RIPD regulation is pending — see the
-volatility banner in the `br-lgpd` module); the small-agents resolution carries the ANPD's
-high-risk criteria. Best for: the `br-lgpd` trigger screen and demand-readiness posture.
+gov.br/anpd. The April 2023 FAQ page is preliminary (the RIPD regulation is still pending as
+of 2026-08-11 — see the volatility banner in the `br-lgpd` module). **Correction (aligned
+2026-08-11):** the small-agents resolution (CD/ANPD nº 2/2022) does **not** carry the high-risk
+criteria — the ANPD's high-risk indicators are non-exhaustive guidance, not a numbered list;
+the transfer regulation and Brazilian SCCs are Resolução CD/ANPD nº 19/2024. Best for: the
+`br-lgpd` trigger screen and demand-readiness posture.
 
 ### China — GB/T 39335-2020 and CAC cross-border materials
 

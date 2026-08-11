@@ -1,30 +1,36 @@
-# Malaysia PDPA — DPIA (incoming; watch status)
+# Malaysia PDPA — DPIA (guideline issued 2026; rebuild pending)
 
 **Regime code:** `my-pdpa` (overlay — Model A, thin; **watch status**).
 
 > **VOLATILITY BANNER — re-verify before relying.** The PDPA 2010 was substantially amended
 > by the Personal Data Protection (Amendment) Act 2024 (DPO appointment, breach notification,
 > data-portability, biometric data as sensitive, processor obligations — phased commencement
-> through 2025). The Commissioner (JPDP) issued a **public consultation paper on DPIAs**
-> (recalled: PCP 1/2025) signalling a DPIA guideline with mandatory application in defined
-> circumstances — surfaced by search at
-> `pdp.gov.my/ppdpv1/wp-content/uploads/2025/08/JPDP-FSB-200325-DPIA-PCP-ENG-TC.pdf`
-> `[web search — verify]`. As of build (2026-08-04) this module could not confirm whether the
-> final guideline has issued. **Check pdp.gov.my before every Malaysia-scope run; rebuild
-> this module from the final guideline when it lands.**
+> completed; **fully in force since 2025-06-01**). **Update (2026-08-11): the final DPIA
+> Guideline has now been issued.** Following the March 2025 public consultation
+> (`pdp.gov.my/ppdpv1/wp-content/uploads/2025/08/JPDP-FSB-200325-DPIA-PCP-ENG-TC.pdf`), the
+> PDP Commissioner launched the final **DPIA Guideline** — together with **Data Protection by
+> Design** and **Automated Decision-Making and Profiling** guidelines — dated ~2026-04-30 and
+> publicly launched 2026-05-08. `[web search — verify]` (issuance corroborated 2026-08-11
+> across multiple firm alerts; pdp.gov.my itself was not fetchable). Reported mandatory-DPIA
+> thresholds from the guideline: sensitive personal data of ≥10,000 individuals; ≥20,000
+> individuals for ADM processing; general personal data of ≥20,000 individuals — **threshold
+> figures and the effective/enforcement date are unconfirmed; fetch the guideline from
+> pdp.gov.my before relying on them. This module must be rebuilt from the final guideline
+> text; until then treat everything below as provisional.**
 
-## 1. Current position (pre-guideline)
+## 1. Current position (guideline issued; text not yet read)
 
-- No general statutory DPIA mandate in the PDPA as amended; the DPIA expectation arrives via
-  the Commissioner's guideline power.
-- The amended Act's DPO guideline already expects the DPO to advise on risk assessment;
-  the consultation paper proposes when a DPIA becomes mandatory (high-risk processing
-  patterns broadly tracking the GDPR triggers). UNVERIFIED.
+- The statutory hook remains the Commissioner's guideline power — the amended Act contains no
+  self-executing DPIA article; the final DPIA Guideline (2026) is what makes a DPIA mandatory
+  in defined circumstances. `[web search — verify]`
+- Sibling guidelines already issued: DPO Guideline (2025-02-25), Data Breach Notification
+  Guideline (Feb 2025), Cross-Border Personal Data Transfer Guideline No. 03/2025 (Apr 2025 —
+  replacing the repealed whitelist approach). `[web search — verify]` (corroborated 2026-08-11)
 
-Screen conclusion: `regulatorConclusions["my-pdpa"].assessmentRequired` — until the final
-guideline is verified, the defensible answers are `false` with a Section 6 note recording the
-incoming guideline, or `true` where the user elects to comply early with the consultation
-draft (record that election).
+Screen conclusion: `regulatorConclusions["my-pdpa"].assessmentRequired` — the final guideline
+is issued, so `true` where the processing meets its mandatory triggers (state which, and tag
+the threshold until verified against the guideline text); `false` with a Section 6 note
+otherwise.
 
 ## 2. Method
 
@@ -44,4 +50,5 @@ the DPIA record itself factual.
 
 - PDPA 2010 + Amendment Act 2024 — official portal / lom.agc.gov.my. UNVERIFIED.
 - JPDP DPIA public consultation paper (2025) — URL above. `[web search — verify]`.
-- JPDP guidelines page (DPO, breach notification, DPIA when final) — pdp.gov.my. UNVERIFIED.
+- **JPDP final DPIA Guideline (April/May 2026)** — `pdp.gov.my/ppdpv1/en/akta/data-protection-impact-assessment-guideline-dpia/`. `[web search — verify]` (issuance corroborated 2026-08-11; fetch for the guideline number, effective date and threshold text — this is the source this module must be rebuilt from).
+- JPDP Data Protection by Design and ADM/Profiling guidelines (April/May 2026); DPO, breach-notification and Cross-Border Transfer (No. 03/2025) guidelines — pdp.gov.my. `[web search — verify]`.

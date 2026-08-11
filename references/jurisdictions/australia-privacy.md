@@ -25,14 +25,18 @@ that the PIA is the prudential accountability record.
 ## 2. Reform overlay that changes DPIA answers now
 
 - **Statutory tort for serious invasions of privacy** — in force from **2025-06-10**; a
-  litigation-exposure line in the executive summary for intrusive processing. `[web search — verify]`
+  litigation-exposure line in the executive summary for intrusive processing. First judicial
+  application: *Kurraba Group Pty Ltd v Williams* [2025] NSWDC 396 (7 October 2025,
+  interlocutory injunction) — the tort is live, not theoretical. `[web search — verify]`
+  (corroborated 2026-08-11)
 - **APP 1.7 ADM transparency** — from **2026-12-10**, privacy policies must disclose
   computer programs used to make (or substantially and directly assist in making) decisions
   significantly affecting individuals — feed §1.10's policy consistency check. `[web search — verify]`
-- **Children's Online Privacy Code** — OAIC must register by **2026-12-10**; child-directed
-  services get a placeholder row until the code text exists. `[web search — verify]`
+- **Children's Online Privacy Code** — OAIC must register by **2026-12-10**; the OAIC's
+  **exposure draft** was consulted on to 2026-06-05 (on track); child-directed services get a
+  placeholder row until the code is registered. `[web search — verify]` (corroborated 2026-08-11)
 - Tranche-two reforms (a "fair and reasonable" test, possible direct PIA duties) remain
-  pending — check status; do not assert them.
+  pending — still no bill introduced as of 2026-08-11; check status; do not assert them.
 
 ## 3. Method and divergence
 

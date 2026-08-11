@@ -5,28 +5,35 @@ filing-intensive regime in this skill: the assessment is not an internal account
 record but a **dossier prepared for and submitted to the Ministry of Public Security**.
 Nothing drafted for the Vietnam limb should assume it stays inside the controller.
 
-> **Sourcing status (2026-08-04):** primary sources not fetched (403 to the fetch tool). A
-> web-search corroboration pass confirmed: the **PDP Law No. 91/2025/QH15** passed
-> 2025-06-26 and **effective 2026-01-01**, replacing **Decree 13/2023/ND-CP**; the
-> **cross-border transfer impact dossier submitted to the MPS within 60 days** of the
-> transfer's start; MPS (Department of Cybersecurity and High-Tech Crime Prevention, A05)
-> as the enforcement authority. Those carry `[web search — verify]`. The domestic
-> processing-impact dossier mechanics carried over from Decree 13 Arts. 24–25 are
-> `[model knowledge — verify]`. The Law is new and implementing decrees are landing —
-> **re-verify on every Vietnam-scope run.**
+> **Sourcing status (updated 2026-08-11):** primary sources not fetched (403 to the fetch
+> tool). The 2026-08-04 pass confirmed the **PDP Law No. 91/2025/QH15** (passed 2025-06-26,
+> **effective 2026-01-01**, replacing **Decree 13/2023/ND-CP**) and the 60-day MPS
+> submission posture. A further pass on **2026-08-11** confirmed the implementing decree has
+> landed: **Decree No. 356/2025/ND-CP, effective 2026-01-01, replaces Decree 13/2023/ND-CP**
+> — including its dossier forms — and adds an appraisal mechanism (see §1). All
+> `[web search — verify]`; the decree's issuance date and annex/form numbering still need a
+> primary-source read. **Re-verify on every Vietnam-scope run.**
 
 ## 1. Instrument and framework
 
-- **Law No. 91/2025/QH15 on Personal Data Protection** (effective 2026-01-01), replacing
-  Decree 13/2023/ND-CP as the interim framework. `[web search — verify]`
-- Two dossier obligations (structure inherited from Decree 13, recalled Arts. 24–25;
-  confirm the Law's article numbers on first fetch):
+- **Law No. 91/2025/QH15 on Personal Data Protection** (effective 2026-01-01), implemented
+  by **Decree No. 356/2025/ND-CP** (effective 2026-01-01), which replaces Decree
+  13/2023/ND-CP. `[web search — verify]` (corroborated 2026-08-11)
+- Two dossier obligations (confirm the Law's and Decree 356's article numbers on first fetch):
   1. **Processing impact assessment dossier** — prepared from the start of processing,
      kept available for MPS inspection, and submitted (one original) to the MPS within
-     **60 days** of the start of processing. `[model knowledge — verify]`
+     **60 days** of the start of processing. `[web search — verify]`
   2. **Cross-border transfer impact assessment dossier** — prepared and **submitted to the
      MPS within 60 days of the transfer's start**; the MPS may inspect and can order a
      halt to transfers. `[web search — verify]`
+- **New under Decree 356 (corroborated 2026-08-11):** a two-way **appraisal mechanism** —
+  the authority must issue a compliance decision within **15 days** of a valid dossier, and
+  submitters get up to **30 days** to cure deficiencies; dossiers are made on **Decree 356's
+  own form templates**, superseding Decree 13's Forms 01–04 (fetch the current form numbers
+  before any real filing). Small enterprises and household businesses may **defer the DPIA
+  dossier up to 5 years from 2026-01-01**, unless processing is large-scale (reported
+  cutoff: ≥100,000 data subjects) or the business is a data-processing-service /
+  sensitive-data processor. `[web search — verify]`
 - Regulator: **Ministry of Public Security (A05)**.
 
 ## 2. Trigger and conclusion

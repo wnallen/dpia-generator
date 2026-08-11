@@ -22,9 +22,15 @@ and derives its conclusion from the register, exactly as for EU/UK GDPR.
   its nature, scope, context and purposes. `[web search — verify]`
 - **Prior consultation:** where the DPIA indicates the processing would result in high
   risk, the controller/processor consults the **Data Commissioner** prior to the
-  processing; secondary sources report DPIA reports submitted **sixty days prior** to
-  processing. `[web search — verify]` — confirm whether the 60-day timeline is statutory
-  or guidance before relying on it in a deliverable.
+  processing. **The 60-day machinery is subsidiary legislation, not the Act** (resolved
+  2026-08-11): the **Data Protection (General) Regulations, 2021** provide that
+  consultation is completed within 60 days of the Commissioner's receipt of the impact
+  report, with **deemed approval if the Commissioner does not communicate within 60 days
+  of submission**; the "submit at least 60 days before processing" framing appears in the
+  ODPC **Guidance Note on DPIAs**. Cite the Regulations (LN 263/2021) for the timeline,
+  never s. 31 itself. `[web search — verify]` (corroborated 2026-08-11; fetch
+  `new.kenyalaw.org/akn/ke/act/ln/2021/263/eng` for the regulation number of the
+  consultation provision).
 - Regulator: **Office of the Data Protection Commissioner (ODPC)**; registration regime
   for controllers/processors runs alongside.
 
@@ -61,4 +67,6 @@ lives in the privileged spine.
 ## 5. Source notes
 
 - Data Protection Act, 2019, s. 31 — kenyalaw.org (`new.kenyalaw.org/akn/ke/act/2019/24/eng`). `[web search — verify]`; fetch for verbatim subsection numbering.
+- **Data Protection (General) Regulations, 2021 (LN 263/2021)** — the 60-day consultation/deemed-approval machinery. `[web search — verify]` (corroborated 2026-08-11).
 - ODPC Guidance Note on DPIAs — odpc.go.ke. `[web search — verify]`; capture edition and the submission-timeline provision.
+- Watch items (2026-08-11): a **Data Protection (Amendment) Bill, 2025** is pending (expanded sensitive-data categories, accountability duties) — bill only, not law; **EU adequacy talks are advanced** (press reporting targets a possible decision in late 2026) but no decision has been adopted — do not cite Kenya as EU-adequate. `[web search — verify]`
