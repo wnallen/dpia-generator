@@ -70,7 +70,7 @@ incoming branch does not touch the builder or fixtures).
 - `npm install`: clean, 0 vulnerabilities. Regression suite: **41/41 passed**.
 - Sample use case: a common DPIA scenario — an AI customer-support chatbot ("HelpDesk AI
   Assistant") with EU + UK scope, a US LLM processor, incidental special-category data in free
-  text, DPO-led (no counsel). Manifest: `docs/samples/helpdesk-ai-manifest.json`.
+  text, DPO-led (no counsel). The one-off test manifest was not kept in the repo.
 - Build: exit 0; OOXML validation **passed** (363 paragraphs). Output
   `DPIA_HelpDesk_AI_Assistant_2026-08-11.docx`.
 - Verified in the output: posture-derived header `CONFIDENTIAL — DRAFT FOR DPO REVIEW` and
