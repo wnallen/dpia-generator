@@ -1,0 +1,9 @@
+{
+  "systemName": "Reviewer Posture DPO",
+  "date": "2026-08-11",
+  "dpo": "A. N. Officer",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "A DPO-led assessment with no counsel in the loop must not present itself, page by page, as awaiting review by a role that does not exist in the workflow." }
+  ]
+}
