@@ -7,7 +7,7 @@ description: >-
   PIPIA / Law 25 PIA?", any new-processing description (tool, vendor, AI feature, monitoring) with a
   privacy-risk question, or a pasted vendor page with a GDPR/ICO/CNIL/EDPB/CPPA/ANPD question. Also "index our
   privacy notice" — a portable notice profile later runs check for policy drift. Use even without the word
-  "DPIA". Produces a Word assessment draft: necessity/proportionality, 3×3 risk matrix,
+  "DPIA". Produces a Word privacy assessment draft: necessity/proportionality, 3×3 risk matrix,
   mitigations, Art. 36-and-analog flags, jurisdictional divergence. Do NOT use for the regulatory landscape of
   a named product with no processing to assess (product-regulatory-scan), a category-level tech-law sweep
   (tech-law-radar), or reviewing a DPA or vendor agreement (b2b-supplier-redline).
