@@ -1,6 +1,10 @@
 # Open-Datasets Integration Plan
 
-Status: **proposed** — nothing in this document is implemented yet. Like the executed
+Status: **workstreams 1–3 executed** as v4.3 (2026-08-29 — EDPB registers, OPP-115 schema +
+JURIX crosswalk, Open Terms Archive; their surviving rules live in `references/authorities.md`,
+`references/published-dpias.md`, `references/notice-profile.md`, `SKILL.md` and
+`docs/eval-prompts.md`). Workstreams 4–6 (DPV phases 1–2, the GPI corpus maintenance rule)
+remain **proposed**. Like the executed
 `global-expansion-plan.md` before it (removed at v4.0.2 once its rules had moved into maintained
 files), this file is a design record: it should be deleted once each workstream lands and its
 surviving rules live in the maintained references.
