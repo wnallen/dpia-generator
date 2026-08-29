@@ -1,6 +1,6 @@
 {
   "name": "dpia-generator",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "private": true,
   "description": "Manifest-driven DPIA .docx assembler and its regression suite for the dpia-generator Claude Skill.",
   "license": "MIT",

@@ -56,6 +56,23 @@ none: a Colorado-only cover offers no Art. 36 box. A manifest `statusOptions` ar
 the derived list entirely; a `status` outside the vocabulary renders as an additional checked
 box with a note on stderr, so the cover always reflects the declared status.
 
+## Cover Note (immediately after the cover page, before the executive summary)
+
+The **cover note** is where SKILL.md routes the run's scope-and-provenance findings: it is a
+level-1 "COVER NOTE" section rendered from ordinary `heading` / `para` / `table` blocks — the
+first content section of the document, unnumbered, before the executive summary. It carries:
+
+- the **applicable-regimes table** with one triggering conclusion per regime (mandatory /
+  prudential / not required / not covered), including any coverage-fallback rows;
+- **documented assumptions** where the user declined or was unavailable for intake questions;
+- the **prior-work reconciliation statement** (supersedes / supplements / refreshes, or the
+  prescribed could-not-check wording where the check could not run);
+- notice-profile provenance and any staleness caveat;
+- where relevant, the EDPB harmonised-template alignment note.
+
+Analysis does not live here — conclusions and recommendations belong to the executive summary;
+the cover note records what was in scope, on what factual basis, and what was carried over.
+
 ## Executive Summary (1 page)
 
 Concise, prose, in counsel's voice. Structure:
@@ -96,6 +113,8 @@ This section cross-checks each material commitment in the controller's published
 | "We don't transfer data outside [region]" | New sub-processor in [non-listed jurisdiction] | consistent / drift / conflict |
 
 Resolution rule: any drift or conflict entry must be addressed before deployment — either by amending the privacy policy (the usual answer) or by changing the processing to come back into line with the existing policy. The builder enforces the row-level half of this (an inconsistent row with no committed `action` is exit 1); the rest is on the manifest author: flag the drift in the executive summary, and repeat every resolution in Section 5's mitigations table with the policy owner named and a target date.
+
+Where the profile records a type as `silent` and the processing touches it, carry the finding as a row using the **silence-row convention** (`references/notice-profile.md`): the `commitment` field holds a bracketed meta-statement — `"[Notice silent — no retention commitment; profile customers-2026-03]"` — which the verbatim-quote rule does not govern, because a silence row quotes nothing. Any `flags` on the loaded profile entry (an embedded instruction found at indexing) are surfaced in this section's narrative and in Appendix B.
 
 If the controller's privacy policy is not available to counsel at the time of the DPIA — no notice profile, no pasted or fetchable notice — note this as an open question in Appendix B and recommend the check be completed before sign-off. Never populate the check from a notice reconstructed from memory: an invented commitment is a fabricated citation.
 
@@ -183,7 +202,7 @@ The trigger is **any residual rating of High**, not only High likelihood × High
 
 A `matrix` block with `"stage": "mitigated"` may follow the residual matrix to show the post-mitigation grid.
 
-Where the assessment covers jurisdictions beyond EU/UK GDPR, follow the Article 36 statement with the **regulator-engagement table**, emitted by one `regulatorTable` block — **never hand-authored as a `table`**. The builder renders Regime | Engagement mechanism | Conclusion for every declared jurisdiction from `regulatorConclusions` plus its registry, appending any per-regime reasoning passed in the block's `notes`; a declared regime with no conclusion fails the build. This is the same computed-not-asserted rule as the matrix: the table a regulator reads cannot disagree with the declared conclusions the gate checks.
+Where the manifest declares more than one regime — EU + UK included: two regulators with no one-stop-shop between them — follow the Article 36 statement with the **regulator-engagement table**, emitted by one `regulatorTable` block — **never hand-authored as a `table`**. The builder renders Regime | Engagement mechanism | Conclusion for every declared jurisdiction from `regulatorConclusions` plus its registry, appending any per-regime reasoning passed in the block's `notes`; a declared regime with no conclusion fails the build. This is the same computed-not-asserted rule as the matrix: the table a regulator reads cannot disagree with the declared conclusions the gate checks.
 
 ## Section 6 — Jurisdictional Divergence (where applicable)
 
@@ -236,6 +255,7 @@ Author the manifest against this table, then run the builder:
 | Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
 | Regulator-engagement table (§5) | one `regulatorTable` block — `{"notes":{"<code>":"reasoning"}}`; rows computed from `regulatorConclusions` + the registry, exit 1 on a declared regime without a conclusion |
+| Cover note | `heading` (level 1, "COVER NOTE") + `table` for the applicable-regimes table + `para` for assumptions, reconciliation, and provenance |
 | Executive summary | `heading` (level 1) + `para` for the five numbered elements; `bullets` for the top residual risks |
 | §1 Description | `heading` per sub-section + `para`; `table` for §1.5 data categories and §1.7 recipients |
 | §1.10 policy consistency check | one `noticeCheck` block — `{"notice":{"source":"...","audience":"...","date":"...","profile":"..."},"rows":[{"commitment":"...","section":"...","processing":"...","verdict":"consistent|drift|conflict","action":"..."}]}`; verdicts colour-coded by the builder, `action` required on drift/conflict (exit 1), stale `notice.date` warns. Falls back to a `para` recording the Appendix B open question where no notice is available |
