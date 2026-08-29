@@ -150,6 +150,36 @@ Commission implementing decision on the adequate level of protection under the E
 - **Standing rule:** a vendor's certification is verified against the live list **at the time the DPIA is written**, never against the vendor's representation, and never against this file. This entry records where to look; it is not itself evidence of anyone's certification.
 - **Status:** UNVERIFIED (and inherently time-sensitive — the underlying adequacy decision is subject to challenge).
 
+### European Commission adequacy decisions — the live list
+
+- **Cited for:** whether a destination country is adequacy-covered, which decides the entire shape of the transfer analysis (adequacy vs. SCC + TIA) per regime touched.
+- **Verify at:** the Commission's adequacy page, `https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/adequacy-decisions_en` (UK addendum: the UK keeps its own adequacy regulations post-DUAA — check the ICO's international-transfers page for UK-side divergence).
+- **Standing rule (same as the DPF list):** adequacy status is checked against the live list **at the time the DPIA is written** — never cited from this file, never from a vendor's representation, and never from model recall; adequacy decisions are adopted, amended, sunset and challenged. Cite the specific decision for the destination, with its date.
+- **Status:** live register — the entry records where to look; only the fetched decision is citable.
+
+### EDPB Register of final one-stop-shop decisions (Art. 60)
+
+- **Cited for:** finding national DPA enforcement decisions on a processing type — the primary index for Step 1 analogs and for grounding a risk rating in what a DPA actually sanctioned.
+- **Verify at:** `https://www.edpb.europa.eu/our-work-tools/consistency-findings/register-for-article-60-final-decisions_en`
+- **Standing rule:** the register's summaries are EDPB-Secretariat-authored and expressly non-authoritative — cite the **underlying national decision** (fetched), never the summary. A summary read without the decision is `[web search — verify]` at best.
+- **Status:** live register — surfaced by web search 2026-08-29; consult live, cite the fetched decision.
+
+### EDPB Art. 65 binding decisions
+
+- **Cited for:** the Board's binding resolution of DPA disputes — the strongest available signal of the harmonised EU position on a contested processing question (lawful basis for behavioural ads, children's data, transfer suspensions).
+- **Verify at:** `https://www.edpb.europa.eu/our-work-tools/consistency-findings/binding-decisions_en`
+- **Capture:** the decision number, adoption date, and paragraph relied on.
+- **Status:** live register — consult live; cite the fetched decision with pinpoints.
+
+### EDPB BCR approvals (Art. 64 opinions) and the BCR register
+
+- **Cited for:** whether a named importer group holds approved Binding Corporate Rules — a transfer mechanism the analysis must verify, not assume. Shared ingestion surface with the sibling `bcr-registry` work: this skill carries the consumption rule, not the data.
+- **Verify at:** edpb.europa.eu (Art. 64 opinions listing; the register of approved BCRs).
+- **Standing rule (as for the DPF list):** a vendor's claim of approved BCRs is verified against the register **at the time the DPIA is written**, and the approving lead SA and approval date are captured.
+- **Status:** live register — the entry records where to look.
+
+**GDPRhub rule.** GDPRhub (gdprhub.eu) is a wiki-sourced index into DPA decisions and is often the fastest way to *find* one — but it is community-authored and may be used to find, **never to cite**. The citation is always to the primary decision, fetched; until fetched, a GDPRhub-surfaced finding is `[web search — verify]`, and wiki content never upgrades a tag.
+
 ### EDPB harmonised DPIA template (v1.0, 2026)
 
 Adopted 10 March 2026, published 14 April 2026 with an Explainer; consultation closed 9 June 2026.
@@ -197,6 +227,37 @@ Adopted 10 March 2026, published 14 April 2026 with an Explainer; consultation c
 - **Cited for:** consent is generally not freely given in employment and other power-imbalanced contexts — the §2.2 lawful-basis analysis.
 - **Capture:** the paragraph on imbalance of power.
 - **Status:** UNVERIFIED.
+
+### Poplavska et al., "From Prescription to Description: Mapping the GDPR to a Privacy Policy Corpus Annotation Scheme" (JURIX 2020)
+
+- **Cited for:** the category-level mapping between the OPP-115 privacy-policy annotation scheme (Wilson et al., ACL 2016) and GDPR principles/articles — the source informing the commitment-type crosswalk table in `references/notice-profile.md`. A method source, not legal authority: it grounds the *structure* of the notice-profile vocabulary, never a legal conclusion in a DPIA.
+- **Verify at:** `https://usableprivacy.org/static/files/poplavska_jurix_2020.pdf` (mirror: NSF PAR, `https://par.nsf.gov/biblio/10257054`). The usableprivacy.org host was egress-blocked from the environment that added this entry.
+- **Capture:** the paper's own category → article mapping tables, and reconcile the notice-profile crosswalk's GDPR column against them — the column ships `[web search — verify]` until that reconciliation has run.
+- **Status:** `[web search — verify]` (existence, venue and authorship corroborated 2026-08-29; paper not fetched).
+
+---
+
+## Vendor terms — cite by version (Open Terms Archive)
+
+Vendor privacy policies, DPAs and ToS are **vendor representations**, not authorities — the
+Untrusted-Content Rule governs their weight. This section governs their *checkability*: a vendor
+commitment quoted without a version anchor is a citation to a moving target, because vendors
+revise terms silently and a DPIA's quote must remain verifiable at review time.
+
+- **Rule:** where a DPIA relies on a vendor's published terms, quote verbatim and cite **as of a
+  named version date** — the vendor's own "last updated" date, or, where the vendor is tracked by
+  an Open Terms Archive collection (opentermsarchive.org; per-collection version repositories with
+  dated permalinks), the OTA version date with the permalink recorded alongside the vendor's live
+  URL. OTA changes the checkability of the citation, not its evidentiary weight.
+- **Refresh diff:** on a Step 0.5 refresh of a prior DPIA that cited a vendor-terms version, diff
+  the vendor's terms between that version date and today (OTA history where tracked; re-fetch and
+  compare otherwise) — a material change feeds the cover-note reconciliation and the
+  severity-floor analysis.
+- **Coverage caveat:** OTA tracks a finite service list. Absence from OTA is absence of tracking,
+  never evidence the terms are unchanged — the same "could not check ≠ checked and found nothing"
+  rule Steps 0.5 and 1 already enforce.
+- Indexed vendor commitments (a `role: vendor` profile entry per `references/notice-profile.md`)
+  carry `version_date` for exactly this rule.
 
 ---
 
