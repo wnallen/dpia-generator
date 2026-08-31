@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+# The suite only reads the repo; never grant the default token more than that.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
