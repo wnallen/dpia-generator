@@ -770,19 +770,31 @@ function build(manifest, state) {
   const children = coverPage(manifest, state.jurisdictions || ['eu-gdpr']);
 
   (manifest.blocks || []).forEach((b, i) => {
+    // Same fail-cleanly contract as the row guards: a null (or mis-typed) entry
+    // in "blocks" must name the block, never throw from the first .type access.
+    if (typeof b !== 'object' || b === null || Array.isArray(b)) {
+      fail(1, `block ${i + 1}: each entry in "blocks" must be a block object, got ${b === null ? 'null' : Array.isArray(b) ? 'an array' : typeof b}`);
+    }
     const ctx = `block ${i + 1} (${b.type})`;
     switch (b.type) {
       case 'pagebreak':
         children.push(new Paragraph({ children: [new (D.PageBreak)()] })); break;
       case 'heading':
+        // A missing "text" would String(undefined) into a literal "undefined"
+        // heading — the v4.2.1 "null" header defect class. "" stays legal.
+        if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
         children.push(heading(b.text, b.level || 2)); break;
       case 'para':
+        if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
         children.push(p(b.text, { italic: b.italic })); break;
       case 'bullets':
-        (b.items || []).forEach(it => children.push(new Paragraph({
-          bullet: { level: 0 }, spacing: { after: 80, line: 276 },
-          children: [new TextRun({ text: String(it), font: FONT, size: 22 })],
-        }))); break;
+        (b.items || []).forEach((it, j) => {
+          if (it === undefined || it === null) fail(1, `${ctx} item ${j + 1}: bullet items must be text, got ${it === null ? 'null' : 'undefined'}`);
+          children.push(new Paragraph({
+            bullet: { level: 0 }, spacing: { after: 80, line: 276 },
+            children: [new TextRun({ text: String(it), font: FONT, size: 22 })],
+          }));
+        }); break;
       case 'table':
         if (!b.columns || !b.rows) fail(1, `${ctx}: needs "columns" and "rows"`);
         (b.rows || []).forEach((r, j) => rowArray(r, `${ctx} row ${j + 1}`));
@@ -976,7 +988,9 @@ function build(manifest, state) {
         break;
       }
       case 'signature': {
-        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => String(v)));
+        // A null cell renders empty, matching dataTable's contract — never the
+        // literal word "null" in a signature line.
+        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => (v === undefined || v === null) ? '' : String(v)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
         break;
@@ -1035,8 +1049,17 @@ function main() {
   let m;
   try { m = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); }
   catch (e) { fail(1, 'manifest is not valid JSON: ' + e.message); }
+  // Valid JSON is not necessarily a manifest: "null", a string, or an array all
+  // parse, and each crashed the required-field check with a TypeError instead
+  // of the clean exit 1 the fail-cleanly contract requires.
+  if (typeof m !== 'object' || m === null || Array.isArray(m)) {
+    fail(1, `manifest must be a JSON object, got ${m === null ? 'null' : Array.isArray(m) ? 'an array' : typeof m}`);
+  }
   ['systemName', 'date'].forEach(k => { if (!m[k]) fail(1, `manifest: missing required "${k}"`); });
   if (!isRealDate(String(m.date))) fail(1, `manifest: "date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(m.date)}`);
+  if (!Array.isArray(m.blocks)) {
+    fail(1, `manifest: "blocks" is required and must be an array of block objects, got ${m.blocks === undefined ? 'nothing' : m.blocks === null ? 'null' : typeof m.blocks}`);
+  }
 
   // The manifest is authored from instructions that may include untrusted
   // ingested content (vendor pages, pasted specs), so both "outputDir" and
