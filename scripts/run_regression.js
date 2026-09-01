@@ -406,6 +406,37 @@ const CASES = [
     stderr: /"mitigatedRating" requires "mitigatedLikelihood" and "mitigatedSeverity"/,
   },
   {
+    name: 'manifest-not-object',
+    why: 'v4.3.3: a manifest file whose JSON is null (or a string, or an array) parsed fine and then crashed the required-field check with a TypeError stack trace — the fail-cleanly contract applies to the manifest root too.',
+    exit: 1,
+    keepDir: true,
+    stderr: /manifest must be a JSON object, got null/,
+  },
+  {
+    name: 'blocks-not-array',
+    why: 'v4.3.3: "blocks" as a string crashed .forEach with a TypeError; the schema says required-and-array, so the builder must enforce it with a named error.',
+    exit: 1,
+    stderr: /"blocks" is required and must be an array of block objects, got string/,
+  },
+  {
+    name: 'block-null-entry',
+    why: 'v4.3.3: a null entry in "blocks" crashed reading .type — the v4.1.1 fail-cleanly contract, latent on the blocks array itself since v1.1.',
+    exit: 1,
+    stderr: /block 2: each entry in "blocks" must be a block object, got null/,
+  },
+  {
+    name: 'para-missing-text',
+    why: 'v4.3.3: a para or heading block with no "text" rendered the literal word "undefined" into the shipped document — the v4.2.1 "null"-header defect class on the two commonest blocks.',
+    exit: 1,
+    stderr: /block 1 \(para\): needs "text"/,
+  },
+  {
+    name: 'bullet-null-item',
+    why: 'v4.3.3: a null bullet item rendered the literal word "null" as a bullet (a null signature cell did the same; it now renders empty, matching dataTable).',
+    exit: 1,
+    stderr: /block 1 \(bullets\) item 2: bullet items must be text, got null/,
+  },
+  {
     name: 'reviewer-posture-dpo',
     why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff. v4.2: the same run also carried a work-product header no attorney would ever stand behind.',
     exit: 0,
