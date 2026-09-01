@@ -29,9 +29,55 @@ rules; the states here have statutes but (as of build) no equivalent rulemaking.
 >   2028-01-01, requires DPAs **plus** a content-prescribed profiling impact assessment);
 >   Alabama (HB 351, eff. 2027-05-01, **reportedly no formal DPA duty — verify against the
 >   text before relying on the outlier**).
+> - **2026-08-31 cross-check pass** (`[web search — verify]`): two roster questions were
+>   resolved against search — **Idaho has no comprehensive privacy law** (breach-notification
+>   and sectoral statutes only; it appears in some third-party trackers regardless, so treat
+>   third-party state rosters as leads, never as sources), and **Nebraska's assessment duty
+>   is confirmed** (**Neb. Rev. Stat. § 87-1116**, the NDPA's data-protection-assessment
+>   section — Nebraska stays in the roster; some trackers wrongly report no duty). Same
+>   pass: **Montana's threshold was lowered** to 25k consumers (15k + >25% sale revenue on
+>   the alternative prong) effective 2025-10-01.
 >
 > Verify the specific state's statute and effective date before declaring the regime
 > applicable.
+
+## 1a. Applicability thresholds — screen these before the trigger test
+
+An assessment duty attaches only where the state's law applies to the controller at all, and
+the thresholds vary enough to change the answer (a 7× spread on the consumer-count prong).
+Compact screen for the roster states; every row `[model knowledge — verify]` except where
+tagged `[web search — verify]` from the 2026-08-31 pass. Verify the statute before declaring
+a close-call state applicable — and treat near-threshold counts (within ~5%) as
+applicability-likely, since compliance lead time runs ahead of the count.
+
+| State | Main prong (consumers/yr) | Alternative prong |
+|---|---|---|
+| Virginia | 100k | 25k + >50% gross revenue from sale of PD |
+| Connecticut | 100k (excl. payment-transaction data) | 25k + >25% revenue from sale — **thresholds lowered by SB 1295 from 2026-07-01; re-screen** |
+| Texas | **No numeric threshold** — conducts business in TX or targets TX residents, processes or sells PD, and is not an SBA small business (small businesses still need consent to sell sensitive data) `[web search — verify]` | — |
+| Oregon | 100k (excl. payment-transaction data) | 25k + ≥25% revenue from sale |
+| Montana | 25k (lowered from 50k, eff. 2025-10-01) `[web search — verify]` | 15k + >25% revenue from sale `[web search — verify]` |
+| Delaware | 35k | 10k + >20% revenue from sale |
+| New Hampshire | 35k | 10k + >25% revenue from sale |
+| New Jersey | 100k | 25k + **any** revenue from sale |
+| Minnesota | 100k | 25k + >25% revenue from sale |
+| Tennessee | >$25M revenue **and** 175k `[web search — verify]` | >$25M revenue **and** 25k + >50% revenue from sale |
+| Indiana | 100k `[web search — verify]` | 25k + >50% revenue from sale `[web search — verify]` |
+| Kentucky | 100k `[web search — verify]` | 25k + >50% revenue from sale `[web search — verify]` |
+| Nebraska | **No numeric threshold** — Texas model, SBA small-business exemption `[web search — verify]` | — |
+| Rhode Island | 35k | 10k + >20% revenue from sale |
+| Maryland | 35k | 10k + ≥20% revenue from sale |
+
+**No-assessment outliers (in effect, deliberately outside this module):** Utah (UCPA) and
+Iowa impose **no** data-protection-assessment duty `[model knowledge — verify]` — a
+processing whose only US-state footprint is Utah/Iowa residents raises no `us-state` limb
+however large the scale, and the applicable-regimes table should say so rather than leave
+the states unmentioned. (Alabama, not yet effective, reportedly joins them — see the roster
+note above.)
+
+**Exemption screen (all roster states):** employment-context data is exempt (contrast
+California); non-profit, HIPAA and GLBA exemptions vary between entity-level and data-level
+by state. Check the specific state's exemption architecture before declaring it applicable.
 
 ## 1. The shared pattern (Virginia CDPA as archetype)
 
@@ -54,9 +100,10 @@ rules; the states here have statutes but (as of build) no equivalent rulemaking.
 
 Do not produce fifty state limbs. Method:
 
-1. Identify which states' thresholds the controller actually meets (residents processed;
-   revenue tests vary; Texas notably applies to any non-small-business processing residents'
-   data).
+1. Identify which states' thresholds the controller actually meets — run the §1a threshold
+   screen (Texas and Nebraska apply with no numeric threshold at all; the consumer-count
+   prong elsewhere spans 25k–175k), and name the no-assessment outliers (Utah, Iowa) in the
+   applicable-regimes table where their residents are in scope.
 2. Run the trigger screen once on the enumerated-activity pattern; note any state-specific
    deviation only if it changes the answer.
 3. Satisfy the content with the GDPR-spine DPIA plus the Colorado-style benefits inventory
