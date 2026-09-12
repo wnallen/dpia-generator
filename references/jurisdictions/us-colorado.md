@@ -34,8 +34,17 @@ harm to a consumer**, which the statute enumerates (C.R.S. § 6-1-1309(2), descr
    treatment or unlawful disparate impact; financial or physical injury; a physical or other
    intrusion upon solitude or seclusion that would be offensive to a reasonable person; or
    other substantial injury;
-4. Processing of **sensitive data** (race/ethnicity, religion, health, sexuality, citizenship
-   status, genetic or biometric data, children's data).
+4. Processing of **sensitive data** — race/ethnicity, religion, health, sexuality, citizenship
+   status, genetic or biometric data, children's data, and (added by **SB 25-276**, effective
+   **2025-10-01**) **precise geolocation data** (reported as a 1,850-foot-radius definition —
+   verify against the amended statute). SB 25-276 also requires **opt-in consent before
+   selling sensitive data**. `[web search — verify]`
+5. **Minors' data with heightened risk of harm (SB 24-041, effective 2025-10-01):** an
+   assessment is required where an online service, product or feature processes the data of a
+   consumer the controller **knows or willfully disregards** is a minor and the processing
+   presents a heightened risk of harm to minors — and this duty applies **regardless of the
+   CPA's normal applicability thresholds**, so it can put a small controller in scope that
+   the volume screen would exclude. `[web search — verify]`
 
 Screen conclusion for the cover note: *"A Colorado data protection assessment [is / is not]
 required because the processing [does / does not] involve [enumerated activity]."* This is a
@@ -45,7 +54,8 @@ reaches the same answer on the same facts.
 Note the CPA applies to controllers meeting its thresholds (Colorado residents' data volumes;
 no revenue floor) and **exempts data processed in an employment context** — a workplace
 monitoring DPIA that is squarely in GDPR scope may be entirely outside the CPA. Check scope
-before declaring the regime applicable at all. `[model knowledge — verify]`
+before declaring the regime applicable at all — but remember the minors trigger above runs
+**outside** those thresholds. `[model knowledge — verify]`
 
 ## 3. Required content — Rule 8.04 crosswalk against Art. 35(7)
 
@@ -71,13 +81,12 @@ fairness/disparate-impact evaluation) for assessments triggered by profiling. `[
 **Colorado AI Act — do not cite it (status corroborated 2026-08-11).** SB 24-205 (the
 "Colorado AI Act", with its own AI impact-assessment duty) **never took effect**: its start
 date was delayed to 2026-06-30 (special session, Aug 2025), enforcement was then suspended by
-the federal district court in the xAI litigation (~April 2026, DOJ intervening), and the Act
-was **repealed in May 2026 by SB 26-189** before commencement. Its replacement, the Colorado
-**Automated Decision-Making Technology Act** (effective 2027-01-01), is a
+the federal district court in the xAI litigation (2026-04-27, DOJ intervening), and the Act
+was **repealed by SB 26-189, signed 2026-05-14**, before commencement. Its replacement, the
+Colorado **Automated Decision-Making Technology Act** (effective 2027-01-01), is a
 transparency/disclosure regime with **no impact-assessment obligation**. The CPA's Rule 8
 data protection assessment duty is unchanged and remains the only Colorado assessment
-instrument. `[web search — verify]` (the SB 26-189 signing date is reported as mid-May 2026
-with minor source disagreement — verify against leg.colorado.gov before citing a date).
+instrument. `[web search — verify]` (signing date corroborated 2026-09-12).
 
 **Rendering:** produce the register and 3×3 matrix as usual — they satisfy the risk element —
 and add a `complianceMap` block (`"regime": "us-co"`) mapping each Rule 8.04 element to the
@@ -128,5 +137,5 @@ Colorado-triggered assessment:
 ## 7. Source notes
 
 - C.R.S. § 6-1-1309 — Colorado General Assembly / official statute publisher. UNVERIFIED; capture URL and subsection enumeration on first fetch.
-- 4 CCR 904-3 Rules, Parts 8–9 — Colorado Secretary of State / AG. UNVERIFIED; the Rule 8.04 element list above must be checked against the adopted text before any sub-paragraph is cited.
+- 4 CCR 904-3 Rules, Parts 8–9 — Colorado Secretary of State / AG. UNVERIFIED; the Rule 8.04 element list above must be checked against the adopted text before any sub-paragraph is cited. **The rules were amended in October 2025** to implement SB 24-041 and SB 25-276 (willful-disregard standard, system design features, "revealing" geolocation) — cite the amended set, not the original 2023 rules. `[web search — verify]` (corroborated 2026-09-12; redline at coag.gov's CPA rulemaking page).
 - Colorado AG shopping-list guidance and enforcement announcements — coag.gov. UNVERIFIED.

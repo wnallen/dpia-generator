@@ -35,8 +35,14 @@ that the PIA is the prudential accountability record.
 - **Children's Online Privacy Code** — OAIC must register by **2026-12-10**; the OAIC's
   **exposure draft** was consulted on to 2026-06-05 (on track); child-directed services get a
   placeholder row until the code is registered. `[web search — verify]` (corroborated 2026-08-11)
-- Tranche-two reforms (a "fair and reasonable" test, possible direct PIA duties) remain
-  pending — still no bill introduced as of 2026-08-11; check status; do not assert them.
+- **Tranche-two reforms — exposure draft out (2026-08-31):** the AG's Department released
+  the exposure-draft **Privacy Amendment (Personal Data Protection) Bill 2026** with a
+  consultation paper on 2026-08-31 (submissions closed mid-September 2026). Contents: a
+  **"fair and reasonable" test** (rewritten APP 3), a **controller/processor framework**,
+  and a **right to erasure for large digital platforms**. Still an exposure draft — not an
+  introduced bill, not law; characterize it as proposed reform, do not assert its rules.
+  Check for an introduced bill on every Australia-scope run. `[web search — verify]`
+  (corroborated 2026-09-12)
 
 ## 3. Method and divergence
 

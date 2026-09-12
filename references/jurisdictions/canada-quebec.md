@@ -73,11 +73,16 @@ failures before quoting either number in a deliverable.
   multi-province, note PIPEDA's accountability principle and move on — there is no separate
   instrument to produce. Bill C-27 (CPPA) died on the order paper with the January 2025
   prorogation; its successor, **Bill C-36 (Protecting Privacy and Consumer Data Act)**, was
-  introduced at first reading **2026-06-15** — privacy-only (no bundled AI act), penalties to
-  $25M, enforcement via a new Digital Safety and Data Protection Commission. **Not law**; do
-  not assert its obligations, but flag it as incoming for long-lived processing. Also note
-  the OPC's joint **OpenAI/ChatGPT findings (PIPEDA #2026-002, ~May 2026)** as persuasive
-  guidance for AI-training assessments. `[web search — verify]` (corroborated 2026-08-11)
+  introduced at first reading **2026-06-15** — privacy-only (no bundled AI act), AMPs up to
+  the greater of **$10M or 3%** of gross global revenue and offences up to the greater of
+  **$25M or 5%** (the ceiling is percentage-of-revenue, not a flat $25M), enforcement via a
+  new Digital Safety and Data Protection Commission. Still at first reading as of 2026-09-12;
+  second reading expected after Parliament resumes 2026-09-21. **Not law**; do not assert
+  its obligations, but flag it as incoming for long-lived processing. Also note the OPC's
+  joint **OpenAI/ChatGPT findings (PIPEDA #2026-002, ~May 2026, joint with the CAI,
+  OIPC-BC and OIPC-AB — the CAI's participation makes it citable on the Quebec limb too)**
+  as persuasive guidance for AI-training assessments. `[web search — verify]`
+  (corroborated 2026-09-12)
 - **Federal public sector:** the Treasury Board **Directive on Privacy Impact Assessment**
   makes PIAs mandatory for government institutions; relevant only when the client is or
   serves a federal institution.

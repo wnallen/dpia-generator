@@ -14,7 +14,9 @@ Chinese; treat every English rendering, including this module, as a working tran
 > and continue to move — those thresholds stay `[model knowledge — verify]` and must be
 > re-verified on every China-scope run. A 2026-08-11 pass added the 2025–2026 instruments in
 > §7a below — notably the **compliance-audit Measures (effective 2025-05-01)** and the
-> **cross-border certification Measures (effective 2026-01-01)**.
+> **cross-border certification Measures (effective 2026-01-01)**. A 2026-09-12 pass added the
+> **small-handler simplified-PIPIA regime (effective 2026-09-01)** — it changes the §2 screen
+> and §3 content answer for handlers under 100,000 individuals.
 
 ## 1. Instrument and statute
 
@@ -51,6 +53,16 @@ Run the Art. 55 list as a category screen. Practical notes:
 - Separate consent requirements attach to several of the same triggers (sensitive PI,
   provision, disclosure, export); note them in §2.2 but do not conflate consent with the
   assessment obligation.
+- **Small-handler simplified regime (from 2026-09-01):** under the CAC + MPS Provisions on
+  Simplified Measures for Personal Information Protection by Small-Scale Personal
+  Information Handlers (issued 2026-07-22), handlers processing PI of **fewer than 100,000
+  individuals** may use a **simplified standardized PIPIA form** (the Provisions' appendix
+  template, retained ≥3 years) instead of a full report; no separate PIPIA or compliance
+  audit is needed where a platform's own audit/PIPIA already covers platform-conducted
+  processing; a five-yearly self-assessment checklist substitutes for full audits, with a
+  certification-based audit exemption. The Art. 55 trigger still fires — what changes is
+  the required form of the assessment; say which form the record takes in §2's conclusion.
+  `[web search — verify]`
 
 Screen conclusion: `regulatorConclusions["cn-pipl"].pipiaRequired`.
 
@@ -103,7 +115,7 @@ the SCC route, filed**. Hard rules:
   (`"headerText": ""`), and the privileged analysis held outside China scope.
 - Assume the record may be reviewed by the CAC in Chinese; record translation status.
 
-## 7a. 2025–2026 instruments (corroborated by web search 2026-08-11 — all `[web search — verify]`)
+## 7a. 2025–2026 instruments (corroborated by web search 2026-08-11 and 2026-09-12 — all `[web search — verify]`)
 
 - **Compliance-audit Measures:** CAC Measures for the Administration of Personal Information
   Protection Compliance Audits (promulgated 2025-02-14, **effective 2025-05-01**, with an
@@ -113,7 +125,14 @@ the SCC route, filed**. Hard rules:
   PIPIA record — note the cadence in §7.3-style review planning.
 - **Certification export route completed:** CAC + SAMR Measures for Certification of
   Cross-Border Personal Information Transfer, issued 2025-10-14, **effective 2026-01-01** —
-  the third PIPL transfer pathway is now operational; detailed technical specs still pending.
+  the third PIPL transfer pathway is now operational; the underpinning technical spec is
+  **GB/T 46068-2025** (Security certification requirements for cross-border PI processing,
+  effective **2026-03-01**), no longer pending.
+- **Tiered-administration overlay:** the small-handler simplified-PIPIA Provisions (§2 above;
+  issued 2026-07-22, **effective 2026-09-01**) are the bottom tier; the top tier is the CAC's
+  **draft Provisions on PI Protection for Large-Scale PI Handlers (>10 million individuals)**,
+  published for comment 2026-08-07 (consultation closed 2026-09-07) — **draft only, do not
+  assert**; watch status for handlers at that scale.
 - **GB/T 45574-2025** — Security Requirements for Processing of Sensitive Personal
   Information (recommended standard, **effective 2025-11-01**); narrows the working sensitive
   list vs. GB/T 35273-2020 (removes ID-card number per se, marital status,

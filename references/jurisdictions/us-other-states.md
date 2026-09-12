@@ -8,7 +8,7 @@ Nebraska, Rhode Island, **Maryland** and successors. Colorado and California are
 their own modules (`us-co`, `us-ca`) because their regulators have issued prescriptive content
 rules; the states here have statutes but (as of build) no equivalent rulemaking.
 
-> **Sourcing status (2026-08-04; roster updated 2026-08-11):** statutes not fetched; the
+> **Sourcing status (2026-08-04; roster updated 2026-08-11 and 2026-09-12):** statutes not fetched; the
 > pattern below is `[model knowledge — verify]` and the state list changes session to session.
 > Roster notes from the 2026-08-11 web-search pass (`[web search — verify]`):
 >
@@ -17,13 +17,27 @@ rules; the states here have statutes but (as of build) no equivalent rulemaking.
 >   processing activity, including for each algorithm used**, with stricter sensitive-data
 >   and profiling rules and data-minimization duties beyond the pattern. Treat Maryland as
 >   Colorado-grade prescriptive until its text is read; do not rely on the harmonized screen
->   alone.
+>   alone. **2026 amendment (corroborated 2026-09-12):** "sensitive data" now includes
+>   **inferred sensitive data**, and sales to immigration-enforcement-linked government
+>   entities are restricted; MODPA became **enforceable 2026-04-01** (cure window to
+>   2027-04-01).
 > - **Kentucky:** the KCDPA's assessment obligations apply to processing occurring **on or
->   after 2026-06-01** (amended pre-effectiveness).
-> - **Connecticut:** SB 1295 (2025) materially amends the CTDPA — most changes effective
->   2026-07-01, with **impact-assessment provisions applying to processing created or
->   generated on or after 2026-08-01**, an expanded sensitive-data list (incl. neural data)
->   and lower thresholds. Re-screen Connecticut against the amended text.
+>   after 2026-06-01** (amended pre-effectiveness). **HB 692 (signed 2026-04-13)** classifies
+>   smart-TV **ACR (automatic content recognition) data as sensitive data from 2027-07-01** —
+>   a future-dated trigger-list delta.
+> - **Connecticut (re-screened 2026-09-12 — no longer a clean thin-pattern member):** SB 1295
+>   (2025) materially amended the CTDPA. Since **2026-07-01** the law applies at **35,000
+>   consumers** (down from 100k) — and with **no numeric threshold at all** for any
+>   controller that (a) **sells personal data** or (b) **processes sensitive data**,
+>   effectively joining the Texas/Nebraska no-threshold group for those activities. A
+>   **profiling impact-assessment duty applies to processing created or generated on or
+>   after 2026-08-01**, and the sensitive-data list expanded (incl. neural data). Re-screen
+>   Connecticut against the amended text on every run; the harmonized screen alone
+>   under-states it.
+> - **New Jersey:** the NJDPA was amended by **A5328 (signed 2026-06-30)** — a data
+>   broker/data collector **registration** framework (registry launching spring 2027)
+>   layered onto the law; the June 2025 proposed NJDPA regulations **expired unadopted
+>   2026-06-02**, so the no-equivalent-rulemaking premise of this module still holds for NJ.
 > - **Enacted 2026, not yet effective:** Oklahoma (SB 546, eff. 2027-01-01, requires DPAs);
 >   Louisiana (SB 386, eff. 2027-01-01, requires DPAs); Vermont (S.71/Act 145, eff.
 >   2028-01-01, requires DPAs **plus** a content-prescribed profiling impact assessment);
@@ -53,7 +67,7 @@ applicability-likely, since compliance lead time runs ahead of the count.
 | State | Main prong (consumers/yr) | Alternative prong |
 |---|---|---|
 | Virginia | 100k | 25k + >50% gross revenue from sale of PD |
-| Connecticut | 100k (excl. payment-transaction data) | 25k + >25% revenue from sale — **thresholds lowered by SB 1295 from 2026-07-01; re-screen** |
+| Connecticut | **35k** (SB 1295, from 2026-07-01; excl. payment-transaction data) `[web search — verify]` | **No threshold** where the controller sells PD or processes sensitive data `[web search — verify]` |
 | Texas | **No numeric threshold** — conducts business in TX or targets TX residents, processes or sells PD, and is not an SBA small business (small businesses still need consent to sell sensitive data) `[web search — verify]` | — |
 | Oregon | 100k (excl. payment-transaction data) | 25k + ≥25% revenue from sale |
 | Montana | 25k (lowered from 50k, eff. 2025-10-01) `[web search — verify]` | 15k + >25% revenue from sale `[web search — verify]` |
@@ -73,7 +87,11 @@ Iowa impose **no** data-protection-assessment duty `[model knowledge — verify]
 processing whose only US-state footprint is Utah/Iowa residents raises no `us-state` limb
 however large the scale, and the applicable-regimes table should say so rather than leave
 the states unmentioned. (Alabama, not yet effective, reportedly joins them — see the roster
-note above.)
+note above.) **Florida is also deliberately outside this roster:** the Florida Digital Bill
+of Rights carries an assessment-style regime but applies only to controllers over ~$1B
+revenue meeting further criteria — name it in the applicable-regimes table (in or out) for
+any consumer processing with Florida residents rather than leaving it silent.
+`[web search — verify]`
 
 **Exemption screen (all roster states):** employment-context data is exempt (contrast
 California); non-profit, HIPAA and GLBA exemptions vary between entity-level and data-level

@@ -43,6 +43,12 @@ privacy**, enumerated in the regulations (descriptive):
 4. Certain **training** of ADMT / facial-recognition / identity-verification technology on
    personal information. `[model knowledge — verify]`
 
+A 2026-09-12 corroboration pass suggests the final regulations may enumerate a **fifth
+trigger — automated processing to infer traits in employment/education contexts** — beyond
+the four above; consistent with this module's descriptive-not-verbatim caveat, verify the
+§ 7150 list against the regulation text before asserting the count either way.
+`[web search — verify]`
+
 Note "consumer" includes employees and job applicants in California — the CCPA has **no**
 HR carve-out (unlike Colorado and the other states). A workplace ADMT deployment can be
 squarely in scope.
@@ -99,6 +105,17 @@ statutory non-waiver clause equivalent to Colorado's recalled provision — trea
 record and counsel's candid analysis as separate documents, per the destination check:
 producible record with `"headerText": ""`; privileged strategic analysis in the GDPR-spine
 DPIA or a separate memo. `[model knowledge — verify]`
+
+## 6a. Watch items — passed 2026 session, not yet law (checked 2026-09-12)
+
+The California legislature closed its 2026 session on 2026-08-31 with a privacy/AI package
+**awaiting the Governor's signature** (typical deadline ~mid-October 2026) — none of these
+is law; do not assert them, but check signature status on any California run after October
+2026: **SB 923** (CPPA-sponsored expansion of the deletion right to all non-exempt PI);
+**AB 1542** (would prohibit sale/sharing of sensitive PI from 2027-01-01 — would directly
+interact with the §2 selling/sharing and SPI triggers); **SB 690** (CIPA reform); **SB 947**
+(employer ADS restrictions, from 2027-07-01); **SB 420** (developer impact assessments for
+high-risk automated decision systems). `[web search — verify]`
 
 ## 7. Source notes
 
