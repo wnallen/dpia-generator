@@ -51,10 +51,15 @@ Art. 35(7)). Section 6 deltas worth a paragraph where they change the answer:
 
 - **Registration:** controllers/processors above thresholds must be ODPC-registered —
   an intake fact; an unregistered controller has a problem upstream of the DPIA.
-- **Transfers (ss. 48–49):** out-of-Kenya transfers need proof of appropriate safeguards
-  or data-subject consent, and **sensitive-data transfers face stricter conditions**;
-  certain processing may be subject to Kenya-server/localization requirements under
-  ministerial regulations. `[model knowledge — verify]`
+- **Transfers (ss. 48–49; Part VI):** out-of-Kenya transfers need proof of appropriate
+  safeguards or data-subject consent, and **sensitive-data transfers face stricter
+  conditions**; certain processing may be subject to Kenya-server/localization requirements
+  under ministerial regulations. **Cite the ODPC's Guidance Note on Cross-Border Data
+  Transfers (2026)** — issued with ODPC-annexed **Standard Clauses**
+  (controller-to-controller) and expressly interpreting Part VI of the Act and
+  **Regulation 40** of the General Regulations 2021 (draft posted April 2026, since
+  finalized) — rather than model recall for the transfer analysis.
+  `[web search — verify]` (corroborated 2026-09-12; PDF at odpc.go.ke)
 - **Civil registration and public-sector data** carry their own restrictions.
 
 ## 4. Privilege posture
@@ -69,4 +74,5 @@ lives in the privileged spine.
 - Data Protection Act, 2019, s. 31 — kenyalaw.org (`new.kenyalaw.org/akn/ke/act/2019/24/eng`). `[web search — verify]`; fetch for verbatim subsection numbering.
 - **Data Protection (General) Regulations, 2021 (LN 263/2021)** — the 60-day consultation/deemed-approval machinery. `[web search — verify]` (corroborated 2026-08-11).
 - ODPC Guidance Note on DPIAs — odpc.go.ke. `[web search — verify]`; capture edition and the submission-timeline provision.
-- Watch items (2026-08-11): a **Data Protection (Amendment) Bill, 2025** is pending (expanded sensitive-data categories, accountability duties) — bill only, not law; **EU adequacy talks are advanced** (press reporting targets a possible decision in late 2026) but no decision has been adopted — do not cite Kenya as EU-adequate. `[web search — verify]`
+- **ODPC 2026 guidance wave** (`[web search — verify]`, corroborated 2026-09-12): Guidance Note on Cross-Border Data Transfers (2026, with annexed Standard Clauses — see §3) and Guidance Note on Data Protection Policy (April 2026) — both at odpc.go.ke.
+- Watch items (updated 2026-09-12): a **Data Protection (Amendment) Bill, 2025** is pending (expanded sensitive-data categories, accountability duties) — bill only, not law. **EU adequacy is now a per-run check, not a background watch item:** the dialogue is at final technical stages with a publicly stated September 2026 target, but **no decision has been adopted as of 2026-09-12** — do not cite Kenya as EU-adequate until the Commission decision is verified. `[web search — verify]`

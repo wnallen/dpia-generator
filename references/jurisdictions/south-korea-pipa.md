@@ -6,14 +6,19 @@ institutions** operating qualifying personal-information files, performed throug
 institutionalized assessment regime in Asia. For the private sector it is recommended, not
 required, but PIPA's other obligations bite hard and belong in Section 6.
 
-> **Sourcing status (2026-08-04; supplemented 2026-08-11):** pipc.go.kr / law.go.kr not
+> **Sourcing status (2026-08-04; supplemented 2026-09-12):** pipc.go.kr / law.go.kr not
 > fetched at build time; provisions below are `[model knowledge — verify]` unless tagged
-> otherwise. Korean authoritative text; record translation reliance. A 2026-08-11 web-search
-> pass found **no change to the Art. 33 public-institution PIA regime**, but surfaced a
-> **major PIPA amendment promulgated 2026-03-10, effective 2026-09-11** — fines up to 10% of
-> total turnover, personal supervisory liability for the representative director, earlier
-> breach notification, and mandatory ISMS-P certification for large controllers from
-> 2027-07-01. `[web search — verify]` Re-check before any Korea-scope run after September 2026.
+> otherwise. Korean authoritative text; record translation reliance. No change to the
+> Art. 33 public-institution PIA regime, but the **major PIPA amendment promulgated
+> 2026-03-10 is now IN FORCE (since 2026-09-11)** — fines up to 10% of total (global)
+> turnover in high-severity scenarios, personal supervisory liability for the CEO /
+> representative director, earlier breach notification, and mandatory ISMS-P certification
+> for large controllers from 2027-07-01. The same amendment package opens a
+> **pseudonymized-data exemption for AI training** (widely covered as the first
+> AI-training-data law of its kind), and a further bill allowing **raw, non-pseudonymized
+> personal data for AI development subject to PIPC approval** passed the National
+> Assembly's Political Affairs Committee in May 2026 — a bill, not law; do not assert it.
+> `[web search — verify]` Cite the amendment as current law on every Korea-scope run.
 
 ## 1. Instrument and statute
 
@@ -55,7 +60,10 @@ automated decisions materially affecting rights — Korea's Art. 22 analog, with
 subordinate guidance including AI-recruitment examples; the PIPC's **Guidelines on
 Processing Personal Information for the Development and Use of Generative AI (2025-08-06)**
 recommend a PIA for large-scale or sensitive processing — cite them for any Korea-scope AI
-DPIA alongside the PIPC's AI Privacy Risk Assessment & Management Model (2024-12-19).
+DPIA alongside the PIPC's AI Privacy Risk Assessment & Management Model (2024-12-19). For
+AI-training processing after 2026-09-11, the amendment's pseudonymized-data exemption (banner
+above) changes the lawful-basis analysis — verify its conditions against the amended text
+before relying on it. `[web search — verify]`
 
 ## 4. Privilege posture
 

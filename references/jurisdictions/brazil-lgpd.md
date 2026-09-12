@@ -68,10 +68,12 @@ spine**; nothing in it is surplus for Brazil. Additions:
   SCCs) governs — **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** (number and date
   confirmed by web search 2026-08-11; the SCC-incorporation grace period for pre-existing
   contracts ended 2025-08-23). `[web search — verify]` A transfer limb in §1.9 should
-  identify the mechanism. **EU–Brazil mutual adequacy adopted 2026-01-27** (coordinated
-  unilateral decisions): the EU limb's transfer to Brazil no longer needs SCCs + TIA, and
-  the Brazil→EU leg has an adequacy route — check each direction's instrument before citing.
-  `[web search — verify]` (corroborated 2026-08-11)
+  identify the mechanism. **EU–Brazil mutual adequacy adopted 2026-01-26** (announced
+  2026-01-27; coordinated unilateral decisions — the Brazilian leg is **Resolução CD/ANPD
+  nº 32, de 26 de janeiro de 2026**, the ANPD's first adequacy decision, recognizing the
+  EU): the EU limb's transfer to Brazil no longer needs SCCs + TIA, and the Brazil→EU leg
+  has an adequacy route — check each direction's instrument before citing.
+  `[web search — verify]` (corroborated 2026-09-12)
 - **Children (Art. 14):** best-interests standard; processing of children's data was loosened
   from consent-only by later amendment/interpretation — verify before relying.
 
@@ -108,3 +110,4 @@ delivery may be expected on an ANPD demand; record translation status.
 - Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**, `[web search — verify]` (confirmed 2026-08-04; **not** a high-risk-criteria instrument — see §2).
 - **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** — the international-transfer regulation and Brazilian SCCs. `[web search — verify]` (number/date confirmed 2026-08-11 against the gov.br listing surfaced by search; the earlier "unconfirmed" flag is resolved). Official page: `gov.br/anpd/.../resolucao-cd-anpd-no-19-de-23-de-agosto-de-2024`.
 - 2025–2026 watch items (`[web search — verify]`, corroborated 2026-08-11): Resoluções CD/ANPD nº 30 e 31/2025 (December 2025 — regulatory-agenda update and the 2026–2027 inspection priority themes: data-subject rights incl. biometrics, children/ECA Digital, public sector, AI); the **ECA Digital** children's statute with an ANPD enforcement role and the ANPD's preliminary guide on age-assurance mechanisms (2026-03-20). Flag on any Brazil-scope DPIA touching children or AI.
+- 2026-09-12 additions (`[web search — verify]`): the ANPD opened a **tomada de subsídios on high-risk processing (2026-08-29 → 2026-09-28)** feeding the pending orientation guide on evaluating high-risk processing for small-scale agents — directly relevant to §2's high-risk indicators; check whether the guide has issued on any Brazil-scope run after Q4 2026. **PL 2338/2023** (the AI bill): Senate-passed 2024-12-10, stuck in a Chamber special committee — the rapporteur postponed the vote until after the October 2026 elections. A bill, not law; a one-line watch item for AI-scope DPIAs, never a citation.

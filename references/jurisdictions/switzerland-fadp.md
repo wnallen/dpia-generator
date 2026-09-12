@@ -56,8 +56,16 @@ paragraph where they change the answer:
   and to state a position on, automated individual decisions — an information/objection
   model, not a default prohibition.
 - **Transfers:** Federal Council adequacy list (not the EU's); EU SCCs usable with Swiss
-  amendments recognized by the FDPIC. The EU limb's TIA needs a Swiss-law paragraph, not a
-  separate document.
+  amendments recognized by the FDPIC. **Swiss–US DPF route:** Switzerland recognizes US
+  adequacy for **Swiss–US Data Privacy Framework-certified importers (effective
+  2024-09-15)** — verify the importer's certification on the DPF list, and note that the
+  Swiss decision shares the EU DPF's fragility (PCLOB quorum concerns; the *Latombe*
+  appeal). `[web search — verify]` (corroborated 2026-09-12) The EU limb's TIA needs a
+  Swiss-law paragraph, not a separate document.
+- **AI processing:** the FDPIC stated (2025-05-08) that the FADP **applies directly to
+  AI-supported data processing** — no Swiss AI-specific statute is needed for the DPIA
+  duty to bite on AI systems; cite the statement for any Swiss-scope AI DPIA.
+  `[web search — verify]` (corroborated 2026-09-12)
 - **Sanctions are personal:** fines (up to CHF 250,000) target the responsible **individual**,
   not the undertaking — worth a line in the executive summary; it changes who cares.
 - **Exemption:** a DPIA can be waived where a certified system/product is used or a code of

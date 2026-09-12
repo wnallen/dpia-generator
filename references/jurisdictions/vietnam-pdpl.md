@@ -10,9 +10,10 @@ Nothing drafted for the Vietnam limb should assume it stays inside the controlle
 > **effective 2026-01-01**, replacing **Decree 13/2023/ND-CP**) and the 60-day MPS
 > submission posture. A further pass on **2026-08-11** confirmed the implementing decree has
 > landed: **Decree No. 356/2025/ND-CP, effective 2026-01-01, replaces Decree 13/2023/ND-CP**
-> — including its dossier forms — and adds an appraisal mechanism (see §1). All
-> `[web search — verify]`; the decree's issuance date and annex/form numbering still need a
-> primary-source read. **Re-verify on every Vietnam-scope run.**
+> — including its dossier forms — and adds an appraisal mechanism (see §1). A 2026-09-12 pass
+> resolved the decree's issuance date: **promulgated 2025-12-31** (5 chapters, 42 articles).
+> All `[web search — verify]`; the annex/form numbering still needs a primary-source read.
+> **Re-verify on every Vietnam-scope run.**
 
 ## 1. Instrument and framework
 
@@ -63,6 +64,14 @@ definitions, and the transfer dossier's counterparty commitments.
 producible in inspections; MPS may order transfer suspension."* Producing a
 "ready-to-file" dossier is a consequential step under the regulator filing gate in
 SKILL.md — confirm before finalizing, and do not file on the user's behalf.
+
+Enforcement context (all `[web search — verify]`, corroborated 2026-09-12): the Law's
+statutory caps run to **VND 3 billion generally and up to 5% of prior-year revenue for
+cross-border violations**; a **draft administrative-sanctions decree** for
+cybersecurity/personal-data violations went to public comment in March 2026 (draft — do
+not cite as law; check status per run). Decree 356 also sets a **72-hour breach
+notification for location and biometric data** — a Section 6 delta where those categories
+are processed.
 
 ## 5. Privilege posture
 

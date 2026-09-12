@@ -14,7 +14,7 @@ The CNIL methodology is the most operationally detailed DPIA guide published by 
 
 1. **Methodology** — the process. https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-1-en-methodology.pdf
 2. **Templates** — the forms and worked examples. https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-2-en-templates.pdf
-3. **Knowledge bases** — the catalog of controls and reference scoring. https://www.cnil.fr/sites/default/files/atoms/files/cnil-pia-3-en-knowledgebases.pdf
+3. **Knowledge bases** — the catalog of controls and reference scoring. https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-3-en-knowledgebases.pdf *(prefix normalized to match guides 1–2, per the 2026-09-12 index check; the older `sites/default/files` path appears to alias — confirm on next fetch)*
 
 Best for: structuring the DPIA narrative, defining severity and likelihood scales, and selecting controls. The methodology is aligned with WP248rev01 — Annex of guide 1 maps each section to the WP29 criteria.
 
@@ -124,9 +124,9 @@ Best for: any DPIA involving a non-EU SaaS vendor, cloud provider, or sub-proces
 
 The Dutch government (SLM Rijk, the central vendor-management office in the Ministry of Justice and Security) and SURF (the Dutch research-and-education ICT cooperative) commission full professional DPIAs from Privacy Company on the major SaaS/cloud vendors, negotiate remediations with the vendor, and **publish the complete DPIAs in English**. This is the closest thing that exists to a public corpus of "controller adopts Vendor X" DPIAs — the scenario most user requests to this skill will resemble. Entries below were surfaced by web search 2026-08-10; the build environment could not fetch them directly (egress proxy), so treat each as `[web search — verify]` until fetched on a live run.
 
-**SURF / Privacy Company DPIA on Microsoft 365 Copilot (December 2024)**
+**SURF / Privacy Company DPIA on Microsoft 365 Copilot (December 2024; update DPIA since published)**
 URL: https://www.surf.nl/files/2024-12/20241218-dpia-microsoft-365-copilot.pdf
-A full DPIA on a generative-AI assistant embedded in a productivity suite — the single best analog for any "we want to roll out an AI copilot/assistant" DPIA. SURF's accompanying position (risks remained "orange" despite Microsoft improvements) models honest residual-risk scoring: https://www.surf.nl/en/news/privacy-risks-microsoft-365-copilot-remain-orange-despite-improvements
+A full DPIA on a generative-AI assistant embedded in a productivity suite — the single best analog for any "we want to roll out an AI copilot/assistant" DPIA. SURF's accompanying position (risks remained "orange" despite Microsoft improvements) models honest residual-risk scoring: https://www.surf.nl/en/news/privacy-risks-microsoft-365-copilot-remain-orange-despite-improvements — **but do not cite the December 2024 residual posture ("4 high risks") without checking which assessment is current: SURF has published an update DPIA (risks reported lowered to 2 medium/"orange") at https://vendorcompliance.surf.nl/en/update-dpia-microsoft-365-copilot/** `[web search — verify]` (noted 2026-09-12). The pair now models the same negotiation arc as the Zoom entry below.
 
 **SURF / Privacy Company DPIA on Zoom (public versions: Feb 2022, updated April 2024)**
 URLs: https://www.surf.nl/files/2022-03/dpia-zoom-25-february-2022_0.pdf and https://www.surf.nl/files/2024-04/20240403-final-public-version-updated-zoom-dpia.pdf

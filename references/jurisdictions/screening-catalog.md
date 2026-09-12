@@ -30,10 +30,11 @@ an AI Adoption Framework (Nov 2025).)*
 
 Federal Decree-Law No. 45/2021 requires a DPIA (recalled Art. 21) for high-risk processing,
 notably new technologies and large-scale sensitive data — but the **executive regulations
-remained pending for years**; verify status before asserting anything operative. *(2026-08-11:
-secondary sources report the Executive Regulations were **finally issued in 2026** by Cabinet
-decision with a compliance runway into 2027 — sourcing is weak and the decision number
-conflicts across reports; verify against the UAE official gazette before asserting.)*
+remained pending for years**; verify status before asserting anything operative. *(2026-08-11,
+re-corroborated 2026-09-12: the Executive Regulations were **issued in 2026 by Cabinet
+decision and are being enforced** — the issuance itself is now well corroborated across
+practitioner guides, though the decision number still varies across reports; verify the
+number against the UAE official gazette before citing it.)*
 Free-zone regimes (DIFC DP Law 2020, ADGM DPR 2021) have their own, more mature, DPIA
 expectations and their own regulators — check which body of law actually applies to the
 establishment.
