@@ -481,6 +481,17 @@ const CASES = [
     ],
   },
   {
+    name: 'regulator-table-malaysia',
+    why: 'v4.4.2: the my-pdpa engagement text still told every Malaysian regulator table the DPIA guideline was "in consultation (watch status)" four months after the JPDP issued it (2026-04-30) — the module knew, the builder did not. The UK row must also carry the Information Commission successor name (from 2026-09-30).',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/JPDP DPIA Guideline \(issued 2026-04-30\)/.test(t), 'Malaysia row names the issued guideline'],
+      [!/in consultation \(watch status\)/.test(t), 'stale watch-status wording gone'],
+      [/Information Commission from 2026-09-30/.test(t), 'UK row names the Information Commission successor'],
+    ],
+  },
+  {
     name: 'reviewer-posture-dpo',
     why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff. v4.2: the same run also carried a work-product header no attorney would ever stand behind.',
     exit: 0,

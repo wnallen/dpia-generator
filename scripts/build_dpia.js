@@ -301,7 +301,7 @@ const REGIMES = {
     derive: (state) => state.consult,
     highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
     statusOption: 'Requires Art. 36 Prior Consultation',
-    engagement: "UK GDPR Art. 36 prior consultation with the ICO on residual high risk",
+    engagement: "UK GDPR Art. 36 prior consultation with the ICO (the Information Commission from 2026-09-30) on residual high risk",
     conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
@@ -381,7 +381,7 @@ const REGIMES = {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    engagement: "DPIA guideline in consultation (watch status) \u2014 verify current JPDP position before relying",
+    engagement: "DPIA under the JPDP DPIA Guideline (issued 2026-04-30) where its mandatory thresholds are met; retained and producible to the Commissioner on request \u2014 verify thresholds and effective date against the guideline text",
     conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'au-privacy': {

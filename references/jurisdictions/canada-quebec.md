@@ -76,8 +76,8 @@ failures before quoting either number in a deliverable.
   introduced at first reading **2026-06-15** — privacy-only (no bundled AI act), AMPs up to
   the greater of **$10M or 3%** of gross global revenue and offences up to the greater of
   **$25M or 5%** (the ceiling is percentage-of-revenue, not a flat $25M), enforcement via a
-  new Digital Safety and Data Protection Commission. Still at first reading as of 2026-09-12;
-  second reading expected after Parliament resumes 2026-09-21. **Not law**; do not assert
+  new Digital Safety and Data Protection Commission. Still at first reading as of 2026-09-23;
+  Parliament resumed 2026-09-21 and second reading is expected this sitting. **Not law**; do not assert
   its obligations, but flag it as incoming for long-lived processing. Also note the OPC's
   joint **OpenAI/ChatGPT findings (PIPEDA #2026-002, ~May 2026, joint with the CAI,
   OIPC-BC and OIPC-AB — the CAI's participation makes it citable on the Quebec limb too)**

@@ -37,7 +37,8 @@ that the PIA is the prudential accountability record.
   placeholder row until the code is registered. `[web search — verify]` (corroborated 2026-08-11)
 - **Tranche-two reforms — exposure draft out (2026-08-31):** the AG's Department released
   the exposure-draft **Privacy Amendment (Personal Data Protection) Bill 2026** with a
-  consultation paper on 2026-08-31 (submissions closed mid-September 2026). Contents: a
+  consultation paper on 2026-08-31 (submissions closed 2026-09-18; the Government has signalled
+  introduction before the end of 2026 — still not introduced as of 2026-09-23). Contents: a
   **"fair and reasonable" test** (rewritten APP 3), a **controller/processor framework**,
   and a **right to erasure for large digital platforms**. Still an exposure draft — not an
   introduced bill, not law; characterize it as proposed reform, do not assert its rules.

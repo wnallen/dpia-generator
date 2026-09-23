@@ -392,8 +392,8 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 
 ## Version
 
-Canonical version: **v4.4.1**. `README.md`'s Changelog is the long-form record of every
+Canonical version: **v4.4.2**. `README.md`'s Changelog is the long-form record of every
 release since v1.0 and must not contradict this section; only the current release is
 summarized here.
 
-- **v4.4.1** — builder test-and-harden pass (no reference-layer change): the output-path allowlist now resolves symlinks (a symlink planted at the default filename, or a symlinked `outputDir` component, in the shared temp dir could redirect the write outside the permitted roots), a `"__proto__"` key inside a `regulatorConclusions` entry can no longer supply the conclusion by inheritance, and five mis-typed block/field shapes fail cleanly with exit 1 instead of a stack trace. Suite: fifty-four cases. v4.4.0 (the 2026-09-12 reference-layer currency pass) and earlier are in README's Changelog.
+- **v4.4.2** — 2026-09-23 currency-check pass: the builder's Malaysia regulator-table text no longer calls the JPDP DPIA Guideline (issued 2026-04-30) "in consultation"; the UK row names the **Information Commission** as the ICO's successor from **2026-09-30** (SI 2026/1015); the EDPB 21 September plenary (draft Guidelines 04/2026 on fines, consultation to 2026-11-13; final DSA–GDPR guidelines) is registered; Kenya adequacy, Bill C-36 and Australia's tranche-2 draft re-dated. Suite: fifty-five cases. v4.4.1 (builder hardening: symlink-safe output path, proto-safe conclusions, fail-cleanly fixes) and earlier are in README's Changelog.
