@@ -392,8 +392,8 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 
 ## Version
 
-Canonical version: **v4.4.0**. `README.md`'s Changelog is the long-form record of every
+Canonical version: **v4.4.1**. `README.md`'s Changelog is the long-form record of every
 release since v1.0 and must not contradict this section; only the current release is
 summarized here.
 
-- **v4.4.0** — 2026-09-12 currency pass across the reference layer (no builder change; suite unchanged at forty-nine cases), plus SKILL.md token trims (this Version section reduced to the current release; Reference Files condensed). Headlines: Indonesia rebuilt around **GR 33/2026** (Arts. 120–121 — the "no implementing regulation" claim was already wrong at the prior pass); Korea's PIPA amendment flipped to **in force 2026-09-11**; China's **small-handler simplified-PIPIA regime** (eff. 2026-09-01) and GB/T 46068-2025; Australia's tranche-2 **exposure draft** (2026-08-31); Colorado corrected for **SB 24-041** (minors trigger, threshold-independent) and **SB 25-276** (precise geolocation), both eff. 2025-10-01 and previously missed; Connecticut's **SB 1295** threshold rewrite; Kenya's ODPC **cross-border transfer guidance** replaces model recall; EU additions — **Reg. (EU) 2025/2518**, EDPB draft Guidelines 02/2026 and 03/2026, DPF appeal posture, **Swiss–US DPF**; Brazil's adequacy leg identified as **Resolução CD/ANPD nº 32/2026**. Details in README's Changelog and the module files' dated notes.
+- **v4.4.1** — builder test-and-harden pass (no reference-layer change): the output-path allowlist now resolves symlinks (a symlink planted at the default filename, or a symlinked `outputDir` component, in the shared temp dir could redirect the write outside the permitted roots), a `"__proto__"` key inside a `regulatorConclusions` entry can no longer supply the conclusion by inheritance, and five mis-typed block/field shapes fail cleanly with exit 1 instead of a stack trace. Suite: fifty-four cases. v4.4.0 (the 2026-09-12 reference-layer currency pass) and earlier are in README's Changelog.

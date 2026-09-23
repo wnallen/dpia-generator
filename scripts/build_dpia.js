@@ -682,7 +682,7 @@ function statusLineOf(m, jur) {
       if (def && def.statusOption && !options.includes(def.statusOption)) options.push(def.statusOption);
     });
   }
-  const chosen = (m.status || 'Draft').trim();
+  const chosen = String(m.status || 'Draft').trim();
   if (!options.some(s => s.toLowerCase() === chosen.toLowerCase())) {
     options.push(chosen);
     process.stderr.write(`build_dpia: note — "status" (${JSON.stringify(chosen)}) is outside the derived status ` +
@@ -788,6 +788,7 @@ function build(manifest, state) {
         if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
         children.push(p(b.text, { italic: b.italic })); break;
       case 'bullets':
+        if (b.items !== undefined && !Array.isArray(b.items)) fail(1, `${ctx}: "items" must be an array of text`);
         (b.items || []).forEach((it, j) => {
           if (it === undefined || it === null) fail(1, `${ctx} item ${j + 1}: bullet items must be text, got ${it === null ? 'null' : 'undefined'}`);
           children.push(new Paragraph({
@@ -796,8 +797,8 @@ function build(manifest, state) {
           }));
         }); break;
       case 'table':
-        if (!b.columns || !b.rows) fail(1, `${ctx}: needs "columns" and "rows"`);
-        (b.rows || []).forEach((r, j) => rowArray(r, `${ctx} row ${j + 1}`));
+        if (!Array.isArray(b.columns) || !Array.isArray(b.rows)) fail(1, `${ctx}: needs "columns" and "rows" arrays`);
+        b.rows.forEach((r, j) => rowArray(r, `${ctx} row ${j + 1}`));
         children.push(dataTable(b.columns, b.rows, b.widths));
         children.push(p('', { after: 120 })); break;
       case 'riskRegister': {
@@ -868,7 +869,7 @@ function build(manifest, state) {
       case 'matrix': {
         const src = own(registers, b.source || 'default');
         if (!src) fail(1, `${ctx}: no riskRegister named "${b.source || 'default'}" appears before this block`);
-        const stage = (b.stage || 'residual').toLowerCase();
+        const stage = String(b.stage || 'residual').toLowerCase();
         if (stage !== 'inherent' && stage !== 'residual' && stage !== 'mitigated') {
           fail(1, `${ctx}: "stage" must be inherent|residual|mitigated`);
         }
@@ -990,6 +991,7 @@ function build(manifest, state) {
       case 'signature': {
         // A null cell renders empty, matching dataTable's contract — never the
         // literal word "null" in a signature line.
+        if (b.rows !== undefined && !Array.isArray(b.rows)) fail(1, `${ctx}: "rows" must be an array of rows`);
         const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => (v === undefined || v === null) ? '' : String(v)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
@@ -1105,7 +1107,29 @@ function main() {
     fail(1, `manifest: resolved output path (${path.resolve(outPath)}) escapes "outputDir" (${outDir}).`);
   }
 
+  // The checks above are lexical. The OS temp dir is shared and world-writable,
+  // so a symlinked directory component or a symlink planted at the predictable
+  // output filename could still redirect the write anywhere the process can
+  // write. Check the real path of the nearest existing ancestor BEFORE mkdir
+  // (so no directory is created through a symlink), again after it, and refuse
+  // to follow a symlink at the file itself.
+  const realRoots = allowedRoots.filter(r => fs.existsSync(r)).map(r => fs.realpathSync(r));
+  const checkReal = (dir) => {
+    let probe = dir;
+    while (!fs.existsSync(probe) && path.dirname(probe) !== probe) probe = path.dirname(probe);
+    const real = path.join(fs.realpathSync(probe), path.relative(probe, dir));
+    if (!realRoots.some(root => isInside(root, real))) {
+      fail(1, `manifest: "outputDir" (${outDir}) resolves through a symlink to ${real}, outside the permitted output roots.`);
+    }
+  };
+  checkReal(outDir);
   fs.mkdirSync(outDir, { recursive: true });
+  checkReal(outDir);
+  let existing = null;
+  try { existing = fs.lstatSync(outPath); } catch (e) { /* absent: fine */ }
+  if (existing && !existing.isFile()) {
+    fail(1, `refusing to write ${outPath}: it exists and is not a regular file (symlink or other).`);
+  }
 
   // ---- Jurisdiction resolution ---------------------------------------------
   if (m.jurisdictions !== undefined && (!Array.isArray(m.jurisdictions) || !m.jurisdictions.length)) {
@@ -1134,7 +1158,9 @@ function main() {
       if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
         fail(1, `manifest: regulatorConclusions["${code}"] must be an object`);
       }
-      rc[code] = Object.assign({}, entry);
+      // Null-proto copy: a JSON "__proto__" key must stay an inert own property,
+      // not become the entry's prototype and supply the conclusion by inheritance.
+      rc[code] = Object.assign(Object.create(null), entry);
     }
   }
   if (m.art36 !== undefined && m.art36 !== null) {
@@ -1143,7 +1169,7 @@ function main() {
     }
     jur.filter(c => REGIMES[c].derive).forEach(c => {
       if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
-        rc[c] = Object.assign({}, rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
+        rc[c] = Object.assign(Object.create(null), rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
       }
     });
   }
@@ -1233,7 +1259,12 @@ function main() {
   }
 
   Packer.toBuffer(doc).then(buf => {
-    fs.writeFileSync(outPath, buf);
+    // O_NOFOLLOW closes the lstat-to-write race where the platform supports it.
+    const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (fs.constants.O_NOFOLLOW || 0);
+    let fd;
+    try { fd = fs.openSync(outPath, flags, 0o644); }
+    catch (e) { fail(1, `cannot write ${outPath}: ${e.code === 'ELOOP' ? 'it is a symlink' : e.message}`); }
+    try { fs.writeSync(fd, buf); } finally { fs.closeSync(fd); }
     if (!noValidate) {
       const v = '/mnt/skills/public/docx/scripts/office/validate.py';
       if (fs.existsSync(v)) {

@@ -437,6 +437,50 @@ const CASES = [
     stderr: /block 1 \(bullets\) item 2: bullet items must be text, got null/,
   },
   {
+    name: 'block-shape-not-array',
+    why: 'v4.4.1: a string "items" on a bullets block (or string "columns" on a table) crashed with a TypeError stack trace instead of a clean exit 1 naming the block.',
+    exit: 1,
+    stderr: /block 1 \(bullets\): "items" must be an array of text/,
+  },
+  {
+    name: 'status-non-string',
+    why: 'v4.4.1: a numeric "status" crashed the cover page with ".trim is not a function"; it now renders as an out-of-vocabulary status with a note.',
+    exit: 0,
+    stderr: /"status" \("5"\) is outside the derived status vocabulary/,
+  },
+  {
+    name: 'conclusions-proto-entry',
+    why: 'v4.4.1: a JSON "__proto__" key inside a regulatorConclusions entry became the entry\'s prototype and supplied the conclusion by inheritance, satisfying the gate with no own declaration.',
+    exit: 1,
+    stderr: /regulatorConclusions\["us-co"\]\.assessmentRequired is required/,
+  },
+  {
+    name: 'symlink-output-file',
+    why: 'v4.4.1: a symlink planted at the predictable output filename in the shared temp dir redirected the write to its target, outside the permitted roots.',
+    exit: 1,
+    stderr: /not a regular file/,
+    setup: (tmp) => {
+      fs.writeFileSync(path.join(tmp, 'victim.txt'), 'orig');
+      fs.symlinkSync(path.join(tmp, 'victim.txt'), path.join(tmp, 'DPIA_Symlink_Probe_2026-09-01.docx'));
+    },
+    checkFs: (tmp) => [
+      [fs.readFileSync(path.join(tmp, 'victim.txt'), 'utf8') === 'orig', 'symlink target left untouched'],
+    ],
+  },
+  {
+    name: 'symlink-output-dir',
+    why: 'v4.4.1: an outputDir under an allowed root that passes through a symlink to a disallowed location was accepted by the lexical check, and mkdir created directories at the symlink target.',
+    exit: 1,
+    stderr: /resolves through a symlink/,
+    setup: (tmp, m) => {
+      fs.symlinkSync(path.join(ROOT, 'tests'), path.join(tmp, 'escape-link'));
+      m.outputDir = path.join(tmp, 'escape-link', 'dpia-symlink-probe');
+    },
+    checkFs: () => [
+      [!fs.existsSync(path.join(ROOT, 'tests', 'dpia-symlink-probe')), 'no directory created through the symlink'],
+    ],
+  },
+  {
     name: 'reviewer-posture-dpo',
     why: 'v4.1.2: on a DPO-led run with no counsel named, every page footer claimed the draft awaited attorney review, and the cover rendered a "Counsel of Record: [to be completed]" line for a role the controller does not staff. v4.2: the same run also carried a work-product header no attorney would ever stand behind.',
     exit: 0,
@@ -479,6 +523,8 @@ function run() {
     // Most cases write into the throwaway tmp dir; a case testing the outputDir
     // allowlist itself keeps the outputDir declared in its fixture.
     if (!c.keepDir) m.outputDir = tmp;
+    // A case may stage the filesystem (e.g. plant a symlink) or adjust the manifest first.
+    if (c.setup) c.setup(tmp, m);
     const mp = path.join(tmp, c.name + '.manifest.json');
     fs.writeFileSync(mp, JSON.stringify(m));
 
