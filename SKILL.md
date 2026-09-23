@@ -392,8 +392,8 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 
 ## Version
 
-Canonical version: **v4.4.0**. `README.md`'s Changelog is the long-form record of every
+Canonical version: **v4.4.2**. `README.md`'s Changelog is the long-form record of every
 release since v1.0 and must not contradict this section; only the current release is
 summarized here.
 
-- **v4.4.0** — 2026-09-12 currency pass across the reference layer (no builder change; suite unchanged at forty-nine cases), plus SKILL.md token trims (this Version section reduced to the current release; Reference Files condensed). Headlines: Indonesia rebuilt around **GR 33/2026** (Arts. 120–121 — the "no implementing regulation" claim was already wrong at the prior pass); Korea's PIPA amendment flipped to **in force 2026-09-11**; China's **small-handler simplified-PIPIA regime** (eff. 2026-09-01) and GB/T 46068-2025; Australia's tranche-2 **exposure draft** (2026-08-31); Colorado corrected for **SB 24-041** (minors trigger, threshold-independent) and **SB 25-276** (precise geolocation), both eff. 2025-10-01 and previously missed; Connecticut's **SB 1295** threshold rewrite; Kenya's ODPC **cross-border transfer guidance** replaces model recall; EU additions — **Reg. (EU) 2025/2518**, EDPB draft Guidelines 02/2026 and 03/2026, DPF appeal posture, **Swiss–US DPF**; Brazil's adequacy leg identified as **Resolução CD/ANPD nº 32/2026**. Details in README's Changelog and the module files' dated notes.
+- **v4.4.2** — 2026-09-23 currency-check pass: the builder's Malaysia regulator-table text no longer calls the JPDP DPIA Guideline (issued 2026-04-30) "in consultation"; the UK row names the **Information Commission** as the ICO's successor from **2026-09-30** (SI 2026/1015); the EDPB 21 September plenary (draft Guidelines 04/2026 on fines, consultation to 2026-11-13; final DSA–GDPR guidelines) is registered; Kenya adequacy, Bill C-36 and Australia's tranche-2 draft re-dated. Suite: fifty-five cases. v4.4.1 (builder hardening: symlink-safe output path, proto-safe conclusions, fail-cleanly fixes) and earlier are in README's Changelog.

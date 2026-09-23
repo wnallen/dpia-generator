@@ -1,6 +1,6 @@
 # Malaysia PDPA — DPIA (guideline issued 2026; rebuild pending)
 
-**Regime code:** `my-pdpa` (overlay — Model A, thin; **watch status**).
+**Regime code:** `my-pdpa` (overlay — Model A, thin; **guideline issued 2026-04-30 — rebuild from its text pending**).
 
 > **VOLATILITY BANNER — re-verify before relying.** The PDPA 2010 was substantially amended
 > by the Personal Data Protection (Amendment) Act 2024 (DPO appointment, breach notification,
@@ -14,7 +14,10 @@
 > across multiple firm alerts; pdp.gov.my itself was not fetchable). Reported mandatory-DPIA
 > thresholds from the guideline: sensitive personal data of ≥10,000 individuals; ≥20,000
 > individuals for ADM processing; general personal data of ≥20,000 individuals — **threshold
-> figures and the effective/enforcement date are unconfirmed; fetch the guideline from
+> figures re-corroborated 2026-09-23 across firm alerts as *more than* 20,000 data subjects (personal
+> data) or *more than* 10,000 (sensitive personal data, including financial information) — the
+> separate ADM-processing prong is not corroborated — but the effective/enforcement date remains
+> unconfirmed; fetch the guideline from
 > pdp.gov.my before relying on them. This module must be rebuilt from the final guideline
 > text; until then treat everything below as provisional.**
 
