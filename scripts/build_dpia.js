@@ -1411,7 +1411,9 @@ function validateOutput(outPath) {
     // module the validator imports (lxml, defusedxml) missing. Any other
     // non-zero exit — including a traceback raised while reading the file —
     // is the validator rejecting the document.
-    const envFailure = r.error || /ModuleNotFoundError|ImportError|No module named/.test(r.stderr || '');
+    // Anchored to the traceback's final line so document text echoed inside a
+    // validator message cannot be mistaken for an environment failure.
+    const envFailure = r.error || /^(ModuleNotFoundError|ImportError): /m.test(r.stderr || '');
     if (!envFailure) rejected(r, 'validate.py');
     fallbackReason = r.error ? `python3: ${r.error.message}` : 'validate.py is missing a Python dependency';
   } else {

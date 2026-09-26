@@ -29,6 +29,20 @@ const ROOT = path.resolve(__dirname, '..');
 const BUILDER = path.join(ROOT, 'scripts', 'build_dpia.js');
 const FIXTURES = path.join(ROOT, 'tests', 'fixtures');
 
+// A directory that is certainly outside the builder's allowed output roots, for
+// the symlink-escape case. The repo's own tests/ folder is the natural target,
+// but a checkout under the OS temp dir (a scratch clone) puts it INSIDE the
+// default os.tmpdir() root and the escape legitimately succeeds — so fall back
+// to a system directory in that situation.
+function escapeTarget() {
+  const tmpReal = fs.realpathSync(os.tmpdir());
+  const inside = (p) => { const rel = path.relative(tmpReal, fs.realpathSync(p)); return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel)); };
+  for (const cand of [path.join(ROOT, 'tests'), '/etc', '/usr', os.homedir()]) {
+    if (fs.existsSync(cand) && !inside(cand)) return cand;
+  }
+  throw new Error('no directory outside os.tmpdir() available for the symlink-escape case');
+}
+
 // text(doc) -> the document's visible runs, joined. Used for the content assertions.
 function docText(docxPath) {
   const py = `
@@ -473,12 +487,15 @@ const CASES = [
     exit: 1,
     stderr: /resolves through a symlink/,
     setup: (tmp, m) => {
-      fs.symlinkSync(path.join(ROOT, 'tests'), path.join(tmp, 'escape-link'));
+      fs.symlinkSync(escapeTarget(), path.join(tmp, 'escape-link'));
       m.outputDir = path.join(tmp, 'escape-link', 'dpia-symlink-probe');
     },
-    checkFs: () => [
-      [!fs.existsSync(path.join(ROOT, 'tests', 'dpia-symlink-probe')), 'no directory created through the symlink'],
-    ],
+    checkFs: () => {
+      const probe = path.join(escapeTarget(), 'dpia-symlink-probe');
+      const created = fs.existsSync(probe);
+      if (created) { try { fs.rmdirSync(probe); } catch (e) { /* leave evidence if it cannot be removed */ } }
+      return [[!created, 'no directory created through the symlink']];
+    },
   },
   {
     name: 'xml-control-chars',
@@ -620,21 +637,30 @@ const CASES = [
 function checkBundledValidator(goodDocx, tmp) {
   const CHECK = path.join(ROOT, 'scripts', 'check_ooxml.py');
   const broken = path.join(tmp, 'broken-control-char.docx');
+  const dtd = path.join(tmp, 'broken-doctype.docx');
   const py = `
 import sys, zipfile
-src, dst = sys.argv[1], sys.argv[2]
+src, dst, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 with zipfile.ZipFile(src) as z, zipfile.ZipFile(dst, 'w') as out:
     for item in z.infolist():
         data = z.read(item.filename)
         if item.filename == 'word/document.xml':
-            data = data.replace(b'</w:body>', b'<w:p><w:r><w:t>\\x0b</w:t></w:r></w:p></w:body>')
+            if mode == 'control':
+                data = data.replace(b'</w:body>', b'<w:p><w:r><w:t>\\x0b</w:t></w:r></w:p></w:body>')
+            else:
+                i = data.index(b'?>') + 2
+                data = (data[:i] + b'<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/hostname">]>'
+                        + data[i:].replace(b'</w:body>', b'<w:p><w:r><w:t>&e;</w:t></w:r></w:p></w:body>'))
         out.writestr(item, data)`;
-  execFileSync('python3', ['-c', py, goodDocx, broken]);
+  execFileSync('python3', ['-c', py, goodDocx, broken, 'control']);
+  execFileSync('python3', ['-c', py, goodDocx, dtd, 'doctype']);
   const good = spawnSync('python3', [CHECK, goodDocx], { encoding: 'utf8' });
   const bad = spawnSync('python3', [CHECK, broken], { encoding: 'utf8' });
+  const ent = spawnSync('python3', [CHECK, dtd], { encoding: 'utf8' });
   return [
     [good.status === 0, 'bundled check accepts a built document'],
     [bad.status === 1 && /not well-formed/.test(bad.stderr || ''), 'bundled check rejects a control character'],
+    [ent.status === 1 && /DOCTYPE/.test(ent.stderr || ''), 'bundled check rejects a DOCTYPE (entity expansion / XXE vector)'],
   ];
 }
 

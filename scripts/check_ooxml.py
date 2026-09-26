@@ -29,11 +29,25 @@ problem on stderr); 2 usage.
 
 import posixpath
 import sys
-import xml.etree.ElementTree as ET
 import zipfile
+
+try:  # defusedxml (declared by ropa-builder; present in the skills image) refuses
+    # entity declarations outright; the stdlib parser is the floor elsewhere.
+    import defusedxml.ElementTree as ET
+    from xml.etree.ElementTree import ParseError
+except ImportError:  # pragma: no cover
+    import xml.etree.ElementTree as ET
+    from xml.etree.ElementTree import ParseError
 
 MAIN_PARTS = ("word/document.xml", "xl/workbook.xml")
 RELS_NS = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+# No OOXML part carries a document type declaration, and a DTD is the only
+# vehicle for entity expansion (billion laughs) or external entities (XXE),
+# so its presence is a malformed part whatever the parser would do with it.
+DOCTYPE = b"<!DOCTYPE"
+# Bound what one part may expand to in memory; a real document.xml is a few
+# megabytes at most.
+MAX_PART_BYTES = 64 * 1024 * 1024
 
 
 def _rels_base(rels_name):
@@ -57,14 +71,23 @@ def check(path):
         for name in sorted(names):
             if not (name.endswith(".xml") or name.endswith(".rels")):
                 continue
+            if zf.getinfo(name).file_size > MAX_PART_BYTES:
+                problems.append(f"{name}: part declares {zf.getinfo(name).file_size} bytes "
+                                f"(cap {MAX_PART_BYTES})")
+                continue
             try:
                 data = zf.read(name)
             except (zipfile.BadZipFile, OSError) as exc:
                 problems.append(f"{name}: cannot read part: {exc}")
                 continue
+            if DOCTYPE in data:
+                problems.append(f"{name}: not well-formed for OOXML: carries a DOCTYPE "
+                                f"declaration (entity expansion / external entity vector)")
+                continue
             try:
                 root = ET.fromstring(data)
-            except ET.ParseError as exc:
+            except (ParseError, ValueError) as exc:
+                # ValueError: defusedxml's refusal of entities/DTDs.
                 problems.append(f"{name}: not well-formed XML: {exc}")
                 continue
             if name.endswith(".rels"):
