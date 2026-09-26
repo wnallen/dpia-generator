@@ -1,0 +1,23 @@
+{
+  "systemName": "Probe",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [
+        "A",
+        "B"
+      ],
+      "rows": [
+        [
+          "1",
+          "2"
+        ]
+      ],
+      "widths": [
+        "50\"/><w:evil/>",
+        "x"
+      ]
+    }
+  ]
+}

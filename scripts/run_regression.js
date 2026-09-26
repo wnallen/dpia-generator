@@ -481,6 +481,79 @@ const CASES = [
     ],
   },
   {
+    name: 'xml-control-chars',
+    why: 'v4.4.3: C0 control characters and U+FFFE in any text field (common in text pasted from PDFs) were written through to the XML verbatim, so the docx would not open — exit 0 wherever validate.py was absent or skipped.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/.test(x), 'no XML-forbidden characters in document.xml'],
+      [x.includes('OVERVIEW'), 'heading text kept with the control character stripped'],
+      [x.includes('pastedfroma pdf'), 'paragraph text kept with \\v and \\f stripped'],
+    ],
+    checkFooter: (f) => [
+      [f.includes('DPIA--001'), 'footer reference stripped of the form feed'],
+    ],
+  },
+  {
+    name: 'text-not-scalar',
+    why: 'v4.4.3: an object where text was expected rendered as "[object Object]", or threw "Cannot convert object to primitive value" when its toString was not callable.',
+    exit: 1,
+    stderr: /block 1 \(para\): expected text, got an object/,
+  },
+  {
+    name: 'outputdir-not-string',
+    why: 'v4.4.3: a non-string "outputDir" reached path.resolve and crashed with a TypeError stack trace.',
+    exit: 1,
+    stderr: /"outputDir" must be a string/,
+    keepDir: true,
+  },
+  {
+    name: 'regulator-table-string-conclusion',
+    why: 'v4.4.3: without a riskRegister the conclusion type gate never ran, so a string "false" (truthy) rendered "Prior consultation required".',
+    exit: 1,
+    stderr: /priorConsultation must be true, false or "conditional", got "false"/,
+  },
+  {
+    name: 'compliancemap-empty-section',
+    why: 'v4.4.3: a bare "§" section stripped to an empty probe that matched every heading, so the dangling-reference gate could be bypassed.',
+    exit: 1,
+    stderr: /names no section/,
+  },
+  {
+    name: 'jurisdictions-duplicate',
+    why: 'v4.4.3: a repeated regime code rendered duplicate regulator-table rows and a footnote naming the same Article twice.',
+    exit: 1,
+    stderr: /listed more than once/,
+  },
+  {
+    name: 'table-widths-invalid',
+    why: 'v4.4.3: non-numeric "widths" produced an invalid tcW element and an OOXML failure after the file was written.',
+    exit: 1,
+    stderr: /"widths" must be an array of percentages/,
+  },
+  {
+    name: 'outputfilename-not-docx',
+    why: 'v4.4.3: an "outputFilename" carrying a bidi override (or any non-.docx name) was written as given; the record must ship under a plain .docx name.',
+    exit: 0,
+    stderr: /not a usable filename/,
+    checkPath: (out) => [
+      [path.basename(out) === 'DPIA_Probe_2026-07-29.docx', 'fell back to the default name'],
+    ],
+  },
+  {
+    name: 'hardlink-output-file',
+    why: 'v4.4.3: a hardlink planted at the predictable output filename is a regular file, so lstat passed and O_TRUNC overwrote the linked file outside the permitted roots.',
+    exit: 1,
+    stderr: /has 2 links/,
+    setup: (tmp) => {
+      fs.writeFileSync(path.join(tmp, 'linked.txt'), 'orig');
+      fs.linkSync(path.join(tmp, 'linked.txt'), path.join(tmp, 'DPIA_Hardlink_Probe_2026-09-01.docx'));
+    },
+    checkFs: (tmp) => [
+      [fs.readFileSync(path.join(tmp, 'linked.txt'), 'utf8') === 'orig', 'hardlink target left untouched'],
+    ],
+  },
+  {
     name: 'regulator-table-malaysia',
     why: 'v4.4.2: the my-pdpa engagement text still told every Malaysian regulator table the DPIA guideline was "in consultation (watch status)" four months after the JPDP issued it (2026-04-30) — the module knew, the builder did not. The UK row must also carry the Information Commission successor name (from 2026-09-30).',
     exit: 0,
