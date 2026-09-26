@@ -593,12 +593,56 @@ const CASES = [
       [f.includes('for attorney review'), 'footer reads "for attorney review"'],
     ],
   },
+  {
+    name: 'scalar-fields-not-scalar',
+    why: 'v4.4.4: cover fields ("controller", "dpo", "counsel", "reference", "docTitle", "headerText", "version", "status") were String()-coerced before the txt() guard, so an object shipped as "[object Object]" with exit 0 — and an object docTitle corrupted the filename prefix.',
+    exit: 1,
+    stderr: /"controller" must be a string, got an object/,
+  },
+  {
+    name: 'outputdir-root-not-yet-created',
+    why: 'v4.4.4: allowed roots that did not exist yet were dropped from the realpath check, so on a fresh image with no /mnt/user-data/outputs the default outputDir was refused with a misleading "resolves through a symlink" error.',
+    exit: 0,
+    keepDir: true,
+    noWarn: true,
+    env: (tmp) => ({ DPIA_OUTPUT_ROOTS: path.join(tmp, 'fresh-root') }),
+    setup: (tmp, m) => { m.outputDir = path.join(tmp, 'fresh-root', 'outputs'); },
+    checkPath: (out, tmp) => [
+      [out.startsWith(path.join(tmp, 'fresh-root', 'outputs') + path.sep), 'written under the not-yet-created root'],
+    ],
+  },
 ];
+
+// The bundled well-formedness check must reject a docx whose XML carries a
+// character XML 1.0 forbids — it is the floor that runs wherever validate.py
+// is absent (CI), so a checker that passes everything would turn "never skip"
+// back into "always pass". Returns a [ok, label] list.
+function checkBundledValidator(goodDocx, tmp) {
+  const CHECK = path.join(ROOT, 'scripts', 'check_ooxml.py');
+  const broken = path.join(tmp, 'broken-control-char.docx');
+  const py = `
+import sys, zipfile
+src, dst = sys.argv[1], sys.argv[2]
+with zipfile.ZipFile(src) as z, zipfile.ZipFile(dst, 'w') as out:
+    for item in z.infolist():
+        data = z.read(item.filename)
+        if item.filename == 'word/document.xml':
+            data = data.replace(b'</w:body>', b'<w:p><w:r><w:t>\\x0b</w:t></w:r></w:p></w:body>')
+        out.writestr(item, data)`;
+  execFileSync('python3', ['-c', py, goodDocx, broken]);
+  const good = spawnSync('python3', [CHECK, goodDocx], { encoding: 'utf8' });
+  const bad = spawnSync('python3', [CHECK, broken], { encoding: 'utf8' });
+  return [
+    [good.status === 0, 'bundled check accepts a built document'],
+    [bad.status === 1 && /not well-formed/.test(bad.stderr || ''), 'bundled check rejects a control character'],
+  ];
+}
 
 function run() {
   const keep = process.argv.includes('--keep');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'dpia-regression-'));
   let failed = 0;
+  let lastGoodDocx = null;
 
   for (const c of CASES) {
     const src = path.join(FIXTURES, c.name + '.json');
@@ -612,19 +656,27 @@ function run() {
     const mp = path.join(tmp, c.name + '.manifest.json');
     fs.writeFileSync(mp, JSON.stringify(m));
 
-    const r = spawnSync('node', [BUILDER, mp], { encoding: 'utf8' });
+    // A case may extend the builder's environment (e.g. an extra output root).
+    const env = Object.assign({}, process.env, c.env ? c.env(tmp) : {});
+    const r = spawnSync('node', [BUILDER, mp], { encoding: 'utf8', env });
     const err = r.stderr || '';
     const problems = [];
 
     if (r.status !== c.exit) problems.push(`exit ${r.status}, expected ${c.exit}`);
     if (c.stderr && !c.stderr.test(err)) problems.push(`stderr did not match ${c.stderr}`);
     if (c.noWarn && /WARNING/.test(err)) problems.push('unexpected WARNING on a clean case');
+    // v4.4.4: validation is never skipped — the full validator or the bundled
+    // well-formedness check must have run on every built file.
+    if (r.status === 0 && /skipped validation|validation skipped/.test(err)) {
+      problems.push('OOXML validation was skipped');
+    }
 
     if (r.status === 0 && (c.check || c.checkXml || c.checkPath)) {
       const outPath = (r.stdout || '').trim().split('\n').pop();
       if (!outPath || !fs.existsSync(outPath)) {
         problems.push('builder reported success but no output file');
       } else {
+        if (!lastGoodDocx) lastGoodDocx = outPath;
         const asserts = []
           .concat(c.check ? c.check(docText(outPath)) : [])
           .concat(c.checkXml ? c.checkXml(rawXml(outPath)) : [])
@@ -659,7 +711,21 @@ function run() {
     console.log(`FAIL  orphaned fixture(s) with no case: ${orphans.join(', ')}`);
   }
 
-  console.log(`\n${CASES.length - failed}/${CASES.length} passed. Artifacts: ${tmp}`);
+  // Harness-level check (not a fixture): the bundled OOXML checker itself.
+  let extra = 1;
+  const bundled = lastGoodDocx ? checkBundledValidator(lastGoodDocx, tmp)
+    : [[false, 'no built document available to probe the bundled check']];
+  const bundledProblems = bundled.filter(([ok]) => !ok).map(([, label]) => label);
+  if (bundledProblems.length) {
+    failed++;
+    console.log('FAIL  bundled-ooxml-check');
+    bundledProblems.forEach(p => console.log(`      - ${p}`));
+  } else {
+    console.log('ok    bundled-ooxml-check');
+  }
+
+  const total = CASES.length + extra;
+  console.log(`\n${total - failed}/${total} passed. Artifacts: ${tmp}`);
   if (!keep) fs.rmSync(tmp, { recursive: true, force: true });
   process.exit(failed ? 1 : 0);
 }

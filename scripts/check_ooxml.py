@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""check_ooxml.py — stdlib-only well-formedness check for a .docx or .xlsx.
+
+Usage:
+    python3 check_ooxml.py FILE.docx|FILE.xlsx [...]
+
+The full OOXML validator (/mnt/skills/public/docx/scripts/office/validate.py)
+exists only inside the skills image. Without it — in GitHub CI, on a plain
+laptop — a builder used to skip validation and pass, which is how a document
+with a stray control character (\\v, \\f) shipped unnoticed: Word refuses the
+file, the suite was green. This check is the floor that always runs: no
+dependencies, no network.
+
+Checks, per file:
+  * the file is a zip archive (not empty, not truncated);
+  * `[Content_Types].xml` is present;
+  * every `*.xml` and `*.rels` part parses as XML 1.0 (expat rejects the
+    characters XML forbids — C0 controls other than tab/CR/LF, U+FFFE/FFFF,
+    lone surrogates — and any unbalanced markup);
+  * the main part is present (`word/document.xml` or `xl/workbook.xml`);
+  * every internal relationship target names a part that exists.
+
+It does not check schema conformance (element order, attribute vocabularies);
+that is the full validator's job, and it still runs wherever it is present.
+
+Exit codes: 0 every file well-formed; 1 a file is malformed (one line per
+problem on stderr); 2 usage.
+"""
+
+import posixpath
+import sys
+import xml.etree.ElementTree as ET
+import zipfile
+
+MAIN_PARTS = ("word/document.xml", "xl/workbook.xml")
+RELS_NS = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+
+
+def _rels_base(rels_name):
+    """word/_rels/document.xml.rels -> word/ ; _rels/.rels -> (root)."""
+    folder = posixpath.dirname(rels_name)  # word/_rels
+    return posixpath.dirname(folder)       # word
+
+
+def check(path):
+    problems = []
+    try:
+        zf = zipfile.ZipFile(path)
+    except (zipfile.BadZipFile, OSError) as exc:
+        return [f"not a readable zip archive: {exc}"]
+    with zf:
+        names = set(zf.namelist())
+        if "[Content_Types].xml" not in names:
+            problems.append("missing [Content_Types].xml")
+        if not any(m in names for m in MAIN_PARTS):
+            problems.append(f"no main part (expected one of {', '.join(MAIN_PARTS)})")
+        for name in sorted(names):
+            if not (name.endswith(".xml") or name.endswith(".rels")):
+                continue
+            try:
+                data = zf.read(name)
+            except (zipfile.BadZipFile, OSError) as exc:
+                problems.append(f"{name}: cannot read part: {exc}")
+                continue
+            try:
+                root = ET.fromstring(data)
+            except ET.ParseError as exc:
+                problems.append(f"{name}: not well-formed XML: {exc}")
+                continue
+            if name.endswith(".rels"):
+                base = _rels_base(name)
+                for rel in root.iter(f"{RELS_NS}Relationship"):
+                    if rel.get("TargetMode") == "External":
+                        continue
+                    target = rel.get("Target") or ""
+                    if target.startswith("/"):
+                        resolved = target.lstrip("/")
+                    else:
+                        resolved = posixpath.normpath(posixpath.join(base, target))
+                    if resolved not in names:
+                        problems.append(f"{name}: relationship {rel.get('Id')} targets "
+                                        f"missing part {resolved}")
+    return problems
+
+
+def main(argv):
+    if len(argv) < 2:
+        print(__doc__.strip().splitlines()[0], file=sys.stderr)
+        print("usage: check_ooxml.py FILE.docx|FILE.xlsx [...]", file=sys.stderr)
+        return 2
+    bad = 0
+    for path in argv[1:]:
+        problems = check(path)
+        if problems:
+            bad += 1
+            for p in problems:
+                print(f"{path}: {p}", file=sys.stderr)
+        else:
+            print(f"well-formed: {path}")
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

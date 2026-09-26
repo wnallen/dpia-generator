@@ -1,0 +1,10 @@
+{
+  "systemName": "Object Coercion Probe",
+  "date": "2026-07-29",
+  "controller": {},
+  "dpo": {"name": "nested"},
+  "blocks": [
+    {"type": "heading", "text": "Executive Summary", "level": 1},
+    {"type": "para", "text": "A manifest whose cover fields are objects must be refused, not rendered as [object Object]."}
+  ]
+}
