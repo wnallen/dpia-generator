@@ -1,0 +1,34 @@
+{
+  "systemName": "Ctrl Probe",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 1 — OVER\u0001VIEW"
+    },
+    {
+      "type": "para",
+      "text": "pasted\u000bfrom\fa pdf\u001f"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "item\u0000one"
+      ]
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Col"
+      ],
+      "rows": [
+        [
+          "cell￾"
+        ]
+      ]
+    }
+  ],
+  "headerText": "HEADER\b",
+  "reference": "DPIA-\f-001"
+}

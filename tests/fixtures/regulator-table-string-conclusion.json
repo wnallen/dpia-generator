@@ -1,0 +1,14 @@
+{
+  "systemName": "Probe",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "regulatorTable"
+    }
+  ],
+  "regulatorConclusions": {
+    "eu-gdpr": {
+      "priorConsultation": "false"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "systemName": "Probe",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 1 — INTRO"
+    },
+    {
+      "type": "complianceMap",
+      "rows": [
+        {
+          "element": "Statutory element",
+          "section": "§"
+        }
+      ]
+    }
+  ]
+}

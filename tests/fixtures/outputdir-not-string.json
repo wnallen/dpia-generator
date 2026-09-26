@@ -1,0 +1,11 @@
+{
+  "systemName": "Probe",
+  "date": "2026-07-29",
+  "blocks": [
+    {
+      "type": "para",
+      "text": "Plain text."
+    }
+  ],
+  "outputDir": 5
+}

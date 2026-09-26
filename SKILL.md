@@ -392,8 +392,8 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 
 ## Version
 
-Canonical version: **v4.4.2**. `README.md`'s Changelog is the long-form record of every
+Canonical version: **v4.4.3**. `README.md`'s Changelog is the long-form record of every
 release since v1.0 and must not contradict this section; only the current release is
 summarized here.
 
-- **v4.4.2** — 2026-09-23 currency-check pass: the builder's Malaysia regulator-table text no longer calls the JPDP DPIA Guideline (issued 2026-04-30) "in consultation"; the UK row names the **Information Commission** as the ICO's successor from **2026-09-30** (SI 2026/1015); the EDPB 21 September plenary (draft Guidelines 04/2026 on fines, consultation to 2026-11-13; final DSA–GDPR guidelines) is registered; Kenya adequacy, Bill C-36 and Australia's tranche-2 draft re-dated. Suite: fifty-five cases. v4.4.1 (builder hardening: symlink-safe output path, proto-safe conclusions, fail-cleanly fixes) and earlier are in README's Changelog.
+- **v4.4.3** — 2026-09-26 builder hardening after an adversarial test pass: XML-forbidden characters are stripped at every text sink (a pasted `\v` or `\f` no longer yields a docx Word cannot open); objects where text was expected, non-string `outputDir`, duplicate jurisdictions, bad table `widths` and a `regulatorTable` conclusion of the wrong type all exit 1 cleanly; the output path is re-verified and `fstat`-checked immediately before the write (symlink-swap window, planted hardlink), `outputFilename` must be a plain `.docx` name, and a file failing OOXML validation is removed. Suite: sixty-four cases. v4.4.2 (currency-check pass, Malaysia and UK regulator-table text) and earlier are in README's Changelog.

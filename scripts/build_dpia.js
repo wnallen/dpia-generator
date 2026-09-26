@@ -224,6 +224,22 @@ function own(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
 }
 
+// Text sink guard. Every string that reaches a TextRun, the core properties
+// or the footer passes through here. Two things it stops: an object where a
+// scalar was expected (which String() would render as "[object Object]", or
+// throw on for a non-callable toString), and characters XML 1.0 forbids —
+// the docx library escapes <>& but writes C0 controls and U+FFFE/FFFF through
+// verbatim, and Word then refuses the file. \v and \f are common in text
+// pasted from PDFs, so they are stripped rather than rejected.
+const XML_FORBIDDEN = /[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g;
+function txt(v, ctx) {
+  if (typeof v === 'object' && v !== null) {
+    fail(1, `${ctx || 'manifest'}: expected text, got ${Array.isArray(v) ? 'an array' : 'an object'}`);
+  }
+  const s = String(v);
+  return (s.toWellFormed ? s.toWellFormed() : s).replace(XML_FORBIDDEN, '');
+}
+
 // Row-shape guards for manifest-supplied "rows" arrays. A null or mis-typed
 // entry must fail with a clean exit 1 and a named row, never a TypeError stack
 // trace from the first member access — same contract as the v3.4.1 hardening.
@@ -441,7 +457,7 @@ function isRealDate(s) {
 
 function norm(v, field, ctx) {
   if (v === undefined || v === null) fail(1, `${ctx}: missing "${field}"`);
-  const s = String(v).trim();
+  const s = txt(v, `${ctx} "${field}"`).trim();
   const hit = LEVELS.find(l => l.toLowerCase() === s.toLowerCase());
   if (!hit) fail(1, `${ctx}: "${field}" must be Low|Medium|High, got "${s}"`);
   return hit;
@@ -543,7 +559,7 @@ function p(text, opts = {}) {
     alignment: opts.align,
     spacing: { after: opts.after === undefined ? 140 : opts.after, line: 276 },
     children: [new TextRun({
-      text: String(text),
+      text: txt(text, opts.ctx),
       font: FONT, size: opts.size || 22,
       bold: !!opts.bold, italics: !!opts.italic, color: opts.color,
     })],
@@ -555,7 +571,7 @@ function heading(text, level) {
   return new Paragraph({
     heading: map[level] || HeadingLevel.HEADING_2,
     spacing: { before: level === 1 ? 320 : 240, after: 140 },
-    children: [new TextRun({ text: String(text), font: FONT, bold: true, size: level === 1 ? 28 : 24, color: '1F3864' })],
+    children: [new TextRun({ text: txt(text, 'heading'), font: FONT, bold: true, size: level === 1 ? 28 : 24, color: '1F3864' })],
   });
 }
 
@@ -570,7 +586,7 @@ function cell(text, opts = {}) {
         alignment: opts.align,
         spacing: { after: 0 },
         children: [new TextRun({
-          text: String(t), font: FONT, size: opts.size || 20,
+          text: txt(t, opts.ctx || 'table cell'), font: FONT, size: opts.size || 20,
           bold: !!opts.bold, color: opts.color,
         })],
       })),
@@ -587,6 +603,12 @@ function table(rows) {
 }
 
 function dataTable(columns, bodyRows, widths) {
+  // Widths reach the table grid unescaped as numbers; anything else (a string
+  // payload, a negative or absurd value) produced an invalid tcW element.
+  if (widths !== undefined && (!Array.isArray(widths) ||
+      !widths.every(x => typeof x === 'number' && Number.isFinite(x) && x >= 1 && x <= 100))) {
+    fail(1, 'table "widths" must be an array of percentages between 1 and 100');
+  }
   const w = widths && widths.length === columns.length
     ? widths : columns.map(() => Math.floor(100 / columns.length));
   const head = new TableRow({
@@ -786,14 +808,14 @@ function build(manifest, state) {
         children.push(heading(b.text, b.level || 2)); break;
       case 'para':
         if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
-        children.push(p(b.text, { italic: b.italic })); break;
+        children.push(p(b.text, { italic: b.italic, ctx })); break;
       case 'bullets':
         if (b.items !== undefined && !Array.isArray(b.items)) fail(1, `${ctx}: "items" must be an array of text`);
         (b.items || []).forEach((it, j) => {
           if (it === undefined || it === null) fail(1, `${ctx} item ${j + 1}: bullet items must be text, got ${it === null ? 'null' : 'undefined'}`);
           children.push(new Paragraph({
             bullet: { level: 0 }, spacing: { after: 80, line: 276 },
-            children: [new TextRun({ text: String(it), font: FONT, size: 22 })],
+            children: [new TextRun({ text: txt(it, `${ctx} item ${j + 1}`), font: FONT, size: 22 })],
           }));
         }); break;
       case 'table':
@@ -852,6 +874,9 @@ function build(manifest, state) {
           const el = r.element, sec = String(r.section || '').trim();
           if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
           const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
+          // A bare "\u00a7" strips to "", and "".includes matches every heading \u2014
+          // the dangling-reference gate below would never fire.
+          if (!probe) fail(1, `${ctx}: row ${j + 1} "section" (${JSON.stringify(sec)}) names no section`);
           if (!headings.some(h => h.includes(probe))) missing.push(sec);
           return [String(el), sec + (r.note ? ` \u2014 ${r.note}` : '')];
         });
@@ -894,6 +919,15 @@ function build(manifest, state) {
             fail(1, `${ctx}: regulatorConclusions["${code}"].${def.conclusionKey} is required to render ` +
                     'the regulator-engagement table — a table row without a declared conclusion is an ' +
                     'assessment that has not finished.');
+          }
+          // The type gate below main() only runs when a riskRegister exists;
+          // without one, a string "false" is truthy and rendered "required".
+          const validType = def.derive
+            ? (typeof declared === 'boolean' || declared === 'conditional')
+            : typeof declared === 'boolean';
+          if (!validType) {
+            fail(1, `${ctx}: regulatorConclusions["${code}"].${def.conclusionKey} must be ` +
+                    `${def.derive ? 'true, false or "conditional"' : 'a boolean'}, got ${JSON.stringify(declared)}`);
           }
           const label = declared === 'conditional'
             ? (def.conclusionLabels[2] || 'Conditional — see the Section 5 mitigations')
@@ -1004,8 +1038,8 @@ function build(manifest, state) {
 
   return new Document({
     creator: 'dpia-generator (AI-generated draft)',
-    title: `DPIA \u2014 ${manifest.systemName}`,
-    description: (headerTextOf(manifest) ? headerTextOf(manifest) + ' | ' : '') + GENERATION_NOTICE,
+    title: txt(`DPIA \u2014 ${manifest.systemName}`),
+    description: txt((headerTextOf(manifest) ? headerTextOf(manifest) + ' | ' : '') + GENERATION_NOTICE),
     styles: { default: { document: { run: { font: FONT, size: 22 } } } },
     sections: [{
       properties: {
@@ -1029,7 +1063,7 @@ function build(manifest, state) {
             alignment: AlignmentType.CENTER,
             children: [new TextRun({
               children: ['Page ', PageNumber.CURRENT, ' of ', PageNumber.TOTAL_PAGES,
-                `   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   AI-generated draft (dpia-generator) — ${reviewerTextOf(manifest)}`],
+                txt(`   |   ${manifest.reference || '[DPIA-YYYY-NNN]'}   |   AI-generated draft (dpia-generator) — ${reviewerTextOf(manifest)}`, 'reference')],
               font: FONT, size: 16, color: '595959',
             })],
           })],
@@ -1048,6 +1082,13 @@ function main() {
   if (!manifestPath) fail(1, 'usage: node build_dpia.js manifest.json [--no-validate]');
   if (!fs.existsSync(manifestPath)) fail(1, `manifest not found: ${manifestPath}`);
 
+  // Size cap before parse: the XML serializer is linear but slow (an 800 KB
+  // manifest of paragraphs packs for over a minute), and no genuine DPIA
+  // manifest approaches this.
+  const MAX_MANIFEST_BYTES = 5 * 1024 * 1024;
+  if (fs.statSync(manifestPath).size > MAX_MANIFEST_BYTES) {
+    fail(1, `manifest exceeds ${MAX_MANIFEST_BYTES} bytes — refusing to parse`);
+  }
   let m;
   try { m = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); }
   catch (e) { fail(1, 'manifest is not valid JSON: ' + e.message); }
@@ -1057,8 +1098,14 @@ function main() {
   if (typeof m !== 'object' || m === null || Array.isArray(m)) {
     fail(1, `manifest must be a JSON object, got ${m === null ? 'null' : Array.isArray(m) ? 'an array' : typeof m}`);
   }
-  ['systemName', 'date'].forEach(k => { if (!m[k]) fail(1, `manifest: missing required "${k}"`); });
-  if (!isRealDate(String(m.date))) fail(1, `manifest: "date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(m.date)}`);
+  ['systemName', 'date'].forEach(k => {
+    if (!m[k]) fail(1, `manifest: missing required "${k}"`);
+    if (typeof m[k] !== 'string') fail(1, `manifest: "${k}" must be a string, got ${typeof m[k]}`);
+  });
+  if (!isRealDate(m.date)) fail(1, `manifest: "date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(m.date)}`);
+  if (m.outputDir !== undefined && (typeof m.outputDir !== 'string' || m.outputDir.includes('\0'))) {
+    fail(1, 'manifest: "outputDir" must be a string path without NUL characters');
+  }
   if (!Array.isArray(m.blocks)) {
     fail(1, `manifest: "blocks" is required and must be an array of block objects, got ${m.blocks === undefined ? 'nothing' : m.blocks === null ? 'null' : typeof m.blocks}`);
   }
@@ -1077,7 +1124,8 @@ function main() {
     .map(r => path.resolve(r));
   const isInside = (base, target) => {
     const rel = path.relative(base, target);
-    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+    // "..sep" not "..": a directory legitimately named "..reports" is inside.
+    return rel === '' || (rel !== '..' && !rel.startsWith('..' + path.sep) && !path.isAbsolute(rel));
   };
   const outDir = path.resolve(m.outputDir || DEFAULT_OUT);
   if (!allowedRoots.some(root => isInside(root, outDir))) {
@@ -1094,9 +1142,14 @@ function main() {
   // basename() so a manifest "outputFilename" cannot write outside outputDir via "../".
   // basename(".."|".") returns the reference itself, so reject those (and empty)
   // explicitly — otherwise path.join(outDir, "..") would climb out of outDir.
-  let named = m.outputFilename ? path.basename(String(m.outputFilename)) : '';
-  if (m.outputFilename && (named === '.' || named === '..' || named === '')) {
-    process.stderr.write(`build_dpia: note — "outputFilename" (${JSON.stringify(m.outputFilename)}) is not a usable filename; using the default name.\n`);
+  if (m.outputFilename !== undefined && m.outputFilename !== null && typeof m.outputFilename !== 'string') {
+    fail(1, `manifest: "outputFilename" must be a string, got ${typeof m.outputFilename}`);
+  }
+  let named = m.outputFilename ? path.basename(m.outputFilename) : '';
+  // The record must ship as a .docx with a plain name: no control characters
+  // (a bidi override can disguise the extension) and no dotfile.
+  if (m.outputFilename && !/^[^\x00-\x1f‎‏‪-‮⁦-⁩.][^\x00-\x1f‎‏‪-‮⁦-⁩]*\.docx$/i.test(named)) {
+    process.stderr.write(`build_dpia: note — "outputFilename" (${JSON.stringify(m.outputFilename)}) is not a usable filename (must be a plain .docx name); using the default name.\n`);
     named = '';
   } else if (m.outputFilename && named !== String(m.outputFilename)) {
     process.stderr.write(`build_dpia: note — "outputFilename" was reduced to "${named}"; it may not contain a path.\n`);
@@ -1125,19 +1178,31 @@ function main() {
   checkReal(outDir);
   fs.mkdirSync(outDir, { recursive: true });
   checkReal(outDir);
-  let existing = null;
-  try { existing = fs.lstatSync(outPath); } catch (e) { /* absent: fine */ }
-  if (existing && !existing.isFile()) {
-    fail(1, `refusing to write ${outPath}: it exists and is not a regular file (symlink or other).`);
-  }
+  const checkTarget = () => {
+    let existing = null;
+    try { existing = fs.lstatSync(outPath); } catch (e) { /* absent: fine */ }
+    if (existing && !existing.isFile()) {
+      fail(1, `refusing to write ${outPath}: it exists and is not a regular file (symlink or other).`);
+    }
+    // A hardlink planted at the output name is a regular file whose data
+    // lives outside the roots; truncating it overwrites the linked file.
+    if (existing && existing.nlink > 1) {
+      fail(1, `refusing to write ${outPath}: it exists and has ${existing.nlink} links.`);
+    }
+  };
+  checkTarget();
 
   // ---- Jurisdiction resolution ---------------------------------------------
   if (m.jurisdictions !== undefined && (!Array.isArray(m.jurisdictions) || !m.jurisdictions.length)) {
     fail(1, 'manifest: "jurisdictions" must be a non-empty array of regime codes when present');
   }
   const jur = m.jurisdictions || ['eu-gdpr'];
-  jur.forEach(c => {
+  jur.forEach((c, i) => {
+    if (typeof c !== 'string') fail(1, `manifest: jurisdictions[${i}] must be a regime code string`);
     if (!own(REGIMES, c)) fail(1, `manifest: unknown jurisdiction code "${c}". Known codes: ${Object.keys(REGIMES).join(', ')}`);
+    // A repeated code renders duplicate regulator rows and a footnote that
+    // names the same Article twice.
+    if (jur.indexOf(c) !== i) fail(1, `manifest: jurisdiction code "${c}" is listed more than once`);
   });
 
   // regulatorConclusions, with "art36" as a legacy alias: it fills
@@ -1259,12 +1324,28 @@ function main() {
   }
 
   Packer.toBuffer(doc).then(buf => {
-    // O_NOFOLLOW closes the lstat-to-write race where the platform supports it.
-    const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (fs.constants.O_NOFOLLOW || 0);
+    // The lexical and realpath checks above ran before packing, which can take
+    // seconds on a large manifest — long enough for a directory component in
+    // the shared temp dir to be swapped for a symlink. Re-check immediately
+    // before the open, then confirm through the descriptor itself: fstat must
+    // show a single-link regular file at the same inode the (non-following)
+    // lstat sees, otherwise the path was redirected between the two calls.
+    // No O_TRUNC: the truncation happens only after the descriptor is proven.
+    checkReal(outDir);
+    checkTarget();
+    const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | (fs.constants.O_NOFOLLOW || 0);
     let fd;
     try { fd = fs.openSync(outPath, flags, 0o644); }
     catch (e) { fail(1, `cannot write ${outPath}: ${e.code === 'ELOOP' ? 'it is a symlink' : e.message}`); }
-    try { fs.writeSync(fd, buf); } finally { fs.closeSync(fd); }
+    try {
+      const st = fs.fstatSync(fd);
+      const seen = fs.lstatSync(outPath);
+      if (!st.isFile() || st.nlink > 1 || st.ino !== seen.ino || st.dev !== seen.dev) {
+        fail(1, `refusing to write ${outPath}: the output path changed underneath the build.`);
+      }
+      fs.ftruncateSync(fd, 0);
+      fs.writeSync(fd, buf);
+    } finally { fs.closeSync(fd); }
     if (!noValidate) {
       const v = '/mnt/skills/public/docx/scripts/office/validate.py';
       if (fs.existsSync(v)) {
@@ -1281,7 +1362,9 @@ function main() {
             process.stderr.write('build_dpia: validate.py could not run (missing dependency?); ' +
               'validation skipped — not a defect in the document.\n');
           } else {
-            fail(2, 'OOXML validation failed for ' + outPath);
+            // Never leave a file Word cannot open where a deliverable belongs.
+            try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
+            fail(2, 'OOXML validation failed for ' + outPath + ' (file removed)');
           }
         }
       } else {
@@ -1292,4 +1375,8 @@ function main() {
   }).catch(e => fail(1, 'packing failed: ' + (e && e.stack ? e.stack : e)));
 }
 
-main();
+// Last line of the fail-cleanly contract: whatever shape of manifest slips
+// past the field guards (a non-callable toString, a cell nested thousands of
+// levels deep) exits 1 with one line, never a stack trace.
+try { main(); }
+catch (e) { fail(1, 'manifest could not be processed: ' + (e && e.message ? e.message : e)); }
