@@ -1,8 +1,22 @@
 # Published DPIAs and DPA Decisions — Reference Catalog
 
-Consult this catalog in Step 1 before web-searching for analogs. Entries are useful for DPIA work and verified as live except where an entry carries its own `[web search — verify]` or UNVERIFIED flag — those were surfaced by search from an environment that could not fetch them, and must be fetched (and the flag removed) before being cited in a DPIA. Where the analog fits the processing under assessment, prefer the analog to a fresh web search; where it does not, web-search for closer fits and add good finds back to this file over time.
+Consult this catalog in Step 1 before web-searching for analogs. **Read the index below first, then only the section it points to** — the full entries run to ~7k tokens and most runs need one section. Entries are verified as live except where one carries its own `[web search — verify]` or UNVERIFIED flag — those were surfaced by search from an environment that could not fetch them, and must be fetched (and the flag removed) before being cited in a DPIA. Where the analog fits the processing under assessment, prefer the analog to a fresh web search; where it does not, web-search for closer fits and add good finds back to this file over time (format: what it is, URL, what it's good for, what it isn't).
 
-For each entry: what it is, where it lives, what it's good for, and what it's not good for.
+## Index — functional classification → section
+
+| Processing looks like | Read the section | Anchor entries |
+|---|---|---|
+| Any DPIA (methodology, scales, triggering, TIA method) | Cross-Cutting Primary Sources | CNIL PIA guides; WP248rev01; EDPB harmonised template; ICO hub; EDPB Rec. 01/2020; CNIL TIA guide |
+| Live facial recognition, biometric matching, watchlists | Sector: Live Facial Recognition | Met Police RFR DPIA; ICO LFR case studies and 2021 opinion |
+| Workplace biometrics (T&A, access control) | Sector: Workplace Biometric | CNIL Model Regulation 2019; ICO v Serco (2024); AEPD 2023 |
+| AI in hiring, performance, workforce management | Sector: AI-Powered HR | ICO AI-in-HR expectation; EU AI Act Annex III; WP251rev01 |
+| Non-EU SaaS vendor or sub-processor; any transfer | Sector: EU-to-US Transfer | Schrems II; DPF live list; EDPB Opinion 5/2023 |
+| SaaS / cloud / productivity-suite / AI-assistant adoption | Sector: Enterprise SaaS | SURF Copilot DPIA (+ update); SURF Zoom DPIAs; SLM Rijk Microsoft/Google DPIAs |
+| Health apps, health data platforms, secondary use | Sector: Health | NHS COVID-19 App; NHS FDP overarching DPIA; COVID Data Store; HSE Tracker |
+| Public sector, vulnerable populations, police databases | Sector: Public-Sector | Home Office Migrant Help; NPCC PND v8; Met VHA; SPA DESC; gov.scot DPIAs |
+| Services likely accessed by children | Sector: Children's Online Services | ICO sample DPIAs: online retail, mobile game, connected toy |
+| Any non-EU regime in scope (`ca-qc`, `us-co`, `us-ca`, `br-lgpd`, `cn-pipl`, `sg-pdpa`, `au-privacy`, `kr-pipa`, `ke-dpa`, `vn-pdpl`, `ch-fadp`) | Non-EU Regulator Guidance | the regulator's own guide, rules or forms, one subsection per regime |
+| Nothing above fits | Discovery Corpora | EDPB Art. 60 register; Art. 65 decisions; BCR register; GDPRhub (find-only); WhatDoTheyKnow; Canadian and Australian PIA registers; NZ COVID Tracer PIAs |
 
 ---
 

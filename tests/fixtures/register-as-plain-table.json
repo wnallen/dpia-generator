@@ -1,0 +1,33 @@
+{
+  "systemName": "Plain Table Register",
+  "date": "2026-09-27",
+  "status": "Approved",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 — RISK ASSESSMENT"
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Risk",
+        "Likelihood",
+        "Severity",
+        "Residual rating"
+      ],
+      "rows": [
+        [
+          "R1",
+          "High",
+          "High",
+          "High"
+        ]
+      ]
+    },
+    {
+      "type": "para",
+      "text": "Article 36 prior consultation is not required."
+    }
+  ]
+}

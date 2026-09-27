@@ -628,6 +628,60 @@ const CASES = [
       [out.startsWith(path.join(tmp, 'fresh-root', 'outputs') + path.sep), 'written under the not-yet-created root'],
     ],
   },
+  {
+    name: 'register-as-plain-table',
+    why: 'v4.4.5: every gate keyed off a riskRegister block, so a register authored as a plain "table" with a High residual, an "Approved" status and a paragraph denying consultation shipped with exit 0 and no warning.',
+    exit: 1,
+    stderr: /block 2 \(table\): column\(s\) "Likelihood", "Severity", "Residual rating" describe a risk register, but the manifest has no riskRegister block/,
+  },
+  {
+    name: 'art36-alias-no-consultation-regime',
+    why: 'v4.4.5: a legacy "art36" declaration on a manifest whose declared regimes engage no prior consultation was silently dropped instead of being refused as a conclusion for a regime out of scope.',
+    exit: 1,
+    stderr: /"art36" declares a prior-consultation conclusion, but none of the declared jurisdictions \[us-co\] engages prior consultation/,
+  },
+  {
+    name: 'signature-cell-not-scalar',
+    why: 'v4.4.5: signature cells were String()-coerced past the txt() guard, so an object shipped as "Role: [object Object]" with exit 0.',
+    exit: 1,
+    stderr: /block 2 \(signature\) row 1 cell 1: expected text, got an object/,
+  },
+  {
+    name: 'compliancemap-fields-not-scalar',
+    why: 'v4.4.5: complianceMap "element", "section" and "note" bypassed txt(), so an object rendered as "[object Object]" in both cells with exit 0.',
+    exit: 1,
+    stderr: /block 2 \(complianceMap\) row 1 "element": expected text, got an object/,
+  },
+  {
+    name: 'noticecheck-fields-not-scalar',
+    why: 'v4.4.5: noticeCheck provenance ("notice.source", "notice.audience", "notice.profile") and row fields ("commitment", "processing", "section", "action") were template-interpolated past txt(), so an object rendered as "[object Object] notice" with exit 0.',
+    exit: 1,
+    stderr: /block 2 \(noticeCheck\) "notice.audience": expected text, got an object/,
+  },
+  {
+    name: 'regulatortable-note-not-scalar',
+    why: 'v4.4.5: a regulatorTable note bypassed txt(), so an object rendered as "Assessment required \u2014 [object Object]" with exit 0.',
+    exit: 1,
+    stderr: /block 2 \(regulatorTable\) notes\["eu-gdpr"\]: expected text, got an object/,
+  },
+  {
+    name: 'heading-level-proto',
+    why: 'v4.4.5: heading "level" was a plain object lookup, so "__proto__" resolved to Object.prototype and shipped w:pStyle w:val="[object Object]" with exit 0 \u2014 the v3.4.1 prototype-key class on the one manifest-keyed lookup it missed.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [[/SECTION 1/.test(t), 'heading text rendered']],
+    checkXml: (x) => [
+      [!/\[object Object\]/.test(x), 'no "[object Object]" style id'],
+      [/w:pStyle w:val="Heading2"/.test(x), 'falls back to the level-2 style'],
+    ],
+  },
+  {
+    name: 'rating-case-insensitive',
+    why: 'v4.4.5: the rating gate compared stated ratings case-sensitively while norm() accepted any case for the scores, so "LOW" against a derived "Low" exited 3 telling the author to re-examine correct scores.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [[/‖ R1 ‖/.test(t), 'R1 present in register'], [!STAR.test(t), 'no starred rating cell']],
+  },
 ];
 
 // The bundled well-formedness check must reject a docx whose XML carries a

@@ -1,0 +1,22 @@
+# Currency Log — corroboration and currency passes
+
+Maintenance record for `references/authorities.md` and the `references/jurisdictions/` modules.
+Not read during a DPIA run: the citation register carries the current tags and dates, and the
+affected module files carry the substance. Append a dated entry after each pass, newest last.
+Every pass so far ran with web search available but primary-source fetches blocked (official
+portals returned 403 to the fetch tool), so nothing here upgrades a citation to
+`[official publication]` — that step still requires the fetch.
+
+## 2026-08-04 — corroboration pass
+
+with web search available but primary-source fetches blocked (all official portals returned 403 to the fetch tool). It moved the non-EU statutory identifiers below from recall to `[web search — verify]`, filled the DUAA chapter number, and corrected one Brazilian resolution attribution. Every one of those still needs a primary-source fetch to reach `[official publication]`; the tags say so.
+## 2026-08-11 — currency-review pass
+
+(web search only; primary fetches still blocked). Headline corrections applied across the modules: the EU AI Act's Annex III / Art. 27 FRIA date moved to 2027-12-02 (Reg. (EU) 2026/1744); the DUAA "Senior Responsible Individual" claim was **deleted as an error** (DUAA retained the DPO — SRI was the failed DPDI Bill); DUAA main provisions commenced 2026-02-05 (SI 2026/82); the Brazilian transfer resolution is confirmed as **Resolução CD/ANPD nº 19/2024**; Malaysia's final DPIA Guideline issued (Apr/May 2026); Vietnam's Decree 13 was replaced by **Decree 356/2025/ND-CP**; India's Rule 13 SDF duty commences **2027-05-13**; Maryland MODPA added to the US-state roster; the Colorado AI Act was repealed May 2026 before taking effect; EU–Brazil mutual adequacy adopted 2026-01-26/27; EDPB adopted a harmonised DPIA template (Mar/Apr 2026). Details live in the affected module files.
+## 2026-09-12 — currency-review pass
+
+(web search only; primary fetches still blocked). Headline corrections: **Indonesia's implementing regulation exists — GR 33/2026** (promulgated 2026-07-16, in force ~2027-01-16; DPIA at Arts. 120–121) — the 2026-08-11 "none enacted" claim was already wrong when recorded; **Korea's PIPA amendment is now in force** (2026-09-11); **China added a small-handler simplified-PIPIA regime** (effective 2026-09-01); **Australia's tranche-2 exposure draft** released 2026-08-31; **Connecticut's CTDPA thresholds changed materially from 2026-07-01** (35k; none for sale/sensitive-data processing); **Colorado's trigger and sensitive-data lists were corrected** for SB 24-041 (minors, threshold-independent) and SB 25-276 (precise geolocation), both effective 2025-10-01 and missed by earlier passes; Brazil's adequacy leg identified as **Resolução CD/ANPD nº 32/2026** (adopted 2026-01-26); Kenya's ODPC issued 2026 cross-border transfer guidance with annexed Standard Clauses; the **GDPR Procedural Regulation (EU) 2025/2518** and the EDPB's July 2026 draft guidelines (02/2026 anonymisation; 03/2026 web scraping for generative AI) were added to this register. Details live in the affected module files.
+## 2026-09-23 — currency-check pass
+
+(web search only; primary fetches still blocked) against every watch item dated after 2026-09-12. Three changes: the ICO→**Information Commission** transition is now dated (**2026-09-30**, SI 2026/1015) and the builder's UK regulator-table text names both; the builder's **Malaysia** engagement text still said the DPIA guideline was "in consultation (watch status)" although the module had recorded its issuance (2026-04-30) since 2026-08-11 — corrected, with the >20,000 / >10,000 (sensitive, incl. financial) thresholds re-corroborated; the EDPB's **21 September plenary** (draft Guidelines 04/2026 on fines vs. other corrective powers, consultation to 2026-11-13; final DSA–GDPR interplay guidelines) is registered. Confirmed unchanged: no Kenya adequacy decision adopted; DPF appeal C-703/25 P pending with no hearing date; Bill C-36 awaiting second reading after Parliament resumed 2026-09-21; Australia's tranche-2 submissions closed 2026-09-18 with introduction intended before end-2026; Korea's PIPA amendment in force 2026-09-11; China's large-handler draft consultation closed 2026-09-07; the ANPD high-risk tomada de subsídios closes 2026-09-28; EDPB DPIA template final still not issued.
+

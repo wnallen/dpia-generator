@@ -1,0 +1,22 @@
+{
+  "systemName": "Compliance Map Fields",
+  "date": "2026-09-27",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 — RISK ASSESSMENT"
+    },
+    {
+      "type": "complianceMap",
+      "rows": [
+        {
+          "element": {
+            "text": "Assessment of risks"
+          },
+          "section": "SECTION 4"
+        }
+      ]
+    }
+  ]
+}

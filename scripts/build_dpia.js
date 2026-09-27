@@ -14,82 +14,14 @@
  * Exit codes:
  *   0  success (built, and validated unless --no-validate)
  *   1  manifest / build failure
- *   2  OOXML validation failure (the validator ran and rejected the document;
- *      a validator that cannot run — missing Python deps — skips with a warning)
- *   3  risk-rating gate failure (see below) — HARD STOP
+ *   2  OOXML validation failure (the full validator where present, otherwise the
+ *      bundled scripts/check_ooxml.py well-formedness check — never skipped)
+ *   3  rating gate or regulator-conclusion gate failure — HARD STOP. Never resolve
+ *      by editing the stated rating or flipping the declaration: re-examine the
+ *      scores (the DESIGN NOTES comment below the schema says why).
  *
- * RISK-RATING GATE (why this script owns the matrix)
- * The likelihood x severity -> rating mapping in references/risk-matrix.md is
- * deterministic and severity-weighted: no cell in which either dimension is
- * High rates Low. A model scoring it inline gets it wrong silently, and a
- * mis-stated residual rating is the single defect most likely to survive review
- * into a filed DPIA. So: the manifest states likelihood and severity; this
- * script derives the rating. If the manifest also states a rating and it
- * disagrees with the derived value, the build stops with exit 3 and names the
- * row. Never "fix" a disagreement by editing the stated rating to match —
- * re-examine the likelihood and severity scores.
- *
- * ARTICLE 36 FLAG
- * Art. 36(1) GDPR engages on residual high risk, however that rating is
- * reached. Any row whose *derived residual rating* is High is marked, not only
- * High likelihood x High severity — a Medium x High residual rates High and
- * engages prior consultation just the same.
- *
- * REGULATOR CONCLUSION GATE (v3.0, exit 3; formerly the Article 36 gate)
- * The rating gate stops the register from contradicting the matrix. It does
- * not stop the *prose* from contradicting the register — a DPIA whose table
- * carries a High residual while its executive summary says prior consultation
- * is not required is the same class of defect, in the sentence a regulator
- * actually reads. So the manifest must declare a conclusion per jurisdiction:
- *
- *   "jurisdictions": ["eu-gdpr", "uk-gdpr"],   // default ["eu-gdpr"]; codes below
- *   "regulatorConclusions": {                  // one entry per declared jurisdiction,
- *     "eu-gdpr": {"priorConsultation": true},  //   REQUIRED whenever a riskRegister
- *     "uk-gdpr": {"priorConsultation": true}   //   block exists
- *   }
- *
- *   "art36": true | false                      // legacy alias, still accepted: fills
- *                                              //   priorConsultation for every declared
- *                                              //   prior-consultation regime that has
- *                                              //   no explicit entry
- *
- * For prior-consultation regimes (EU/UK GDPR, Kenya — marked derivable in the
- * REGIMES registry) the script derives the answer from the register and stops
- * with exit 3 if the declaration disagrees. For non-derivable regimes
- * (statutory-checklist assessments) the gate checks only that a conclusion is
- * declared: silence is a manifest error (exit 1), never a pass. As with the
- * rating gate, do not resolve a failure by flipping the declaration to match:
- * decide which is wrong, the conclusion or the scores, and fix that. The script
- * also scans narrative blocks for a sentence asserting the opposite of the
- * derived answer and warns on stderr — a warning, not a stop, because phrasing
- * is too varied to gate on.
- *
- * CONDITIONAL CONSULTATION (v4.0)
- * Art. 36(1) keys to high risk "in the absence of measures taken by the
- * controller to mitigate the risk". Register rows may therefore carry optional
- * post-mitigation scores — the residual expected once Section 5's recommended
- * mitigations are implemented:
- *
- *   "mitigatedLikelihood": "Low", "mitigatedSeverity": "High"   // together or not at all
- *   "mitigatedRating": "Medium"                                 // optional; checked if present
- *
- * The derived consultation conclusion is then tri-state: false (no High
- * residual); "conditional" (every High residual falls below High
- * post-mitigation — consultation is required only if the controller proceeds
- * WITHOUT implementing the mitigations); true (at least one High residual has
- * no such pathway). "art36" and priorConsultation accept true|false|
- * "conditional" accordingly, the register footnote states the conditional
- * pathway, and the register gains a Post-mitigation column when any row scores
- * one. A "mitigated" matrix stage plots the post-mitigation grid.
- *
- * GENERATION TRANSPARENCY (v4.0, no manifest knob)
- * Every document self-identifies as an AI-generated draft of the dpia-generator
- * skill — cover notice, footer line, and file metadata — for human review and
- * adoption. This is builder-owned text and deliberately not overridable. The
- * footer's reviewer phrase is posture-derived, not a knob (v4.1.2): "for
- * attorney review" only where counsel is named AND the work-product header is
- * on; "for DPO review" otherwise — a DPO-led run has no attorney to review it,
- * and a producible record must not tell a regulator it is an attorney draft.
+ * This comment is the manifest author's read; the design notes after it are
+ * background.
  *
  * MANIFEST SCHEMA
  * {
@@ -113,8 +45,13 @@
  *                                              //   vocabulary entirely
  *   "jurisdictions": ["eu-gdpr"],              // optional; default ["eu-gdpr"]; every
  *                                              //   code must exist in REGIMES below
- *   "regulatorConclusions": { ... },           // see conclusion gate above
- *   "art36": false,                            // legacy alias; see conclusion gate
+ *   "regulatorConclusions": {                  // REQUIRED whenever a riskRegister block
+ *     "eu-gdpr": {"priorConsultation": true},  //   exists: one entry per declared
+ *     "uk-gdpr": {"priorConsultation": true}   //   jurisdiction, keyed by the regime's
+ *   },                                         //   conclusionKey (REGIMES registry below)
+ *   "art36": false,                            // legacy alias: true | false | "conditional";
+ *                                              //   fills priorConsultation for every declared
+ *                                              //   prior-consultation regime with no entry
  *   "docTitle": null,                          // optional; default "DATA PROTECTION
  *                                              //   IMPACT ASSESSMENT" — override for
  *                                              //   regimes that name the instrument
@@ -154,9 +91,11 @@
  *    "rows":[                                              //   referenced by a matrix block's "source"
  *       {"id":"R1","risk":"...","likelihood":"High","severity":"Medium",
  *        "controls":"...","residualLikelihood":"Low","residualSeverity":"Medium",
- *        "inherentRating":"High","residualRating":"Low"}   // ratings optional; checked if present
+ *        "inherentRating":"High","residualRating":"Low",   // ratings optional; checked if present
+ *        "mitigatedLikelihood":"Low","mitigatedSeverity":"High",  // optional post-mitigation scores,
+ *        "mitigatedRating":"Medium"}                        //   together or not at all (design notes)
  *   ]}
- *   {"type":"matrix","title":"Inherent risk","stage":"inherent"|"residual","source":"<riskRegister id>"}
+ *   {"type":"matrix","title":"Inherent risk","stage":"inherent"|"residual"|"mitigated","source":"<riskRegister id>"}
  *      -- plots the register's risk IDs onto the coloured 3x3 grid.
  *   {"type":"complianceMap","regime":"us-co","title":"...",         // regime optional but
  *    "rows":[{"element":"<statutory required element>",            //   must be a known code
@@ -193,6 +132,69 @@
  *         the assessment date warns on stderr. Rows come from the controller's
  *         notice profile (references/notice-profile.md) where one exists.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
+ */
+
+/**
+ * DESIGN NOTES (background; not needed to author a manifest)
+ *
+ * RISK-RATING GATE (why this script owns the matrix)
+ * The likelihood x severity -> rating mapping in references/risk-matrix.md is
+ * deterministic and severity-weighted: no cell in which either dimension is
+ * High rates Low. A model scoring it inline gets it wrong silently, and a
+ * mis-stated residual rating is the single defect most likely to survive review
+ * into a filed DPIA. So: the manifest states likelihood and severity; this
+ * script derives the rating. If the manifest also states a rating and it
+ * disagrees with the derived value, the build stops with exit 3 and names the
+ * row. Never "fix" a disagreement by editing the stated rating to match —
+ * re-examine the likelihood and severity scores.
+ *
+ * ARTICLE 36 FLAG
+ * Art. 36(1) GDPR engages on residual high risk, however that rating is
+ * reached. Any row whose *derived residual rating* is High is marked, not only
+ * High likelihood x High severity — a Medium x High residual rates High and
+ * engages prior consultation just the same.
+ *
+ * REGULATOR CONCLUSION GATE (v3.0, exit 3; formerly the Article 36 gate)
+ * The rating gate stops the register from contradicting the matrix. It does
+ * not stop the *prose* from contradicting the register — a DPIA whose table
+ * carries a High residual while its executive summary says prior consultation
+ * is not required is the same class of defect, in the sentence a regulator
+ * actually reads. So the manifest declares a conclusion per jurisdiction
+ * (regulatorConclusions, or the legacy art36 alias). For prior-consultation
+ * regimes (EU/UK GDPR, Kenya — marked derivable in the REGIMES registry) the
+ * script derives the answer from the register and stops with exit 3 if the
+ * declaration disagrees. For non-derivable regimes (statutory-checklist
+ * assessments) the gate checks only that a conclusion is declared: silence is a
+ * manifest error (exit 1), never a pass. Do not resolve a failure by flipping
+ * the declaration to match: decide which is wrong, the conclusion or the
+ * scores, and fix that. The script also scans narrative blocks for a sentence
+ * asserting the opposite of the derived answer and warns on stderr — a
+ * warning, not a stop, because phrasing is too varied to gate on. A register
+ * authored as a plain "table" (v4.4.5) is refused outright: the gates never
+ * see it.
+ *
+ * CONDITIONAL CONSULTATION (v4.0)
+ * Art. 36(1) keys to high risk "in the absence of measures taken by the
+ * controller to mitigate the risk". Register rows may therefore carry optional
+ * post-mitigation scores (mitigatedLikelihood / mitigatedSeverity) — the
+ * residual expected once Section 5's recommended mitigations are implemented.
+ * The derived consultation conclusion is then tri-state: false (no High
+ * residual); "conditional" (every High residual falls below High
+ * post-mitigation — consultation is required only if the controller proceeds
+ * WITHOUT implementing the mitigations); true (at least one High residual has
+ * no such pathway). "art36" and priorConsultation accept true|false|
+ * "conditional" accordingly, the register footnote states the conditional
+ * pathway, and the register gains a Post-mitigation column when any row scores
+ * one. A "mitigated" matrix stage plots the post-mitigation grid.
+ *
+ * GENERATION TRANSPARENCY (v4.0, no manifest knob)
+ * Every document self-identifies as an AI-generated draft of the dpia-generator
+ * skill — cover notice, footer line, and file metadata — for human review and
+ * adoption. This is builder-owned text and deliberately not overridable. The
+ * footer's reviewer phrase is posture-derived, not a knob (v4.1.2): "for
+ * attorney review" only where counsel is named AND the work-product header is
+ * on; "for DPO review" otherwise — a DPO-led run has no attorney to review it,
+ * and a producible record must not tell a regulator it is an attorney draft.
  */
 
 const fs = require('fs');
@@ -530,13 +532,20 @@ function resolveRegister(rows) {
     if (r.mitigatedRating && !mitigated) {
       fail(1, `${ctx}: "mitigatedRating" requires "mitigatedLikelihood" and "mitigatedSeverity" — the rating is derived from those scores, never stated alone`);
     }
-    if (r.inherentRating && String(r.inherentRating).trim() !== inherent) {
+    // A stated rating is compared on the same vocabulary norm() accepts for the
+    // scores: "LOW" against a derived "Low" is not a scoring error to
+    // re-examine. An object here is a manifest error (exit 1), as elsewhere.
+    const stated = (v, field) => {
+      const t = txt(v, `${ctx} "${field}"`).trim();
+      return LEVELS.find(l => l.toLowerCase() === t.toLowerCase()) || t;
+    };
+    if (r.inherentRating && stated(r.inherentRating, 'inherentRating') !== inherent) {
       violations.push(`${ctx}: stated inherentRating "${r.inherentRating}" != derived "${inherent}" from (${iL} x ${iS})`);
     }
-    if (r.residualRating && String(r.residualRating).trim() !== residual) {
+    if (r.residualRating && stated(r.residualRating, 'residualRating') !== residual) {
       violations.push(`${ctx}: stated residualRating "${r.residualRating}" != derived "${residual}" from (${rL} x ${rS})`);
     }
-    if (r.mitigatedRating && String(r.mitigatedRating).trim() !== mitigated) {
+    if (r.mitigatedRating && stated(r.mitigatedRating, 'mitigatedRating') !== mitigated) {
       violations.push(`${ctx}: stated mitigatedRating "${r.mitigatedRating}" != derived "${mitigated}" from (${mL} x ${mS})`);
     }
     return {
@@ -569,7 +578,7 @@ function p(text, opts = {}) {
 function heading(text, level) {
   const map = { 1: HeadingLevel.HEADING_1, 2: HeadingLevel.HEADING_2, 3: HeadingLevel.HEADING_3 };
   return new Paragraph({
-    heading: map[level] || HeadingLevel.HEADING_2,
+    heading: own(map, level) || HeadingLevel.HEADING_2, // own(): a "__proto__" level must not resolve to a style id
     spacing: { before: level === 1 ? 320 : 240, after: 140 },
     children: [new TextRun({ text: txt(text, 'heading'), font: FONT, bold: true, size: level === 1 ? 28 : 24, color: '1F3864' })],
   });
@@ -871,14 +880,18 @@ function build(manifest, state) {
         const missing = [];
         const rows = b.rows.map((r, j) => {
           rowObject(r, `${ctx} row ${j + 1}`);
-          const el = r.element, sec = String(r.section || '').trim();
+          // Through txt(): an object "element", "section" or "note" shipped as
+          // "[object Object]" with exit 0 (the v4.4.4 cover-field class).
+          const el = (r.element === undefined || r.element === null) ? '' : txt(r.element, `${ctx} row ${j + 1} "element"`);
+          const sec = (r.section === undefined || r.section === null) ? '' : txt(r.section, `${ctx} row ${j + 1} "section"`).trim();
+          const note = (r.note === undefined || r.note === null) ? '' : txt(r.note, `${ctx} row ${j + 1} "note"`);
           if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
           const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
           // A bare "\u00a7" strips to "", and "".includes matches every heading \u2014
           // the dangling-reference gate below would never fire.
           if (!probe) fail(1, `${ctx}: row ${j + 1} "section" (${JSON.stringify(sec)}) names no section`);
           if (!headings.some(h => h.includes(probe))) missing.push(sec);
-          return [String(el), sec + (r.note ? ` \u2014 ${r.note}` : '')];
+          return [el, sec + (note ? ` \u2014 ${note}` : '')];
         });
         if (missing.length) {
           fail(1, `${ctx}: "section" reference(s) match no heading in this manifest: ${missing.join(', ')}. ` +
@@ -932,7 +945,8 @@ function build(manifest, state) {
           const label = declared === 'conditional'
             ? (def.conclusionLabels[2] || 'Conditional — see the Section 5 mitigations')
             : def.conclusionLabels[declared ? 0 : 1];
-          const note = b.notes ? own(b.notes, code) : undefined;
+          const rawNote = b.notes ? own(b.notes, code) : undefined;
+          const note = (rawNote === undefined || rawNote === null) ? '' : txt(rawNote, `${ctx} notes["${code}"]`);
           return [def.label, def.engagement, label + (note ? ` — ${note}` : '')];
         });
         children.push(p(b.title || 'Regulator engagement — conclusions by jurisdiction', { bold: true, after: 100 }));
@@ -947,10 +961,15 @@ function build(manifest, state) {
         // notice profile (references/notice-profile.md) where one exists;
         // "notice" records the provenance that makes each commitment quotable.
         if (!b.notice || typeof b.notice !== 'object' || Array.isArray(b.notice) ||
-            !b.notice.source || !String(b.notice.source).trim()) {
+            b.notice.source === undefined || b.notice.source === null ||
+            !txt(b.notice.source, `${ctx} "notice.source"`).trim()) {
           fail(1, `${ctx}: needs "notice.source" — the published notice (URL or document) the commitments ` +
                   'were read from. A consistency check with no stated notice is not checkable.');
         }
+        // Provenance fields through txt(): an object audience/profile rendered
+        // as "[object Object] notice" with exit 0.
+        const noticeField = (k) => (b.notice[k] === undefined || b.notice[k] === null) ? '' : txt(b.notice[k], `${ctx} "notice.${k}"`);
+        const nSource = noticeField('source'), nAudience = noticeField('audience'), nProfile = noticeField('profile');
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
         if (b.notice.date !== undefined && b.notice.date !== null) {
           if (!isRealDate(String(b.notice.date))) {
@@ -971,31 +990,34 @@ function build(manifest, state) {
         const rows = b.rows.map((r, j) => {
           const rctx = `${ctx} row ${j + 1}`;
           rowObject(r, rctx);
-          if (!r.commitment || !String(r.commitment).trim() || !r.processing || !String(r.processing).trim()) {
+          const field = (k) => (r[k] === undefined || r[k] === null) ? '' : txt(r[k], `${rctx} "${k}"`);
+          const commitment = field('commitment'), processing = field('processing');
+          const section = field('section'), action = field('action');
+          if (!commitment.trim() || !processing.trim()) {
             fail(1, `${rctx}: needs "commitment" (verbatim from the notice) and "processing" (the new reality it is checked against)`);
           }
           const v = own(VERDICTS, String(r.verdict === undefined || r.verdict === null ? '' : r.verdict).toLowerCase());
           if (!v) fail(1, `${rctx}: "verdict" must be consistent|drift|conflict, got ${JSON.stringify(r.verdict)}`);
           const inconsistent = v !== VERDICTS.consistent;
-          if (inconsistent && !(r.action && String(r.action).trim())) {
+          if (inconsistent && !action.trim()) {
             fail(1, `${rctx}: a ${JSON.stringify(String(r.verdict).toLowerCase())} verdict requires an "action" — ` +
                     'the resolution rule (amend the notice or change the processing before deployment, with a named ' +
                     'owner) is a gate, not advice. An inconsistency with no committed resolution is an unfinished check.');
           }
           if (inconsistent) unresolved = true;
           return {
-            commitment: String(r.commitment) + (r.section ? ` (${r.section})` : ''),
-            processing: String(r.processing),
+            commitment: commitment + (section ? ` (${section})` : ''),
+            processing,
             label: v.label, style: v.style,
             // A consistent row needs no resolution, but one the manifest states
             // anyway (e.g. "monitor at next notice refresh") is kept, not dropped.
-            action: (r.action && String(r.action).trim()) ? String(r.action) : '—',
+            action: action.trim() ? action : '—',
           };
         });
-        const prov = [String(b.notice.source)];
-        if (b.notice.audience) prov.push(`${b.notice.audience} notice`);
+        const prov = [nSource];
+        if (nAudience) prov.push(`${nAudience} notice`);
         if (b.notice.date) prov.push(`indexed ${b.notice.date}`);
-        if (b.notice.profile) prov.push(`profile: ${b.notice.profile}`);
+        if (nProfile) prov.push(`profile: ${nProfile}`);
         children.push(p(b.title || 'Privacy policy consistency check', { bold: true, after: 100 }));
         children.push(p('Checked against: ' + prov.join(' — '), { italic: true, size: 18 }));
         const w = [30, 30, 12, 28];
@@ -1026,7 +1048,8 @@ function build(manifest, state) {
         // A null cell renders empty, matching dataTable's contract — never the
         // literal word "null" in a signature line.
         if (b.rows !== undefined && !Array.isArray(b.rows)) fail(1, `${ctx}: "rows" must be an array of rows`);
-        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => (v === undefined || v === null) ? '' : String(v)));
+        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`)
+          .map((v, k) => (v === undefined || v === null) ? '' : txt(v, `${ctx} row ${j + 1} cell ${k + 1}`)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
         break;
@@ -1263,9 +1286,38 @@ function main() {
     if (typeof m.art36 !== 'boolean' && m.art36 !== 'conditional') {
       fail(1, `manifest: "art36" must be true, false or "conditional", got ${JSON.stringify(m.art36)}`);
     }
-    jur.filter(c => REGIMES[c].derive).forEach(c => {
+    const consultRegimes = jur.filter(c => REGIMES[c].derive);
+    if (!consultRegimes.length) {
+      fail(1, `manifest: "art36" declares a prior-consultation conclusion, but none of the declared jurisdictions ` +
+              `[${jur.join(', ')}] engages prior consultation, so the declaration would be silently dropped. ` +
+              'Declare regulatorConclusions["<code>"] for each regime instead.');
+    }
+    consultRegimes.forEach(c => {
       if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
         rc[c] = Object.assign(Object.create(null), rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
+      }
+    });
+  }
+
+  // ---- Register-shape gate (exit 1) ----------------------------------------
+  // Every gate below keys off a riskRegister block. A risk register authored
+  // as a plain "table" (the shape SKILL.md forbids) carries likelihood /
+  // severity / rating columns the gates never read, so a High residual, an
+  // "Approved" status and a paragraph denying consultation shipped with exit 0
+  // and no warning. A table that looks like a register is refused unless the
+  // manifest also carries the real one.
+  const blocksIn = Array.isArray(m.blocks) ? m.blocks : [];
+  const isBlock = (b) => b && typeof b === 'object' && !Array.isArray(b);
+  if (!blocksIn.some(b => isBlock(b) && b.type === 'riskRegister')) {
+    const REGISTER_COLUMN = /\b(likelihood|severity|residual|inherent|rating)\b/i;
+    blocksIn.forEach((b, i) => {
+      if (!isBlock(b) || b.type !== 'table' || !Array.isArray(b.columns)) return;
+      const hits = b.columns.filter(c => typeof c === 'string' && REGISTER_COLUMN.test(c));
+      if (hits.length) {
+        fail(1, `block ${i + 1} (table): column(s) ${hits.map(h => JSON.stringify(h)).join(', ')} describe a risk register, ` +
+                'but the manifest has no riskRegister block. The rating gate, the matrices and the Article 36 mark never ' +
+                'see a plain table, so its ratings would ship unchecked. Author the register as a "riskRegister" block ' +
+                '(manifest schema in this script\'s header), never as a "table".');
       }
     });
   }
