@@ -1,0 +1,23 @@
+{
+  "systemName": "Regulator Table Note",
+  "date": "2026-09-27",
+  "jurisdictions": [
+    "eu-gdpr"
+  ],
+  "art36": false,
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 5 — MEASURES"
+    },
+    {
+      "type": "regulatorTable",
+      "notes": {
+        "eu-gdpr": {
+          "text": "no High residual"
+        }
+      }
+    }
+  ]
+}

@@ -530,13 +530,20 @@ function resolveRegister(rows) {
     if (r.mitigatedRating && !mitigated) {
       fail(1, `${ctx}: "mitigatedRating" requires "mitigatedLikelihood" and "mitigatedSeverity" — the rating is derived from those scores, never stated alone`);
     }
-    if (r.inherentRating && String(r.inherentRating).trim() !== inherent) {
+    // A stated rating is compared on the same vocabulary norm() accepts for the
+    // scores: "LOW" against a derived "Low" is not a scoring error to
+    // re-examine. An object here is a manifest error (exit 1), as elsewhere.
+    const stated = (v, field) => {
+      const t = txt(v, `${ctx} "${field}"`).trim();
+      return LEVELS.find(l => l.toLowerCase() === t.toLowerCase()) || t;
+    };
+    if (r.inherentRating && stated(r.inherentRating, 'inherentRating') !== inherent) {
       violations.push(`${ctx}: stated inherentRating "${r.inherentRating}" != derived "${inherent}" from (${iL} x ${iS})`);
     }
-    if (r.residualRating && String(r.residualRating).trim() !== residual) {
+    if (r.residualRating && stated(r.residualRating, 'residualRating') !== residual) {
       violations.push(`${ctx}: stated residualRating "${r.residualRating}" != derived "${residual}" from (${rL} x ${rS})`);
     }
-    if (r.mitigatedRating && String(r.mitigatedRating).trim() !== mitigated) {
+    if (r.mitigatedRating && stated(r.mitigatedRating, 'mitigatedRating') !== mitigated) {
       violations.push(`${ctx}: stated mitigatedRating "${r.mitigatedRating}" != derived "${mitigated}" from (${mL} x ${mS})`);
     }
     return {
@@ -569,7 +576,7 @@ function p(text, opts = {}) {
 function heading(text, level) {
   const map = { 1: HeadingLevel.HEADING_1, 2: HeadingLevel.HEADING_2, 3: HeadingLevel.HEADING_3 };
   return new Paragraph({
-    heading: map[level] || HeadingLevel.HEADING_2,
+    heading: own(map, level) || HeadingLevel.HEADING_2, // own(): a "__proto__" level must not resolve to a style id
     spacing: { before: level === 1 ? 320 : 240, after: 140 },
     children: [new TextRun({ text: txt(text, 'heading'), font: FONT, bold: true, size: level === 1 ? 28 : 24, color: '1F3864' })],
   });
@@ -871,14 +878,18 @@ function build(manifest, state) {
         const missing = [];
         const rows = b.rows.map((r, j) => {
           rowObject(r, `${ctx} row ${j + 1}`);
-          const el = r.element, sec = String(r.section || '').trim();
+          // Through txt(): an object "element", "section" or "note" shipped as
+          // "[object Object]" with exit 0 (the v4.4.4 cover-field class).
+          const el = (r.element === undefined || r.element === null) ? '' : txt(r.element, `${ctx} row ${j + 1} "element"`);
+          const sec = (r.section === undefined || r.section === null) ? '' : txt(r.section, `${ctx} row ${j + 1} "section"`).trim();
+          const note = (r.note === undefined || r.note === null) ? '' : txt(r.note, `${ctx} row ${j + 1} "note"`);
           if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
           const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
           // A bare "\u00a7" strips to "", and "".includes matches every heading \u2014
           // the dangling-reference gate below would never fire.
           if (!probe) fail(1, `${ctx}: row ${j + 1} "section" (${JSON.stringify(sec)}) names no section`);
           if (!headings.some(h => h.includes(probe))) missing.push(sec);
-          return [String(el), sec + (r.note ? ` \u2014 ${r.note}` : '')];
+          return [el, sec + (note ? ` \u2014 ${note}` : '')];
         });
         if (missing.length) {
           fail(1, `${ctx}: "section" reference(s) match no heading in this manifest: ${missing.join(', ')}. ` +
@@ -932,7 +943,8 @@ function build(manifest, state) {
           const label = declared === 'conditional'
             ? (def.conclusionLabels[2] || 'Conditional — see the Section 5 mitigations')
             : def.conclusionLabels[declared ? 0 : 1];
-          const note = b.notes ? own(b.notes, code) : undefined;
+          const rawNote = b.notes ? own(b.notes, code) : undefined;
+          const note = (rawNote === undefined || rawNote === null) ? '' : txt(rawNote, `${ctx} notes["${code}"]`);
           return [def.label, def.engagement, label + (note ? ` — ${note}` : '')];
         });
         children.push(p(b.title || 'Regulator engagement — conclusions by jurisdiction', { bold: true, after: 100 }));
@@ -947,10 +959,15 @@ function build(manifest, state) {
         // notice profile (references/notice-profile.md) where one exists;
         // "notice" records the provenance that makes each commitment quotable.
         if (!b.notice || typeof b.notice !== 'object' || Array.isArray(b.notice) ||
-            !b.notice.source || !String(b.notice.source).trim()) {
+            b.notice.source === undefined || b.notice.source === null ||
+            !txt(b.notice.source, `${ctx} "notice.source"`).trim()) {
           fail(1, `${ctx}: needs "notice.source" — the published notice (URL or document) the commitments ` +
                   'were read from. A consistency check with no stated notice is not checkable.');
         }
+        // Provenance fields through txt(): an object audience/profile rendered
+        // as "[object Object] notice" with exit 0.
+        const noticeField = (k) => (b.notice[k] === undefined || b.notice[k] === null) ? '' : txt(b.notice[k], `${ctx} "notice.${k}"`);
+        const nSource = noticeField('source'), nAudience = noticeField('audience'), nProfile = noticeField('profile');
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
         if (b.notice.date !== undefined && b.notice.date !== null) {
           if (!isRealDate(String(b.notice.date))) {
@@ -971,31 +988,34 @@ function build(manifest, state) {
         const rows = b.rows.map((r, j) => {
           const rctx = `${ctx} row ${j + 1}`;
           rowObject(r, rctx);
-          if (!r.commitment || !String(r.commitment).trim() || !r.processing || !String(r.processing).trim()) {
+          const field = (k) => (r[k] === undefined || r[k] === null) ? '' : txt(r[k], `${rctx} "${k}"`);
+          const commitment = field('commitment'), processing = field('processing');
+          const section = field('section'), action = field('action');
+          if (!commitment.trim() || !processing.trim()) {
             fail(1, `${rctx}: needs "commitment" (verbatim from the notice) and "processing" (the new reality it is checked against)`);
           }
           const v = own(VERDICTS, String(r.verdict === undefined || r.verdict === null ? '' : r.verdict).toLowerCase());
           if (!v) fail(1, `${rctx}: "verdict" must be consistent|drift|conflict, got ${JSON.stringify(r.verdict)}`);
           const inconsistent = v !== VERDICTS.consistent;
-          if (inconsistent && !(r.action && String(r.action).trim())) {
+          if (inconsistent && !action.trim()) {
             fail(1, `${rctx}: a ${JSON.stringify(String(r.verdict).toLowerCase())} verdict requires an "action" — ` +
                     'the resolution rule (amend the notice or change the processing before deployment, with a named ' +
                     'owner) is a gate, not advice. An inconsistency with no committed resolution is an unfinished check.');
           }
           if (inconsistent) unresolved = true;
           return {
-            commitment: String(r.commitment) + (r.section ? ` (${r.section})` : ''),
-            processing: String(r.processing),
+            commitment: commitment + (section ? ` (${section})` : ''),
+            processing,
             label: v.label, style: v.style,
             // A consistent row needs no resolution, but one the manifest states
             // anyway (e.g. "monitor at next notice refresh") is kept, not dropped.
-            action: (r.action && String(r.action).trim()) ? String(r.action) : '—',
+            action: action.trim() ? action : '—',
           };
         });
-        const prov = [String(b.notice.source)];
-        if (b.notice.audience) prov.push(`${b.notice.audience} notice`);
+        const prov = [nSource];
+        if (nAudience) prov.push(`${nAudience} notice`);
         if (b.notice.date) prov.push(`indexed ${b.notice.date}`);
-        if (b.notice.profile) prov.push(`profile: ${b.notice.profile}`);
+        if (nProfile) prov.push(`profile: ${nProfile}`);
         children.push(p(b.title || 'Privacy policy consistency check', { bold: true, after: 100 }));
         children.push(p('Checked against: ' + prov.join(' — '), { italic: true, size: 18 }));
         const w = [30, 30, 12, 28];
@@ -1026,7 +1046,8 @@ function build(manifest, state) {
         // A null cell renders empty, matching dataTable's contract — never the
         // literal word "null" in a signature line.
         if (b.rows !== undefined && !Array.isArray(b.rows)) fail(1, `${ctx}: "rows" must be an array of rows`);
-        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`).map(v => (v === undefined || v === null) ? '' : String(v)));
+        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`)
+          .map((v, k) => (v === undefined || v === null) ? '' : txt(v, `${ctx} row ${j + 1} cell ${k + 1}`)));
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
         break;
@@ -1263,9 +1284,38 @@ function main() {
     if (typeof m.art36 !== 'boolean' && m.art36 !== 'conditional') {
       fail(1, `manifest: "art36" must be true, false or "conditional", got ${JSON.stringify(m.art36)}`);
     }
-    jur.filter(c => REGIMES[c].derive).forEach(c => {
+    const consultRegimes = jur.filter(c => REGIMES[c].derive);
+    if (!consultRegimes.length) {
+      fail(1, `manifest: "art36" declares a prior-consultation conclusion, but none of the declared jurisdictions ` +
+              `[${jur.join(', ')}] engages prior consultation, so the declaration would be silently dropped. ` +
+              'Declare regulatorConclusions["<code>"] for each regime instead.');
+    }
+    consultRegimes.forEach(c => {
       if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
         rc[c] = Object.assign(Object.create(null), rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
+      }
+    });
+  }
+
+  // ---- Register-shape gate (exit 1) ----------------------------------------
+  // Every gate below keys off a riskRegister block. A risk register authored
+  // as a plain "table" (the shape SKILL.md forbids) carries likelihood /
+  // severity / rating columns the gates never read, so a High residual, an
+  // "Approved" status and a paragraph denying consultation shipped with exit 0
+  // and no warning. A table that looks like a register is refused unless the
+  // manifest also carries the real one.
+  const blocksIn = Array.isArray(m.blocks) ? m.blocks : [];
+  const isBlock = (b) => b && typeof b === 'object' && !Array.isArray(b);
+  if (!blocksIn.some(b => isBlock(b) && b.type === 'riskRegister')) {
+    const REGISTER_COLUMN = /\b(likelihood|severity|residual|inherent|rating)\b/i;
+    blocksIn.forEach((b, i) => {
+      if (!isBlock(b) || b.type !== 'table' || !Array.isArray(b.columns)) return;
+      const hits = b.columns.filter(c => typeof c === 'string' && REGISTER_COLUMN.test(c));
+      if (hits.length) {
+        fail(1, `block ${i + 1} (table): column(s) ${hits.map(h => JSON.stringify(h)).join(', ')} describe a risk register, ` +
+                'but the manifest has no riskRegister block. The rating gate, the matrices and the Article 36 mark never ' +
+                'see a plain table, so its ratings would ship unchecked. Author the register as a "riskRegister" block ' +
+                '(manifest schema in this script\'s header), never as a "table".');
       }
     });
   }

@@ -1,0 +1,32 @@
+{
+  "systemName": "Alias Dropped",
+  "date": "2026-09-27",
+  "jurisdictions": [
+    "us-co"
+  ],
+  "art36": true,
+  "regulatorConclusions": {
+    "us-co": {
+      "assessmentRequired": true
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 — RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "High residual.",
+          "likelihood": "High",
+          "severity": "High"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "systemName": "Notice Check Fields",
+  "date": "2026-09-27",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "1.10 Privacy policy consistency check"
+    },
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy",
+        "audience": {
+          "segment": "customers"
+        }
+      },
+      "rows": [
+        {
+          "commitment": "We retain support records for 24 months",
+          "processing": "Deleted at 18 months",
+          "verdict": "consistent"
+        }
+      ]
+    }
+  ]
+}

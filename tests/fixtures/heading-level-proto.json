@@ -1,0 +1,15 @@
+{
+  "systemName": "Heading Level Proto",
+  "date": "2026-09-27",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": "__proto__",
+      "text": "SECTION 1 — DESCRIPTION"
+    },
+    {
+      "type": "para",
+      "text": "A heading level that names a prototype key renders as a normal level-2 heading."
+    }
+  ]
+}

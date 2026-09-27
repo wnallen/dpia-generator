@@ -1,0 +1,28 @@
+{
+  "systemName": "Rating Case",
+  "date": "2026-09-27",
+  "art36": false,
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 — RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Stated ratings differ from the derived ones only in case.",
+          "likelihood": "low",
+          "severity": "medium",
+          "inherentRating": "LOW",
+          "residualLikelihood": "low",
+          "residualSeverity": "low",
+          "residualRating": "low "
+        }
+      ]
+    }
+  ]
+}
