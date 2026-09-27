@@ -219,53 +219,7 @@ If residual risk is **Medium**, recommend internal DPO consultation and a define
 
 Read `references/output-template.md` for the DPIA's exact section structure and its template → manifest mapping table. You are not writing document code, so do not read `/mnt/skills/public/docx/SKILL.md` as a matter of course — the builder already encodes the docx-js patterns and runs the validator itself. Read it only if the build exits 2 and you need the unpack-fix-repack procedure.
 
-The output is a Word document saved to `/mnt/user-data/outputs/`, named `[prefix]_[SystemName]_[YYYY-MM-DD].docx` where the prefix is the document title's initials — the default title yields the historical `DPIA_`, a Colorado "DATA PROTECTION ASSESSMENT" yields `DPA_`. Structure:
-
-```
-COVER PAGE
-  - "DATA PROTECTION IMPACT ASSESSMENT"
-  - System name, version, date
-  - Posture-derived running header — "Privileged & Confidential — Attorney Work
-    Product" where counsel is named, "Confidential — Draft for DPO Review"
-    otherwise
-  - Controller / DPO / counsel of record (counsel line only where counsel is
-    actually named — never a placeholder)
-  - Status checkboxes — vocabulary derived per regime: Draft / Under DPO Review /
-    Approved, plus each declared regime's blocking state (Art. 36 box for EU/UK
-    scope, FDPIC box for Swiss, agency-assessment box for Korean public-sector
-    scope)
-  - DPIA reference number placeholder
-
-COVER NOTE (unnumbered, before the executive summary — see output-template.md)
-  - Applicable-regimes table with one triggering conclusion per regime
-  - Documented assumptions, prior-work reconciliation, notice-profile provenance
-
-EXECUTIVE SUMMARY (1 page)
-  - Processing in one sentence
-  - Article 35 triggering conclusion
-  - Top residual risks (3-5)
-  - DPO / supervisory authority consultation flag (yes/no, with reasoning)
-  - Counsel's bottom-line recommendation: proceed / proceed conditionally / do not proceed
-
-SECTION 1 — DESCRIPTION OF PROCESSING (Art. 35(7)(a))
-  - includes §1.10 Privacy Policy Consistency Check
-SECTION 2 — NECESSITY AND PROPORTIONALITY (Art. 35(7)(b))
-SECTION 3 — CONSULTATION OF STAKEHOLDERS (Art. 35(2), (9))
-SECTION 4 — RISK ASSESSMENT (Art. 35(7)(c))
-  - Risk register table (matrix columns)
-  - Risk-by-risk narrative
-  - 3×3 matrix visualization (inherent and residual)
-SECTION 5 — MEASURES TO ADDRESS RISKS (Art. 35(7)(d))
-  - ends with the regulator-engagement conclusion(s), one per applicable regime
-SECTION 6 — JURISDICTIONAL DIVERGENCE (where applicable)
-  - UK/EU divergence first where UK scope exists; one subsection per further
-    applicable regime, only where its answer differs from the GDPR spine
-SECTION 7 — CONCLUSION AND APPROVAL
-
-APPENDIX A — Reference DPIA(s) and authorities cited
-APPENDIX B — Open questions and follow-up items
-APPENDIX C — Revision history
-```
+The output is a Word document saved to `/mnt/user-data/outputs/`, named `[prefix]_[SystemName]_[YYYY-MM-DD].docx` where the prefix is the document title's initials — the default title yields the historical `DPIA_`, a Colorado "DATA PROTECTION ASSESSMENT" yields `DPA_`. The section structure (cover page, cover note with the applicable-regimes table, executive summary, Sections 1–7 including §1.10, Appendices A–C) is fixed by `references/output-template.md`, which you have already read for this step; it is not repeated here.
 
 Implementation — **author a JSON manifest and run the bundled builder. Do not hand-write a per-run generator.**
 
@@ -273,7 +227,7 @@ Implementation — **author a JSON manifest and run the bundled builder. Do not 
 node scripts/build_dpia.js /home/claude/dpia_manifest.json
 ```
 
-The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices, the §1.10 notice-consistency table and signature block, then runs `/mnt/skills/public/docx/scripts/office/validate.py` on its own output and prints the written path. The full manifest schema and block types are documented in the script's header comment, `scripts/build_dpia.js` lines 1–188 — read that range before writing the manifest, not the whole file. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
+The builder resolves `docx` from the global npm prefix, renders the cover page, header/footer, headings, prose, bullets, tables, risk register, 3×3 matrices, the §1.10 notice-consistency table and signature block, then validates its own output (the full OOXML validator where present, the bundled `scripts/check_ooxml.py` well-formedness check otherwise — never skipped) and prints the written path. The full manifest schema and block types are documented in the script's header comment — read `scripts/build_dpia.js` from the top to the first closing `*/` (about 200 lines) before writing the manifest, never the whole file. Narrative content stays bespoke per DPIA; the document structure is the constant and belongs to the script.
 
 **Notice-consistency gate (exit 1).** Where a notice profile is in play, §1.10 is carried by the `noticeCheck` block — **never hand-authored as a `table`** — with the notice's provenance stated and one row per commitment checked. The builder colour-codes the verdicts, refuses a `drift`/`conflict` row that carries no committed resolution (the §1.10 resolution rule is a gate, not advice), appends the builder-owned resolution footnote, and warns on a notice indexed more than six months before the assessment date. Every drift/conflict resolution must reappear in Section 5's mitigations with a named owner and target date.
 
@@ -385,15 +339,15 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 - `references/jurisdictions/` — One module per non-EU regime; each declares its regime code in its opening lines, so list the directory to map codes to files (filenames need not match codes). Fixed skeleton: instrument, trigger test, Art. 35(7) crosswalk, risk method, regulator engagement, divergence table, privilege posture, source notes. Read the module for every regime in the applicable-regimes table; a regime with no module is **not covered** and takes the coverage fallback. A **volatility banner** is a contract, not a disclaimer: re-search before reliance on any run that touches it. `uk-gdpr.md` carries UK divergence (DUAA, Art. 22 ADM, recognized lawful bases, transfers).
 - `references/notice-profile.md` — The portable privacy-notice profile: schema, verbatim-extraction and category-complete rules (silence recorded as data), version-pinned `role: vendor` entries, staleness rules, and the consumption table. Read in Notice-Profile Mode and Step 0.6.
 - `references/output-template.md` — Exact section structure (incl. §1.10), table layouts, standard wording, and the template → manifest mapping.
-- `scripts/build_dpia.js` — Manifest-driven .docx assembler for Step 5; owns the `REGIMES` registry, the rating mapping, the Article 36 mark, the risk-rating and per-regime conclusion gates (exit 3), and the notice-consistency gate (exit 1). Manifest schema in the script header (lines 1–188). **Execute, don't reimplement.**
+- `scripts/build_dpia.js` — Manifest-driven .docx assembler for Step 5; owns the `REGIMES` registry, the rating mapping, the Article 36 mark, the risk-rating and per-regime conclusion gates (exit 3), and the notice-consistency gate (exit 1). Manifest schema in the script header (read to the first closing `*/`). **Execute, don't reimplement.**
 - `scripts/run_regression.js` + `tests/fixtures/` — Regression suite, one fixture per case, drift-proof in both directions; every case pins a shipped defect or a gate. Run it after any change to the builder, `references/risk-matrix.md`, or the manifest schema. Requires the pinned `docx` package.
 
 ---
 
 ## Version
 
-Canonical version: **v4.4.3**. `README.md`'s Changelog is the long-form record of every
+Canonical version: **v4.4.4**. `README.md`'s Changelog is the long-form record of every
 release since v1.0 and must not contradict this section; only the current release is
 summarized here.
 
-- **v4.4.3** — 2026-09-26 builder hardening after an adversarial test pass: XML-forbidden characters are stripped at every text sink (a pasted `\v` or `\f` no longer yields a docx Word cannot open); objects where text was expected, non-string `outputDir`, duplicate jurisdictions, bad table `widths` and a `regulatorTable` conclusion of the wrong type all exit 1 cleanly; the output path is re-verified and `fstat`-checked immediately before the write (symlink-swap window, planted hardlink), `outputFilename` must be a plain `.docx` name, and a file failing OOXML validation is removed. Suite: sixty-four cases. v4.4.2 (currency-check pass, Malaysia and UK regulator-table text) and earlier are in README's Changelog.
+- **v4.4.4** — 2026-09-26 review-pass release. Builder: cover and metadata fields (`controller`, `dpo`, `counsel`, `reference`, `docTitle`, `headerText`, `version`, `status`, `statusOptions`) are type-checked up front — an object no longer ships as `[object Object]` with exit 0; an allowed output root that does not exist yet is still a root (a fresh image with no `/mnt/user-data/outputs` refused the default location with a misleading symlink message); the output directory is created only after every gate passes; a dangling-symlink `outputDir`, an over-long `systemName` and a short write fail cleanly; `build failed:` errors carry the message, not a stack. OOXML validation is never skipped: where `validate.py` is absent or cannot start, the bundled `scripts/check_ooxml.py` well-formedness check runs and a malformed file is removed with exit 2; a validator traceback is now the document's failure unless it names a missing Python module. `engines` corrected to Node ≥ 20 (`.nvmrc` 22). SKILL.md: the stale header line range and the duplicated Step 5 section skeleton removed. The bundled check refuses any part carrying a DOCTYPE (the entity-expansion / external-entity vector; no OOXML part has one), prefers `defusedxml` where installed, and caps part size; the validator-crash test is anchored to the traceback's final line. Suite: sixty-six cases plus the harness-level bundled-check probe (`scalar-fields-not-scalar`, `outputdir-root-not-yet-created`); the symlink-escape case now targets a directory certainly outside the roots, so a checkout under the OS temp dir no longer fails it spuriously.

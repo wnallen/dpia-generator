@@ -1,0 +1,8 @@
+{
+  "systemName": "Fresh Image",
+  "date": "2026-07-29",
+  "blocks": [
+    {"type": "heading", "text": "Executive Summary", "level": 1},
+    {"type": "para", "text": "An allowed output root that does not exist yet is still a root; the builder creates it rather than refusing the default location."}
+  ]
+}

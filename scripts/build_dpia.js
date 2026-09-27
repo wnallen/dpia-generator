@@ -1106,6 +1106,22 @@ function main() {
   if (m.outputDir !== undefined && (typeof m.outputDir !== 'string' || m.outputDir.includes('\0'))) {
     fail(1, 'manifest: "outputDir" must be a string path without NUL characters');
   }
+  // Cover and metadata fields are String()-coerced or template-interpolated on
+  // their way to the text sinks, so an object here would ship as
+  // "[object Object]" (and, for docTitle, corrupt the filename prefix) before
+  // txt() could refuse it. Type-check them once, up front. null means "use
+  // the default" for each of them.
+  ['version', 'controller', 'dpo', 'counsel', 'reference', 'status', 'docTitle', 'headerText']
+    .forEach(k => {
+      const v = m[k];
+      if (v !== undefined && v !== null && typeof v !== 'string' && typeof v !== 'number') {
+        fail(1, `manifest: "${k}" must be a string, got ${Array.isArray(v) ? 'an array' : typeof v === 'object' ? 'an object' : typeof v}`);
+      }
+    });
+  if (m.statusOptions !== undefined && m.statusOptions !== null &&
+      (!Array.isArray(m.statusOptions) || m.statusOptions.some(s => typeof s !== 'string'))) {
+    fail(1, 'manifest: "statusOptions" must be an array of strings');
+  }
   if (!Array.isArray(m.blocks)) {
     fail(1, `manifest: "blocks" is required and must be an array of block objects, got ${m.blocks === undefined ? 'nothing' : m.blocks === null ? 'null' : typeof m.blocks}`);
   }
@@ -1133,7 +1149,9 @@ function main() {
             `[${allowedRoots.join(', ')}]. Set DPIA_OUTPUT_ROOTS to permit another location.`);
   }
 
-  const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  // Capped: a long systemName must not pack the whole document and then fail
+  // at open with ENAMETOOLONG.
+  const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 80);
   // Filename prefix follows the document title's initials, so the default title
   // yields the historical "DPIA_" and a Colorado "DATA PROTECTION ASSESSMENT"
   // yields "DPA_" — a producible record must not ship under a DPIA filename.
@@ -1166,18 +1184,31 @@ function main() {
   // write. Check the real path of the nearest existing ancestor BEFORE mkdir
   // (so no directory is created through a symlink), again after it, and refuse
   // to follow a symlink at the file itself.
-  const realRoots = allowedRoots.filter(r => fs.existsSync(r)).map(r => fs.realpathSync(r));
-  const checkReal = (dir) => {
+  // Real path of a directory that may not exist yet: resolve its nearest
+  // existing ancestor and re-append the rest. Used for the roots as well as
+  // the target — a root that does not exist yet (a fresh image where
+  // /mnt/user-data/outputs has not been created) is still a root; filtering
+  // it out refused the default outputDir with a misleading symlink message.
+  const realOfNearest = (dir) => {
     let probe = dir;
     while (!fs.existsSync(probe) && path.dirname(probe) !== probe) probe = path.dirname(probe);
-    const real = path.join(fs.realpathSync(probe), path.relative(probe, dir));
+    return path.join(fs.realpathSync(probe), path.relative(probe, dir));
+  };
+  const realRoots = allowedRoots.map(realOfNearest);
+  const checkReal = (dir) => {
+    const real = realOfNearest(dir);
     if (!realRoots.some(root => isInside(root, real))) {
       fail(1, `manifest: "outputDir" (${outDir}) resolves through a symlink to ${real}, outside the permitted output roots.`);
     }
   };
   checkReal(outDir);
-  fs.mkdirSync(outDir, { recursive: true });
-  checkReal(outDir);
+  // A dangling symlink at outputDir is neither a directory to use nor one to
+  // create: mkdir would fail deep inside with a bare ENOENT.
+  try {
+    if (fs.lstatSync(outDir).isSymbolicLink() && !fs.existsSync(outDir)) {
+      fail(1, `manifest: "outputDir" (${outDir}) is a dangling symlink.`);
+    }
+  } catch (e) { /* absent: fine, created below */ }
   const checkTarget = () => {
     let existing = null;
     try { existing = fs.lstatSync(outPath); } catch (e) { /* absent: fine */ }
@@ -1324,13 +1355,18 @@ function main() {
   }
 
   Packer.toBuffer(doc).then(buf => {
-    // The lexical and realpath checks above ran before packing, which can take
-    // seconds on a large manifest — long enough for a directory component in
-    // the shared temp dir to be swapped for a symlink. Re-check immediately
-    // before the open, then confirm through the descriptor itself: fstat must
-    // show a single-link regular file at the same inode the (non-following)
-    // lstat sees, otherwise the path was redirected between the two calls.
-    // No O_TRUNC: the truncation happens only after the descriptor is proven.
+    // The directory is created only now, after every manifest gate has passed
+    // and the document has packed — a failed manifest leaves no directory
+    // behind. The lexical and realpath checks above ran before packing, which
+    // can take seconds on a large manifest — long enough for a directory
+    // component in the shared temp dir to be swapped for a symlink. Re-check
+    // before mkdir and immediately before the open, then confirm through the
+    // descriptor itself: fstat must show a single-link regular file at the
+    // same inode the (non-following) lstat sees, otherwise the path was
+    // redirected between the two calls. No O_TRUNC: the truncation happens
+    // only after the descriptor is proven.
+    checkReal(outDir);
+    fs.mkdirSync(outDir, { recursive: true });
     checkReal(outDir);
     checkTarget();
     const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | (fs.constants.O_NOFOLLOW || 0);
@@ -1344,35 +1380,54 @@ function main() {
         fail(1, `refusing to write ${outPath}: the output path changed underneath the build.`);
       }
       fs.ftruncateSync(fd, 0);
-      fs.writeSync(fd, buf);
+      fs.writeFileSync(fd, buf); // loops until the whole buffer is written
     } finally { fs.closeSync(fd); }
-    if (!noValidate) {
-      const v = '/mnt/skills/public/docx/scripts/office/validate.py';
-      if (fs.existsSync(v)) {
-        const r = spawnSync('python3', [v, outPath], { encoding: 'utf8' });
-        if (r.stdout) process.stdout.write(r.stdout);
-        if (r.stderr) process.stderr.write(r.stderr);
-        if (r.error || r.status !== 0) {
-          // A Python traceback (or a failure to launch python3 at all) means the
-          // validator itself could not run — a missing dependency in the
-          // environment, not a defect in the document. Only a clean validator
-          // run that rejects the file is an OOXML failure.
-          const crashed = r.error || /Traceback \(most recent call last\)/.test(r.stderr || '');
-          if (crashed) {
-            process.stderr.write('build_dpia: validate.py could not run (missing dependency?); ' +
-              'validation skipped — not a defect in the document.\n');
-          } else {
-            // Never leave a file Word cannot open where a deliverable belongs.
-            try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
-            fail(2, 'OOXML validation failed for ' + outPath + ' (file removed)');
-          }
-        }
-      } else {
-        process.stderr.write('build_dpia: validate.py not found; skipped validation\n');
-      }
-    }
+    if (!noValidate) validateOutput(outPath);
     process.stdout.write(outPath + '\n');
-  }).catch(e => fail(1, 'packing failed: ' + (e && e.stack ? e.stack : e)));
+  }).catch(e => fail(1, 'build failed: ' + (e && e.message ? e.message : e)));
+}
+
+// OOXML check, never skipped. The full validator (the public docx skill's
+// validate.py) runs where it is installed; where it is absent or cannot start
+// for an environment reason (python module missing), the bundled stdlib
+// well-formedness check in scripts/check_ooxml.py runs instead — a document
+// with a stray control character shipped with exit 0 in CI for exactly as long
+// as "validator absent" meant "pass". Any other validator failure is the
+// document's, and the file is removed rather than left where a deliverable
+// belongs. --no-validate is the only way to skip.
+function validateOutput(outPath) {
+  const full = '/mnt/skills/public/docx/scripts/office/validate.py';
+  const bundled = path.join(__dirname, 'check_ooxml.py');
+  const rejected = (r, label) => {
+    process.stderr.write((r.stdout || '') + (r.stderr || ''));
+    try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
+    fail(2, `OOXML validation failed (${label}) for ${outPath} (file removed)`);
+  };
+  let fallbackReason = null;
+  if (fs.existsSync(full)) {
+    const r = spawnSync('python3', [full, outPath], { encoding: 'utf8' });
+    if (!r.error && r.status === 0) return;
+    // Only an environment failure falls back: python3 not launchable, or a
+    // module the validator imports (lxml, defusedxml) missing. Any other
+    // non-zero exit — including a traceback raised while reading the file —
+    // is the validator rejecting the document.
+    // Anchored to the traceback's final line so document text echoed inside a
+    // validator message cannot be mistaken for an environment failure.
+    const envFailure = r.error || /^(ModuleNotFoundError|ImportError): /m.test(r.stderr || '');
+    if (!envFailure) rejected(r, 'validate.py');
+    fallbackReason = r.error ? `python3: ${r.error.message}` : 'validate.py is missing a Python dependency';
+  } else {
+    fallbackReason = 'validate.py not present in this environment';
+  }
+  const r = spawnSync('python3', [bundled, outPath], { encoding: 'utf8' });
+  if (r.error) {
+    try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
+    fail(2, `no OOXML check could run (${fallbackReason}; python3: ${r.error.message}) — the document ` +
+            'was not validated and has been removed; install python3 or pass --no-validate to accept an unchecked file');
+  }
+  if (r.status !== 0) rejected(r, 'bundled well-formedness check');
+  process.stderr.write(`build_dpia: note — ${fallbackReason}; the bundled well-formedness check ` +
+    '(scripts/check_ooxml.py) passed instead of the full OOXML validator.\n');
 }
 
 // Last line of the fail-cleanly contract: whatever shape of manifest slips
