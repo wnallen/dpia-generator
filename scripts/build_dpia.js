@@ -14,82 +14,14 @@
  * Exit codes:
  *   0  success (built, and validated unless --no-validate)
  *   1  manifest / build failure
- *   2  OOXML validation failure (the validator ran and rejected the document;
- *      a validator that cannot run — missing Python deps — skips with a warning)
- *   3  risk-rating gate failure (see below) — HARD STOP
+ *   2  OOXML validation failure (the full validator where present, otherwise the
+ *      bundled scripts/check_ooxml.py well-formedness check — never skipped)
+ *   3  rating gate or regulator-conclusion gate failure — HARD STOP. Never resolve
+ *      by editing the stated rating or flipping the declaration: re-examine the
+ *      scores (the DESIGN NOTES comment below the schema says why).
  *
- * RISK-RATING GATE (why this script owns the matrix)
- * The likelihood x severity -> rating mapping in references/risk-matrix.md is
- * deterministic and severity-weighted: no cell in which either dimension is
- * High rates Low. A model scoring it inline gets it wrong silently, and a
- * mis-stated residual rating is the single defect most likely to survive review
- * into a filed DPIA. So: the manifest states likelihood and severity; this
- * script derives the rating. If the manifest also states a rating and it
- * disagrees with the derived value, the build stops with exit 3 and names the
- * row. Never "fix" a disagreement by editing the stated rating to match —
- * re-examine the likelihood and severity scores.
- *
- * ARTICLE 36 FLAG
- * Art. 36(1) GDPR engages on residual high risk, however that rating is
- * reached. Any row whose *derived residual rating* is High is marked, not only
- * High likelihood x High severity — a Medium x High residual rates High and
- * engages prior consultation just the same.
- *
- * REGULATOR CONCLUSION GATE (v3.0, exit 3; formerly the Article 36 gate)
- * The rating gate stops the register from contradicting the matrix. It does
- * not stop the *prose* from contradicting the register — a DPIA whose table
- * carries a High residual while its executive summary says prior consultation
- * is not required is the same class of defect, in the sentence a regulator
- * actually reads. So the manifest must declare a conclusion per jurisdiction:
- *
- *   "jurisdictions": ["eu-gdpr", "uk-gdpr"],   // default ["eu-gdpr"]; codes below
- *   "regulatorConclusions": {                  // one entry per declared jurisdiction,
- *     "eu-gdpr": {"priorConsultation": true},  //   REQUIRED whenever a riskRegister
- *     "uk-gdpr": {"priorConsultation": true}   //   block exists
- *   }
- *
- *   "art36": true | false                      // legacy alias, still accepted: fills
- *                                              //   priorConsultation for every declared
- *                                              //   prior-consultation regime that has
- *                                              //   no explicit entry
- *
- * For prior-consultation regimes (EU/UK GDPR, Kenya — marked derivable in the
- * REGIMES registry) the script derives the answer from the register and stops
- * with exit 3 if the declaration disagrees. For non-derivable regimes
- * (statutory-checklist assessments) the gate checks only that a conclusion is
- * declared: silence is a manifest error (exit 1), never a pass. As with the
- * rating gate, do not resolve a failure by flipping the declaration to match:
- * decide which is wrong, the conclusion or the scores, and fix that. The script
- * also scans narrative blocks for a sentence asserting the opposite of the
- * derived answer and warns on stderr — a warning, not a stop, because phrasing
- * is too varied to gate on.
- *
- * CONDITIONAL CONSULTATION (v4.0)
- * Art. 36(1) keys to high risk "in the absence of measures taken by the
- * controller to mitigate the risk". Register rows may therefore carry optional
- * post-mitigation scores — the residual expected once Section 5's recommended
- * mitigations are implemented:
- *
- *   "mitigatedLikelihood": "Low", "mitigatedSeverity": "High"   // together or not at all
- *   "mitigatedRating": "Medium"                                 // optional; checked if present
- *
- * The derived consultation conclusion is then tri-state: false (no High
- * residual); "conditional" (every High residual falls below High
- * post-mitigation — consultation is required only if the controller proceeds
- * WITHOUT implementing the mitigations); true (at least one High residual has
- * no such pathway). "art36" and priorConsultation accept true|false|
- * "conditional" accordingly, the register footnote states the conditional
- * pathway, and the register gains a Post-mitigation column when any row scores
- * one. A "mitigated" matrix stage plots the post-mitigation grid.
- *
- * GENERATION TRANSPARENCY (v4.0, no manifest knob)
- * Every document self-identifies as an AI-generated draft of the dpia-generator
- * skill — cover notice, footer line, and file metadata — for human review and
- * adoption. This is builder-owned text and deliberately not overridable. The
- * footer's reviewer phrase is posture-derived, not a knob (v4.1.2): "for
- * attorney review" only where counsel is named AND the work-product header is
- * on; "for DPO review" otherwise — a DPO-led run has no attorney to review it,
- * and a producible record must not tell a regulator it is an attorney draft.
+ * This comment is the manifest author's read; the design notes after it are
+ * background.
  *
  * MANIFEST SCHEMA
  * {
@@ -113,8 +45,13 @@
  *                                              //   vocabulary entirely
  *   "jurisdictions": ["eu-gdpr"],              // optional; default ["eu-gdpr"]; every
  *                                              //   code must exist in REGIMES below
- *   "regulatorConclusions": { ... },           // see conclusion gate above
- *   "art36": false,                            // legacy alias; see conclusion gate
+ *   "regulatorConclusions": {                  // REQUIRED whenever a riskRegister block
+ *     "eu-gdpr": {"priorConsultation": true},  //   exists: one entry per declared
+ *     "uk-gdpr": {"priorConsultation": true}   //   jurisdiction, keyed by the regime's
+ *   },                                         //   conclusionKey (REGIMES registry below)
+ *   "art36": false,                            // legacy alias: true | false | "conditional";
+ *                                              //   fills priorConsultation for every declared
+ *                                              //   prior-consultation regime with no entry
  *   "docTitle": null,                          // optional; default "DATA PROTECTION
  *                                              //   IMPACT ASSESSMENT" — override for
  *                                              //   regimes that name the instrument
@@ -154,9 +91,11 @@
  *    "rows":[                                              //   referenced by a matrix block's "source"
  *       {"id":"R1","risk":"...","likelihood":"High","severity":"Medium",
  *        "controls":"...","residualLikelihood":"Low","residualSeverity":"Medium",
- *        "inherentRating":"High","residualRating":"Low"}   // ratings optional; checked if present
+ *        "inherentRating":"High","residualRating":"Low",   // ratings optional; checked if present
+ *        "mitigatedLikelihood":"Low","mitigatedSeverity":"High",  // optional post-mitigation scores,
+ *        "mitigatedRating":"Medium"}                        //   together or not at all (design notes)
  *   ]}
- *   {"type":"matrix","title":"Inherent risk","stage":"inherent"|"residual","source":"<riskRegister id>"}
+ *   {"type":"matrix","title":"Inherent risk","stage":"inherent"|"residual"|"mitigated","source":"<riskRegister id>"}
  *      -- plots the register's risk IDs onto the coloured 3x3 grid.
  *   {"type":"complianceMap","regime":"us-co","title":"...",         // regime optional but
  *    "rows":[{"element":"<statutory required element>",            //   must be a known code
@@ -193,6 +132,69 @@
  *         the assessment date warns on stderr. Rows come from the controller's
  *         notice profile (references/notice-profile.md) where one exists.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
+ */
+
+/**
+ * DESIGN NOTES (background; not needed to author a manifest)
+ *
+ * RISK-RATING GATE (why this script owns the matrix)
+ * The likelihood x severity -> rating mapping in references/risk-matrix.md is
+ * deterministic and severity-weighted: no cell in which either dimension is
+ * High rates Low. A model scoring it inline gets it wrong silently, and a
+ * mis-stated residual rating is the single defect most likely to survive review
+ * into a filed DPIA. So: the manifest states likelihood and severity; this
+ * script derives the rating. If the manifest also states a rating and it
+ * disagrees with the derived value, the build stops with exit 3 and names the
+ * row. Never "fix" a disagreement by editing the stated rating to match —
+ * re-examine the likelihood and severity scores.
+ *
+ * ARTICLE 36 FLAG
+ * Art. 36(1) GDPR engages on residual high risk, however that rating is
+ * reached. Any row whose *derived residual rating* is High is marked, not only
+ * High likelihood x High severity — a Medium x High residual rates High and
+ * engages prior consultation just the same.
+ *
+ * REGULATOR CONCLUSION GATE (v3.0, exit 3; formerly the Article 36 gate)
+ * The rating gate stops the register from contradicting the matrix. It does
+ * not stop the *prose* from contradicting the register — a DPIA whose table
+ * carries a High residual while its executive summary says prior consultation
+ * is not required is the same class of defect, in the sentence a regulator
+ * actually reads. So the manifest declares a conclusion per jurisdiction
+ * (regulatorConclusions, or the legacy art36 alias). For prior-consultation
+ * regimes (EU/UK GDPR, Kenya — marked derivable in the REGIMES registry) the
+ * script derives the answer from the register and stops with exit 3 if the
+ * declaration disagrees. For non-derivable regimes (statutory-checklist
+ * assessments) the gate checks only that a conclusion is declared: silence is a
+ * manifest error (exit 1), never a pass. Do not resolve a failure by flipping
+ * the declaration to match: decide which is wrong, the conclusion or the
+ * scores, and fix that. The script also scans narrative blocks for a sentence
+ * asserting the opposite of the derived answer and warns on stderr — a
+ * warning, not a stop, because phrasing is too varied to gate on. A register
+ * authored as a plain "table" (v4.4.5) is refused outright: the gates never
+ * see it.
+ *
+ * CONDITIONAL CONSULTATION (v4.0)
+ * Art. 36(1) keys to high risk "in the absence of measures taken by the
+ * controller to mitigate the risk". Register rows may therefore carry optional
+ * post-mitigation scores (mitigatedLikelihood / mitigatedSeverity) — the
+ * residual expected once Section 5's recommended mitigations are implemented.
+ * The derived consultation conclusion is then tri-state: false (no High
+ * residual); "conditional" (every High residual falls below High
+ * post-mitigation — consultation is required only if the controller proceeds
+ * WITHOUT implementing the mitigations); true (at least one High residual has
+ * no such pathway). "art36" and priorConsultation accept true|false|
+ * "conditional" accordingly, the register footnote states the conditional
+ * pathway, and the register gains a Post-mitigation column when any row scores
+ * one. A "mitigated" matrix stage plots the post-mitigation grid.
+ *
+ * GENERATION TRANSPARENCY (v4.0, no manifest knob)
+ * Every document self-identifies as an AI-generated draft of the dpia-generator
+ * skill — cover notice, footer line, and file metadata — for human review and
+ * adoption. This is builder-owned text and deliberately not overridable. The
+ * footer's reviewer phrase is posture-derived, not a knob (v4.1.2): "for
+ * attorney review" only where counsel is named AND the work-product header is
+ * on; "for DPO review" otherwise — a DPO-led run has no attorney to review it,
+ * and a producible record must not tell a regulator it is an attorney draft.
  */
 
 const fs = require('fs');
