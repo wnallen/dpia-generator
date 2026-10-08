@@ -1,0 +1,32 @@
+{
+  "systemName": "Duplicate Row",
+  "date": "2026-09-01",
+  "art36": false,
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "Controls."
+        },
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "Low",
+          "severity": "Medium",
+          "controls": "Controls."
+        }
+      ]
+    }
+  ]
+}

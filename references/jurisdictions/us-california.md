@@ -3,9 +3,12 @@
 **Regime code:** `us-ca` (standalone assessment module — Model B). The instrument is a **risk
 assessment** under the CCPA as amended by the CPRA, governed by the California Privacy
 Protection Agency's regulations approved by the Office of Administrative Law on
-**2025-09-23** and effective **2026-01-01**. This is the only regime in this skill with a
-**scheduled filing obligation** — the regulator does not merely demand on request; summaries
-and attestations are submitted on a calendar.
+**2025-09-23** and effective **2026-01-01**. Several regimes in this skill submit
+assessments to the regulator (Vietnam, Kenya, Korea's public-institution PIA, India's SDF
+report); California's distinguishing feature is a **calendar-driven filing obligation** —
+the regulator does not merely demand on request, and summaries and attestations are
+submitted on a fixed schedule rather than on a processing or risk event (India's annual SDF
+report, not live until 2027-05-13, is the nearest analog).
 
 > **Sourcing status (2026-08-04; re-corroborated 2026-08-11):** cppa.ca.gov returns HTTP 403
 > to the fetch tool. Web-search corroboration passes **confirmed the risk-assessment article

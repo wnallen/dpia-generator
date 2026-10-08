@@ -42,15 +42,16 @@ Nothing drafted for the Vietnam limb should assume it stays inside the controlle
 The dossier obligations attach to processing and to cross-border transfer **as such** —
 not to a high-risk subset. If Vietnam-resident data subjects' personal data is processed
 or exported at scale, the practical screen is "does the Vietnam limb exist at all," then
-scope thresholds and sector exemptions under the new Law (verify — the 2025 Law
-introduced calibrations for small businesses and specific sectors that this module has
-not read). `[model knowledge — verify]`
+scope thresholds and exemptions: the small-enterprise / household-business deferral and
+its large-scale and sensitive-data carve-backs under Decree 356 (§1, `[web search —
+verify]`); any further sector calibrations in the Law's or the Decree's text have not been
+read from the primary source. `[model knowledge — verify]`
 
 Screen conclusion: `regulatorConclusions["vn-pdpl"].dossierRequired`.
 
 ## 3. Content and method
 
-The Decree 13-era dossier forms map onto the GDPR spine (controller/processor details,
+The dossier forms (Decree 356's templates, descended from Decree 13's Forms 01–04) map onto the GDPR spine (controller/processor details,
 purposes, data types, recipients, transfer details, measures, risk assessment); the
 register and matrix over-satisfy the risk element. Vietnam-specific items the spine does
 not carry: the prescribed dossier **forms** (issued by MPS regulation — fetch the current
@@ -84,4 +85,4 @@ requirements verified before submission.
 
 - Law No. 91/2025/QH15 — Official Gazette / MPS. `[web search — verify]`; capture article numbers for both dossiers on first fetch.
 - Decree 13/2023/ND-CP (replaced; structure persists) — Arts. 24–25. `[model knowledge — verify]`.
-- MPS dossier forms and implementing decrees under the 2025 Law — pending/rolling; verify per run.
+- Decree No. 356/2025/ND-CP (promulgated 2025-12-31, effective 2026-01-01) — the implementing decree and its dossier form templates. `[web search — verify]` (corroborated 2026-08-11 / 2026-09-12); capture the form numbers on first fetch. Further implementing instruments (incl. the draft administrative-sanctions decree, §4) — verify per run.

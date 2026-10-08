@@ -75,8 +75,30 @@ sys.stdout.write(' \\u2016 '.join(r.strip() for r in out if r.strip()))`;
   return execFileSync('python3', ['-c', py, docxPath], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 }
 
+const VALIDATED = /note — (the full OOXML validator \(validate\.py\) passed|.*the bundled well-formedness check \(scripts\/check_ooxml\.py\) passed)/;
 const STAR = /‖\s*High \*\s*‖/;          // a starred rating cell in the register
 const FOOTNOTE = /Article 36 prior consultation .* (is|are) engaged/;
+
+// The 3x3 matrix as references/risk-matrix.md states it: { L: { S: {rating, flag} } }.
+// Parsed from the reference itself so the builder's MATRIX cannot drift from
+// the document a reviewer reads — the one mapping no one can check by eye.
+function referenceMatrix() {
+  const md = fs.readFileSync(path.join(ROOT, 'references', 'risk-matrix.md'), 'utf8');
+  const lines = md.split('\n').filter(l => /^\|/.test(l.trim()));
+  const head = lines.find(l => /Likelihood/.test(l) && /Severity/.test(l));
+  if (!head) return null;
+  const level = (c) => (c.match(/\b(Low|Medium|High)\b/) || [])[1];
+  const sev = head.split('|').slice(2, -1).map(level);
+  const out = {};
+  lines.forEach(l => {
+    const cells = l.split('|').slice(1, -1).map(c => c.trim());
+    const L = (cells[0].match(/^\*\*(Low|Medium|High)\*\*/) || [])[1];
+    if (!L || cells.length !== sev.length + 1) return;
+    out[L] = {};
+    sev.forEach((S, k) => { out[L][S] = { rating: level(cells[k + 1]), flag: /Art\. 36 flag/.test(cells[k + 1]) }; });
+  });
+  return out;
+}
 
 const CASES = [
   {
@@ -666,14 +688,28 @@ const CASES = [
   },
   {
     name: 'heading-level-proto',
-    why: 'v4.4.5: heading "level" was a plain object lookup, so "__proto__" resolved to Object.prototype and shipped w:pStyle w:val="[object Object]" with exit 0 \u2014 the v3.4.1 prototype-key class on the one manifest-keyed lookup it missed.',
+    why: 'v4.4.5: heading "level" was a plain object lookup, so "__proto__" resolved to Object.prototype and shipped w:pStyle w:val="[object Object]" with exit 0 \u2014 the v3.4.1 prototype-key class on the one manifest-keyed lookup it missed. v4.4.7: a level outside 1-3 is now refused outright rather than falling back to level 2.',
+    exit: 1,
+    stderr: /block 1 \(heading\): "level" must be 1, 2 or 3, got "__proto__"/,
+  },
+  {
+    name: 'risk-matrix-cells',
+    why: 'v4.4.7: nothing pinned the builder\'s MATRIX to references/risk-matrix.md cell by cell, so a mis-rated cell (High x Low as Low) would ship every affected rating silently. One register row per likelihood x severity pair (id = their initials, e.g. "HL"); each must render the reference table\'s rating, and the Art. 36 star exactly where the reference flags it.',
     exit: 0,
     noWarn: true,
-    check: (t) => [[/SECTION 1/.test(t), 'heading text rendered']],
-    checkXml: (x) => [
-      [!/\[object Object\]/.test(x), 'no "[object Object]" style id'],
-      [/w:pStyle w:val="Heading2"/.test(x), 'falls back to the level-2 style'],
-    ],
+    check: (t) => {
+      const ref = referenceMatrix();
+      const cells = ref ? Object.keys(ref).reduce((n, L) => n + Object.keys(ref[L]).length, 0) : 0;
+      const out = [[cells === 9, `references/risk-matrix.md parses to 9 cells (got ${cells})`]];
+      if (cells !== 9) return out;
+      Object.keys(ref).forEach(L => Object.keys(ref[L]).forEach(S => {
+        const { rating, flag } = ref[L][S];
+        const id = L[0] + S[0];
+        const row = new RegExp(`‖ ${id} ‖ [^‖]+ ‖ ${L} x ${S} ‖ ${rating} ‖ [^‖]+ ‖ ${L} x ${S} ‖ ${rating}${flag ? ' \\*' : ''} ‖`);
+        out.push([row.test(t), `${L} likelihood x ${S} severity rates ${rating}${flag ? ' with the Art. 36 flag' : ', unflagged'}`]);
+      }));
+      return out;
+    },
   },
   {
     name: 'rating-case-insensitive',
@@ -682,7 +718,117 @@ const CASES = [
     noWarn: true,
     check: (t) => [[/‖ R1 ‖/.test(t), 'R1 present in register'], [!STAR.test(t), 'no starred rating cell']],
   },
+  {
+    name: 'regulator-text-currency',
+    why: 'v4.4.7: the UK footnote named the ICO after the Information Commission replaced it (2026-09-30); the Indonesia row still awaited an implementing regulation GR 33/2026 had supplied; the Kenya row cited "ODPC guidance" for a timeline the 2021 General Regulations set. UK wording now follows the assessment date.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/UK GDPR Article 36 prior consultation with the Information Commission \(the ICO before 2026-09-30\)/.test(t), 'footnote names the Information Commission on a post-2026-09-30 assessment'],
+      [/UK GDPR Art\. 36 prior consultation with the Information Commission \(the ICO before 2026-09-30\) on residual high risk/.test(t), 'UK engagement row names the Information Commission'],
+      [!/consultation with the ICO\b(?! before)/.test(t), 'the ICO is never named as the consultee'],
+      [/Data Protection \(General\) Regulations 2021 \(LN 263\/2021\)/.test(t), 'Kenya row cites LN 263/2021 for the timeline'],
+      [/GR 33\/2026\); production expectations pending the supervisory authority(?:'|&apos;)s establishment/.test(t), 'Indonesia row reflects GR 33/2026'],
+      [!/pending the implementing regulation/.test(t), 'stale Indonesia wording gone'],
+    ],
+  },
+  {
+    name: 'register-duplicate-id',
+    why: 'v4.4.7: a second riskRegister reusing an id silently replaced the first, so a matrix "source" plotted whichever register was authored last.',
+    exit: 1,
+    stderr: /block 3 \(riskRegister\): riskRegister id "main" is used by an earlier register/,
+  },
+  {
+    name: 'register-duplicate-row-id',
+    why: 'v4.4.7: two rows sharing a risk id made the matrix grid and every prose citation of that id ambiguous.',
+    exit: 1,
+    stderr: /riskRegister row 2: risk id "R1" is used by an earlier row in this register/,
+  },
+  {
+    name: 'footnote-multi-register',
+    why: 'v4.4.7: footnotes were worded per register, so a register whose High residual was mitigable said "prior consultation is not required" while another register\'s unmitigable High residual required it — the document contradicted itself and the Art. 36 gate.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [!/prior consultation is not required/.test(t), 'no "not required" wording while consultation is required document-wide'],
+      [/bring every High-rated residual in this register below High, but a High residual elsewhere in this assessment has no such pathway/.test(t), 'mitigable register explains why consultation still engages'],
+      [/engaged for this risk, and the processing may not commence until that consultation has concluded/.test(t), 'unmitigable register keeps the unconditional footnote'],
+    ],
+  },
+  {
+    name: 'status-claims-consultation',
+    why: 'v4.4.7: the cover-status check ran one way only; a cover claiming prior consultation that no register derives overstated the obligation with no warning.',
+    exit: 0,
+    stderr: /WARNING — manifest "status" is "Requires Art\. 36 Prior Consultation", but no register derives a prior-consultation requirement/,
+  },
+  {
+    name: 'reviewer-posture-custom-header',
+    why: 'v4.4.7: with counsel named, any non-empty custom header kept "for attorney review" in the footer — a producible record under a "PREPARED FOR PRODUCTION" header told the regulator it was an attorney draft.',
+    exit: 0,
+    noWarn: true,
+    checkFooter: (f) => [
+      [f.includes('for DPO review') && !f.includes('for attorney review'), 'non-privilege custom header gets the DPO reviewer phrase'],
+    ],
+  },
+  {
+    name: 'heading-level-invalid',
+    why: 'v4.4.7: a heading level outside 1-3 silently rendered as level 2, misplacing the section in the document outline.',
+    exit: 1,
+    stderr: /block 1 \(heading\): "level" must be 1, 2 or 3, got 7/,
+  },
+  {
+    name: 'table-empty-columns',
+    why: 'v4.4.7: a table with no columns divided its widths by zero and wrote a table Word cannot lay out.',
+    exit: 1,
+    stderr: /block 1 \(table\): "columns" must name at least one column/,
+  },
+  {
+    name: 'table-row-cell-count',
+    why: 'v4.4.7: a row with no cells (or a ragged one) wrote an empty or misaligned w:tr instead of failing with the row named.',
+    exit: 1,
+    stderr: /block 1 \(table\) row 2: has 0 cell\(s\) but the table has 2 column\(s\)/,
+  },
+  {
+    name: 'compliancemap-substring-section',
+    why: 'v4.4.7: section references matched headings by substring, so "e" matched any heading containing the letter and "S 10" matched "SECTION 1" — the dangling-reference gate passed references that pointed nowhere.',
+    exit: 1,
+    stderr: /"section" reference\(s\) match no heading in this manifest: e, S 10\./,
+  },
+  {
+    name: 'notice-date-not-string',
+    why: 'v4.4.7: a non-string notice.date (an array) was String()-coerced into a valid-looking date and passed the calendar check.',
+    exit: 1,
+    stderr: /"notice\.date" must be a real YYYY-MM-DD calendar date, got \["2026-01-01"\]/,
+  },
+  {
+    name: 'output-replaces-existing-file',
+    why: 'v4.4.7: the output was written into a pre-existing file in place (and left world-readable 0644). It is now written to a fresh O_EXCL temp file at 0600 and renamed over the name, replacing the planted entry rather than writing through it, with no temp file left behind.',
+    exit: 0,
+    noWarn: true,
+    setup: (tmp) => {
+      const f = path.join(tmp, 'DPIA_Replace_Probe_2026-09-01.docx');
+      fs.writeFileSync(f, 'orig', { mode: 0o644 });
+      CASE_STATE.plantedIno = fs.statSync(f).ino;
+    },
+    checkPath: (out, tmp) => {
+      const st = fs.statSync(out);
+      return [
+        [st.ino !== CASE_STATE.plantedIno, 'the planted file was replaced, not written in place'],
+        [(st.mode & 0o777) === 0o600, `output is mode 0600 (got ${(st.mode & 0o777).toString(8)})`],
+        [!fs.readdirSync(tmp).some(n => /\.tmp\.docx$/.test(n)), 'no temp file left in the output directory'],
+      ];
+    },
+  },
+  {
+    name: 'narrative-scan-computed-blocks',
+    why: 'v4.4.7: the narrative contradiction scan read only para, bullets and table text, so a heading or a regulatorTable note denying an engaged Art. 36 consultation shipped without a warning.',
+    exit: 0,
+    stderr: /assert the opposite at: block 1 \(heading\); block 3 \(regulatorTable\) note eu-gdpr/,
+  },
 ];
+
+// Per-run scratch shared between a case's setup and its checks.
+const CASE_STATE = {};
 
 // The bundled well-formedness check must reject a docx whose XML carries a
 // character XML 1.0 forbids — it is the floor that runs wherever validate.py
@@ -701,6 +847,14 @@ with zipfile.ZipFile(src) as z, zipfile.ZipFile(dst, 'w') as out:
         if item.filename == 'word/document.xml':
             if mode == 'control':
                 data = data.replace(b'</w:body>', b'<w:p><w:r><w:t>\\x0b</w:t></w:r></w:p></w:body>')
+            elif mode.startswith('utf16'):
+                # Re-encode the part as UTF-16 (with BOM), which expat accepts;
+                # 'utf16-doctype' also carries the DTD a byte search cannot see.
+                x = data.decode('utf-8').replace('encoding="UTF-8"', 'encoding="UTF-16"', 1)
+                if mode == 'utf16-doctype':
+                    i = x.index('?>') + 2
+                    x = x[:i] + '<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/hostname">]>' + x[i:]
+                data = x.encode('utf-16')
             else:
                 i = data.index(b'?>') + 2
                 data = (data[:i] + b'<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/hostname">]>'
@@ -708,13 +862,21 @@ with zipfile.ZipFile(src) as z, zipfile.ZipFile(dst, 'w') as out:
         out.writestr(item, data)`;
   execFileSync('python3', ['-c', py, goodDocx, broken, 'control']);
   execFileSync('python3', ['-c', py, goodDocx, dtd, 'doctype']);
+  const u16 = path.join(tmp, 'utf16-clean.docx');
+  const u16dtd = path.join(tmp, 'utf16-doctype.docx');
+  execFileSync('python3', ['-c', py, goodDocx, u16, 'utf16']);
+  execFileSync('python3', ['-c', py, goodDocx, u16dtd, 'utf16-doctype']);
   const good = spawnSync('python3', [CHECK, goodDocx], { encoding: 'utf8' });
   const bad = spawnSync('python3', [CHECK, broken], { encoding: 'utf8' });
   const ent = spawnSync('python3', [CHECK, dtd], { encoding: 'utf8' });
+  const ok16 = spawnSync('python3', [CHECK, u16], { encoding: 'utf8' });
+  const ent16 = spawnSync('python3', [CHECK, u16dtd], { encoding: 'utf8' });
   return [
     [good.status === 0, 'bundled check accepts a built document'],
     [bad.status === 1 && /not well-formed/.test(bad.stderr || ''), 'bundled check rejects a control character'],
     [ent.status === 1 && /DOCTYPE/.test(ent.stderr || ''), 'bundled check rejects a DOCTYPE (entity expansion / XXE vector)'],
+    [ok16.status === 0, 'bundled check accepts a well-formed UTF-16 part'],
+    [ent16.status === 1 && /DOCTYPE/.test(ent16.stderr || ''), 'bundled check rejects a DOCTYPE in a UTF-16 part (v4.4.7: the byte search missed it)'],
   ];
 }
 
@@ -746,12 +908,14 @@ function run() {
     if (c.stderr && !c.stderr.test(err)) problems.push(`stderr did not match ${c.stderr}`);
     if (c.noWarn && /WARNING/.test(err)) problems.push('unexpected WARNING on a clean case');
     // v4.4.4: validation is never skipped — the full validator or the bundled
-    // well-formedness check must have run on every built file.
-    if (r.status === 0 && /skipped validation|validation skipped/.test(err)) {
-      problems.push('OOXML validation was skipped');
+    // well-formedness check must have run on every built file. Asserted
+    // positively (v4.4.7): the builder states which check passed, and a build
+    // that exits 0 without saying so was not validated.
+    if (r.status === 0 && !VALIDATED.test(err)) {
+      problems.push('no evidence that OOXML validation ran on the built file');
     }
 
-    if (r.status === 0 && (c.check || c.checkXml || c.checkPath)) {
+    if (r.status === 0 && (c.check || c.checkXml || c.checkFooter || c.checkPath)) {
       const outPath = (r.stdout || '').trim().split('\n').pop();
       if (!outPath || !fs.existsSync(outPath)) {
         problems.push('builder reported success but no output file');

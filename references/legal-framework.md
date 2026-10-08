@@ -11,7 +11,7 @@ Read this before completing the Article 35(1)/(3) triggering screen in Step 0, b
 - (b) processing on a large scale of special categories of data (Art. 9) or data on criminal convictions and offences (Art. 10);
 - (c) systematic monitoring of publicly accessible areas on a large scale.
 
-**Art. 35(4):** Supervisory authorities publish lists of processing operations subject to mandatory DPIA. The ICO list, the CNIL list, and the EDPB opinions on the 22 Member State lists are the authoritative reference points beyond the Art. 35(3) statutory list.
+**Art. 35(4):** Supervisory authorities publish lists of processing operations subject to mandatory DPIA. The UK list (published by the ICO, now maintained by the Information Commission), the CNIL list, and the EDPB opinions on the 22 Member State lists are the authoritative reference points beyond the Art. 35(3) statutory list.
 
 **Art. 35(7) — required content (this is the structure of your DPIA):**
 - (a) a systematic description of the envisaged processing operations and the purposes;
@@ -76,7 +76,7 @@ Source: Article 29 Working Party, "Guidelines on Data Protection Impact Assessme
 Document your triggering analysis in this exact form in the DPIA cover note:
 
 1. Does the processing fall within Art. 35(3)(a), (b), or (c)? If yes → mandatory DPIA, stop here.
-2. Is the processing on the ICO/CNIL/other applicable DPA's published "DPIA always required" list? If yes → mandatory DPIA, stop here.
+2. Is the processing on the UK (Information Commission, formerly ICO) / CNIL / other applicable DPA's published "DPIA always required" list? If yes → mandatory DPIA, stop here.
 3. How many WP29 nine criteria does the processing meet? If two or more → mandatory DPIA, in line with WP29 guidance. If one → mandatory DPIA likely; explain the reasoning.
 4. If zero criteria met → DPIA is prudential, not mandatory. Conduct it as a voluntary Art. 24 accountability exercise.
 

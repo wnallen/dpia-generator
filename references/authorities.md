@@ -8,8 +8,9 @@ This file separates them.
 
 ## How to use it
 
-- **Tier A** entries are statutory and treaty-level instruments with stable public identifiers. Cite them as `[official publication]` using the identifiers below. The article and recital *text* for the GDPR provisions this skill relies on is reproduced in `references/legal-framework.md`; quote from there rather than from recall.
-- **Tier B** entries are guidance, opinions, decisions and case law. They ship **UNVERIFIED**. Cite them as `[model knowledge — verify]` until a run actually fetches the source, and only then upgrade the tag on that citation.
+- **Each entry's own tag governs.** Cite an entry with the tag it carries here, never a stronger one; where an entry carries no tag, use the tier default below.
+- **Tier A** entries are statutory and treaty-level instruments with stable public identifiers. An untagged Tier A entry (e.g. the GDPR and UK GDPR) is cited as `[official publication]` for its statutory identifier only — dates and status notes inside an entry are never upgraded by that default; a Tier A entry tagged `[web search — verify]` keeps that tag and moves to `[official publication]` only once verified against the official text (fetched, pinpoint read, reference captured here). The article and recital *text* for the GDPR provisions this skill relies on is reproduced in `references/legal-framework.md`; quote from there rather than from recall.
+- **Tier B** entries are guidance, opinions, decisions and case law. They ship **UNVERIFIED**: cite them as `[model knowledge — verify]`, or `[web search — verify]` where the entry records a web corroboration, until a run actually fetches the source, and only then upgrade the tag on that citation.
 - **Three tags, three levels of confidence — do not conflate the middle one with the top one.** `[model knowledge — verify]` is pure recall (highest fabrication risk). `[web search — verify]` means the identifier or pinpoint was **corroborated by independent web search but the primary source was not fetched and read** — better than recall, still not authority. `[official publication]` / a fully verified Tier B tag means **the document was fetched, the pinpoint was read, and the exact reference captured**. Moving a citation from recall to `[web search — verify]` is a real improvement and is allowed; moving it to `[official publication]` from a search snippet is **not** — that step requires the fetch.
 - **Currency and corroboration passes** (2026-08-04, 08-11, 09-12, 09-23) are logged in `references/currency-log.md` — maintenance reading only; the tags and dates on the entries below already reflect them. Primary-source fetches were blocked in every pass so far, so no entry has yet moved to `[official publication]` on the strength of a pass.
 - When a run does verify an entry, update it here — status, exact pinpoint, date checked — the same way `published-dpias.md` grows. That is the whole point of the file: the verification burden should fall once, not once per DPIA.
@@ -18,7 +19,7 @@ This file separates them.
 
 ---
 
-## Tier A — statutory instruments, citable as `[official publication]`
+## Tier A — statutory instruments (`[official publication]` once verified; each entry's tag governs)
 
 ### Regulation (EU) 2016/679 (GDPR)
 
@@ -54,7 +55,7 @@ The UK GDPR as it forms part of retained EU law, read with the DPA 2018 (c. 12).
 
 ### Data (Use and Access) Act 2025
 
-`[web search — verify]` **Chapter 18** — Data (Use and Access) Act 2025 (c. 18), Royal Assent **19 June 2025**. Official text: `https://www.legislation.gov.uk/ukpga/2025/18` (the "bare year path" problem is resolved — the chapter number is 18). Main data-protection provisions commenced **2026-02-05** via the Commencement No. 6 Regulations, **SI 2026/82** (corroborated 2026-08-11); consequential/transitional provisions (incl. Information Commission preparation) in **SI 2026/386**; the Information Commission replaces the ICO on **2026-09-30** under Commencement No. 9, **SI 2026/1015** (corroborated 2026-09-23). Cite the specific amending section, not the Act as a whole; not yet fetched and read. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
+`[web search — verify]` **Chapter 18** — Data (Use and Access) Act 2025 (c. 18), Royal Assent **19 June 2025**. Official text: `https://www.legislation.gov.uk/ukpga/2025/18` (the "bare year path" problem is resolved — the chapter number is 18). Main data-protection provisions commenced **2026-02-05** via the Commencement No. 6 Regulations, **SI 2026/82** (corroborated 2026-08-11); consequential/transitional provisions (incl. Information Commission preparation) in **SI 2026/386**; the Information Commission replaced the ICO on **2026-09-30** under Commencement No. 9, **SI 2026/1015** (corroborated 2026-09-23). Cite the specific amending section, not the Act as a whole; not yet fetched and read. Substantive analysis is in `references/jurisdictions/uk-gdpr.md`.
 
 ### US state statutes and rules (Phase 1 modules)
 
@@ -104,7 +105,7 @@ Cited for: Art. 6 and Annex III high-risk classification (employment, biometrics
 
 ---
 
-## Tier B — guidance, opinions and case law. All UNVERIFIED.
+## Tier B — guidance, opinions and case law. All UNVERIFIED (some web-corroborated).
 
 Each entry: what it is, what it is cited for, where to verify, and what to capture when you do.
 
@@ -157,7 +158,7 @@ Commission implementing decision on the adequate level of protection under the E
 ### European Commission adequacy decisions — the live list
 
 - **Cited for:** whether a destination country is adequacy-covered, which decides the entire shape of the transfer analysis (adequacy vs. SCC + TIA) per regime touched.
-- **Verify at:** the Commission's adequacy page, `https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/adequacy-decisions_en` (UK addendum: the UK keeps its own adequacy regulations post-DUAA — check the ICO's international-transfers page for UK-side divergence).
+- **Verify at:** the Commission's adequacy page, `https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/adequacy-decisions_en` (UK addendum: the UK keeps its own adequacy regulations post-DUAA — check the Information Commission's (formerly the ICO's) international-transfers page for UK-side divergence).
 - **Standing rule (same as the DPF list):** adequacy status is checked against the live list **at the time the DPIA is written** — never cited from this file, never from a vendor's representation, and never from model recall; adequacy decisions are adopted, amended, sunset and challenged. Cite the specific decision for the destination, with its date.
 - **Status:** live register — the entry records where to look; only the fetched decision is citable.
 
@@ -213,7 +214,7 @@ Adopted 10 March 2026, published 14 April 2026 with an Explainer; consultation c
 
 - **Cited for:** UK triggering analysis; the ICO's own mandatory-DPIA categories; ICO expectations on AI in HR. URLs in `published-dpias.md`.
 - **Capture:** the ICO list entries actually relied on, individually — "the ICO list" is not a pinpoint.
-- **Status:** UNVERIFIED. ICO guidance is being revised following the DUAA; check the page date.
+- **Status:** UNVERIFIED. ICO guidance is being revised following the DUAA, now by the Information Commission (from 2026-09-30); check the page date and publisher.
 
 ### ICO enforcement — Serco Leisure (February 2024)
 

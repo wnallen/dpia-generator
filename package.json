@@ -1,6 +1,6 @@
 {
   "name": "dpia-generator",
-  "version": "4.4.6",
+  "version": "4.4.7",
   "private": true,
   "description": "Manifest-driven DPIA .docx assembler and its regression suite for the dpia-generator Claude Skill.",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "test": "node scripts/run_regression.js"
   },
   "dependencies": {
-    "docx": "9.7.1"
+    "docx": "9.9.0"
   },
   "engines": {
     "node": ">=20"

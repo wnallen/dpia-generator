@@ -15,7 +15,7 @@ Consult this catalog in Step 1 before web-searching for analogs. **Read the inde
 | Health apps, health data platforms, secondary use | Sector: Health | NHS COVID-19 App; NHS FDP overarching DPIA; COVID Data Store; HSE Tracker |
 | Public sector, vulnerable populations, police databases | Sector: Public-Sector | Home Office Migrant Help; NPCC PND v8; Met VHA; SPA DESC; gov.scot DPIAs |
 | Services likely accessed by children | Sector: Children's Online Services | ICO sample DPIAs: online retail, mobile game, connected toy |
-| Any non-EU regime in scope (`ca-qc`, `us-co`, `us-ca`, `br-lgpd`, `cn-pipl`, `sg-pdpa`, `au-privacy`, `kr-pipa`, `ke-dpa`, `vn-pdpl`, `ch-fadp`) | Non-EU Regulator Guidance | the regulator's own guide, rules or forms, one subsection per regime |
+| Any non-EU regime in scope (`ca-qc`, `us-co`, `us-ca`, `us-state`, `br-lgpd`, `cn-pipl`, `in-dpdp`, `sg-pdpa`, `my-pdpa`, `id-pdp`, `au-privacy`, `kr-pipa`, `ke-dpa`, `vn-pdpl`, `ch-fadp`) | Non-EU Regulator Guidance | the regulator's own guide, rules or forms, one subsection per regime |
 | Nothing above fits | Discovery Corpora | EDPB Art. 60 register; Art. 65 decisions; BCR register; GDPRhub (find-only); WhatDoTheyKnow; Canadian and Australian PIA registers; NZ COVID Tracer PIAs |
 
 ---
@@ -270,6 +270,26 @@ free prose. Best for: `vn-pdpl` runs; verify current form numbers before any rea
 
 edoeb.admin.ch. Best for: `ch-fadp` runs and the Art. 23 consultation mechanics, including
 the Art. 23(4) advisor alternative.
+
+### Other US states (`us-state`)
+
+No published exemplar is catalogued yet. Anchor on the statutes and roster in
+`us-other-states.md`; the Colorado entry above over-satisfies the pattern-state content list.
+
+### India (`in-dpdp`)
+
+No published exemplar is catalogued yet. Anchor on the DPDP Act / Rules material in
+`india-dpdp.md`, with its tags.
+
+### Malaysia (`my-pdpa`)
+
+No published exemplar is catalogued yet. The JPDP DPIA Guideline (2026) named in
+`malaysia-pdpa.md` is the anchor once fetched.
+
+### Indonesia (`id-pdp`)
+
+No published exemplar is catalogued yet. Anchor on the UU PDP / GR 33/2026 material in
+`indonesia-pdp.md`, with its tags.
 
 ---
 

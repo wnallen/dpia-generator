@@ -17,7 +17,8 @@ An explicit `headerText` overrides either default; `""` omits the header entirel
 - DPIA reference number (placeholder: `[DPIA-YYYY-NNN]`)
 - "AI-generated draft (dpia-generator) — [for attorney review / for DPO review]" — the reviewer
   phrase is derived by the builder, not a manifest knob: "for attorney review" only where the
-  manifest names a `counsel` **and** the work-product header is on; "for DPO review" otherwise
+  manifest names a `counsel` **and** the default work-product header is used (no `headerText`
+  override); "for DPO review" otherwise
   (a DPO-led run with no counsel, or a producible record built with `"headerText": ""`). The
   "AI-generated draft" half never varies.
 
@@ -47,7 +48,7 @@ Use a horizontal rule above and below the central block. Leave generous white sp
 
 **Status vocabulary is derived, not fixed.** The builder composes the checkbox row from the
 manifest's `jurisdictions`: the base lifecycle states are `Draft / Under DPO Review /
-Approved` (the review officer's exact statutory title varies by regime — DPO, SRI,
+Approved` (the review officer's exact statutory title varies by regime — DPO,
 Encarregado, Person in Charge of PI Protection — but the cover checkbox uses "DPO"
 uniformly), and each declared regime with a consultation-style blocking state contributes
 its checkbox — the Art. 36 box for EU/UK, `Requires FDPIC Consultation` for `ch-fadp`,
@@ -80,7 +81,7 @@ Concise, prose, in counsel's voice. Structure:
 1. **Processing in one sentence.** "This DPIA assesses [system] which [purpose] by processing [data categories] of [data subject categories]."
 2. **Article 35 triggering conclusion.** "A DPIA is [mandatory / prudential] because [reasoning, with specific Art. 35(3) or WP29 criteria citations]."
 3. **Top residual risks (3–5 bullets).** Each one named with its residual rating.
-4. **Article 36 prior consultation flag.** "This DPIA [does / does not] require Article 36 prior consultation with the [ICO / CNIL / [DPA]] before processing commences, because [residual risk findings]."
+4. **Article 36 prior consultation flag.** "This DPIA [does / does not] require Article 36 prior consultation with the [Information Commission (UK; the ICO for documents dated before 2026-09-30) / CNIL / [DPA]] before processing commences, because [residual risk findings]."
 5. **Counsel's bottom-line recommendation.** "We recommend the controller [proceed / proceed conditionally on the mitigations identified in Section 5 / do not proceed pending [specific changes]]."
 
 ## Section 1 — Description of the Processing (Art. 35(7)(a))
@@ -196,7 +197,7 @@ End the section with the **Article 36 flag**:
 
 > **Article 36 Prior Consultation:** Based on the residual risk assessment in Section 4, this DPIA [does / does not] require prior consultation with the [competent supervisory authority] under Article 36 GDPR. [Reasoning.]
 
-The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr when a starred row is present and the status says otherwise.
+The trigger is **any residual rating of High**, not only High likelihood × High severity — a Medium × High residual rates High and engages Art. 36 the same way. Where the register carries a starred row, this statement must say "does", the executive summary must carry the flag, and the cover-page `status` should normally be `Requires Art. 36 Prior Consultation`; the builder warns on stderr in either direction — a starred row with a status that does not reflect it, or that status with no starred row.
 
 **Conditional pathway.** Art. 36(1) keys to high risk *in the absence of mitigating measures*. Where every High-rated residual carries a post-mitigation score below High, the honest statement is conditional, and the builder derives exactly that: "Article 36 prior consultation is required **only if** the controller proceeds without implementing the Section 5 mitigations; with those mitigations implemented before processing commences, no residual risk rates High and consultation is not required." Declare `"conditional"` in the manifest (the gate checks it); the register footnote and engagement table carry the conditional language; the recommended cover status is `Draft` with the executive summary stating the condition. Where any High residual has no post-mitigation score below High, the unconditional flag stands.
 
@@ -206,21 +207,21 @@ Where the manifest declares more than one regime — EU + UK included: two regul
 
 ## Section 6 — Jurisdictional Divergence (where applicable)
 
-Only include this section where the processing has scope beyond EU GDPR. One subsection per applicable regime, using the analysis framework in that regime's `references/jurisdictions/<code>.md` file — UK/EU divergence first where UK scope exists. Address, per regime:
+Only include this section where the processing has scope beyond EU GDPR. One subsection per applicable regime, using the analysis framework in that regime's module file in `references/jurisdictions/` (descriptive filenames — `brazil-lgpd.md` for `br-lgpd`; each module declares its code in its opening lines) — UK/EU divergence first where UK scope exists. Address, per regime:
 
 - Whether the analysis above applies equally under this regime.
 - Where the regime's position would permit or require a different conclusion (and whether the controller is taking advantage of a permissive divergence).
 - For multi-jurisdiction deployments, an explicit statement that the higher standard applies unless carved out.
 - For a regime with no module file: the coverage-fallback statement — screened on the GDPR spine only, own-regime obligations not assessed.
 
-If the processing has only EU scope, omit Section 6 and renumber.
+If the processing has only EU scope, keep the section numbering fixed (later references such as §7.3 depend on it): carry the Section 6 heading with a one-line `para` — "Not applicable — EU-only scope." The builder does not number headings; the numbering is the manifest's.
 
 ## Section 7 — Conclusion and Approval
 
 - **7.1 Counsel's conclusion** — restating the bottom-line recommendation from the executive summary.
 - **7.2 Open items requiring resolution before sign-off** — itemized list.
 - **7.3 Review cadence** — when the DPIA must be revisited (default: annually, plus material change triggers: new sub-processor, model change >X%, change in applicable law, security incident).
-- **7.4 Sign-off block** — signature lines for Controller, DPO/SRI, Counsel.
+- **7.4 Sign-off block** — signature lines for Controller and DPO (the regime's statutory title where it differs), plus Counsel **only where the manifest names a `counsel`** — never a placeholder Counsel line on a DPO-led run.
 
 ## Appendix A — Reference DPIAs and Authorities Cited
 
@@ -238,7 +239,7 @@ Anything the user could not answer in intake, anything that materially affected 
 
 ## Appendix C — Revision History
 
-Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — dpia-generator (AI) — initial draft for counsel review." Human reviewers add their own rows on adoption.
+Table: Version | Date | Author | Summary of changes. For the initial draft: "v1.0 — [date] — dpia-generator (AI) — initial draft for [counsel / DPO] review" — the reviewer matching the document's posture (counsel where the manifest names one, DPO otherwise). Human reviewers add their own rows on adoption.
 
 ---
 
@@ -252,7 +253,7 @@ Author the manifest against this table, then run the builder:
 |---|---|
 | Cover page | Top-level fields — `systemName`, `date`, `version`, `controller`, `dpo`, `counsel`, `reference`, `status`. Emitted automatically; no block needed. `counsel` is genuinely optional and is the posture signal: omit it on a DPO-led run and the cover carries no Counsel of Record line, the header reads "CONFIDENTIAL — DRAFT FOR DPO REVIEW", and the footer says "for DPO review" — never fill it with a placeholder name. Optional `docTitle` overrides "DATA PROTECTION IMPACT ASSESSMENT" for regimes that name the instrument differently; optional `headerText` overrides the posture-derived header (`""` omits it — deliberate for documents drafted for regulator production; see the per-regime privilege notes); optional `statusOptions` overrides the per-regime derived status vocabulary (see the cover-page section above). |
 | Jurisdictional scope | Top-level `jurisdictions` — array of regime codes, default `["eu-gdpr"]`. Every code must exist in the builder's `REGIMES` registry. |
-| Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling the GDPR-family entries. |
+| Regulator conclusions | Top-level `regulatorConclusions` — one entry per declared regime. **Required** (per regime) wherever a `riskRegister` block exists; prior-consultation regimes are checked against the register, exit 3 on disagreement. Legacy `art36` still accepted as an alias filling every declared prior-consultation regime without an explicit entry — the GDPR-family entries and Kenya (`ke-dpa`); refused where no declared regime engages prior consultation. |
 | Statutory content checklist (checklist regimes) | one `complianceMap` block per regime — `{"regime":"<code>","rows":[{"element":"...","section":"..."}]}`; every `section` must match a heading in the manifest (exit 1 otherwise) |
 | Regulator-engagement table (§5) | one `regulatorTable` block — `{"notes":{"<code>":"reasoning"}}`; rows computed from `regulatorConclusions` + the registry, exit 1 on a declared regime without a conclusion |
 | Cover note | `heading` (level 1, "COVER NOTE") + `table` for the applicable-regimes table + `para` for assumptions, reconciliation, and provenance |
@@ -265,7 +266,7 @@ Author the manifest against this table, then run the builder:
 | §4.3 Risk-by-risk narrative | `heading` + `para` per Medium/High residual risk |
 | §4.4 Matrix visualisation | two `matrix` blocks — `{"stage":"inherent"}` and `{"stage":"residual"}` (plus an optional `{"stage":"mitigated"}` where post-mitigation scores exist), all with `source` set to the register's `id` |
 | §5 Measures | `table` with the mitigation / type / owner / target date / effect columns |
-| §6 Jurisdictional divergence | `heading` + `para` per applicable regime; omit the block entirely where the processing has EU-only scope |
+| §6 Jurisdictional divergence | `heading` + `para` per applicable regime; on EU-only scope, the heading plus one `para`: "Not applicable — EU-only scope." |
 | §7 Conclusion and approval | `heading` + `para` + one `signature` block |
 | Appendices A–C | `pagebreak`, then `heading` + `bullets` (A, B) and `table` (C) |
 
@@ -275,4 +276,4 @@ Run it, and read the exit code before delivering anything:
 node scripts/build_dpia.js /home/claude/dpia_manifest.json
 ```
 
-`0` built and validated; `1` manifest error; `2` validation did not pass; `3` risk-rating gate failure — the stated rating disagrees with the derived one, which is a scoring error to re-examine, never a number to overwrite. Deliver only on `0`. On exit 2, read `/mnt/skills/public/docx/SKILL.md` for the unpack-fix-repack procedure and re-run.
+`0` built and validated (written mode 0600 via a temp file and rename); `1` manifest error — including duplicate register or risk ids, a heading level outside 1–3, and a `table` with an empty column or row; `2` validation did not pass; `3` gate failure — the risk-rating gate (a stated rating disagrees with the derived one) or the regulator-conclusion gate (a declared prior-consultation conclusion disagrees with the register): a scoring or conclusion error to re-examine, never a value to overwrite. Deliver only on `0`. On exit 2 the builder has removed the failed file — there is nothing to unpack; fix the manifest content that caused it and rebuild.

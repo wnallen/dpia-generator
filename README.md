@@ -4,7 +4,7 @@
 
 A Claude Skill that drafts a Data Protection Impact Assessment under Article 35 GDPR (and its analogs in other covered jurisdictions) for a client's privacy register.
 
-Given a description of a new or modified processing activity, the Skill gathers what is missing, maps the applicable regimes, and screens each regime's own trigger. Coverage is EU/UK GDPR plus one module per further jurisdiction in `references/jurisdictions/` — currently the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Indonesia, Vietnam, Australia, South Korea, and Kenya; that directory is the authoritative list. The analysis is anchored in real published DPIAs and regulator guidance (ICO, CNIL, EDPB, CPPA, ANPD, and peers), and risks are scored on a 3×3 likelihood × severity matrix. The deliverable is a reasoned Word document: cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, per-regime regulator-engagement flags (Article 36 prior consultation and its analogs), and a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
+Given a description of a new or modified processing activity, the Skill gathers what is missing, maps the applicable regimes, and screens each regime's own trigger. Coverage is EU/UK GDPR plus one module per further jurisdiction in `references/jurisdictions/` — currently the US states, Quebec, Brazil, China, India, Switzerland, Singapore, Malaysia, Indonesia, Vietnam, Australia, South Korea, and Kenya; that directory is the authoritative list. The analysis is anchored in real published DPIAs and regulator guidance (ICO — now the Information Commission — CNIL, EDPB, CPPA, ANPD, and peers), and risks are scored on a 3×3 likelihood × severity matrix. The deliverable is a reasoned Word document: cover page, executive summary, necessity/proportionality analysis, controls inventory, residual ratings, mitigations, per-regime regulator-engagement flags (Article 36 prior consultation and its analogs), and a Jurisdictional Divergence section wherever a covered regime changes the answer. Regimes without a module are named as not covered rather than silently absorbed.
 
 # Important
 
@@ -73,7 +73,13 @@ dpia-generator/
 │   │                                 #   staleness rules, and what the profile feeds on DPIA runs
 │   ├── published-dpias.md            # Curated catalog of real DPIAs, DPA decisions and regulator guides
 │   ├── jurisdictions/                # One module per non-EU regime (trigger test, Art. 35(7)
-│   │   └── uk-gdpr.md                #   crosswalk, regulator engagement, privilege posture)
+│   │   │                             #   crosswalk, regulator engagement, privilege posture)
+│   │   ├── uk-gdpr.md                # UK GDPR / DUAA divergence overlay
+│   │   ├── us-colorado.md, us-california.md, us-other-states.md
+│   │   ├── canada-quebec.md, brazil-lgpd.md, china-pipl.md, india-dpdp.md
+│   │   ├── switzerland-fadp.md, singapore-pdpa.md, malaysia-pdpa.md, australia-privacy.md
+│   │   ├── south-korea-pipa.md, kenya-dpa.md, vietnam-pdpl.md, indonesia-pdp.md
+│   │   └── screening-catalog.md      # One-paragraph screening notes for regimes without a module
 │   └── output-template.md            # Section structure, table layouts, template → manifest mapping
 ├── scripts/
 │   ├── build_dpia.js                 # Manifest-driven .docx assembler; owns the jurisdiction registry,
@@ -100,17 +106,19 @@ The builder validates its own OOXML output via the public docx skill's `validate
 The skill's coverage is only as good as its most stale module. Four standing rules:
 
 1. **Volatility banners are contracts.** Modules carrying an explicit banner — Brazil
-   (ANPD RIPD regulation pending), Malaysia (JPDP DPIA guideline in consultation),
-   Indonesia (UU PDP implementing regulation pending), Vietnam (2025 Law's implementing
-   decrees rolling) — must be **re-searched on every run that touches them**, and rebuilt
-   from the final instrument when it lands, never patched by prose. Australia's tranche-two
-   reforms and the UAE's executive regulations are the same class, tracked in their module
-   and the screening catalog respectively.
+   (ANPD RIPD regulation pending), Malaysia (JPDP DPIA guideline issued 2026-04-30; rebuild
+   from its text pending), Indonesia (implementing regulation GR 33/2026 enacted 2026-07-16;
+   the supervisory authority's establishment still pending) — must be **re-searched on every
+   run that touches them**, and rebuilt from the final instrument when it lands, never
+   patched by prose. Vietnam's module carries a re-verify-every-run sourcing note (Decree
+   356/2025 landed; its dossier forms not yet read), and Australia's tranche-two reforms are
+   the same class. The UAE's executive regulations were issued in 2026 (decision number
+   still unverified), tracked in the screening catalog.
 2. **Dates are check-by dates.** Every sourcing banner records when its corroboration pass
-   ran (currently 2026-08-04). A banner more than ~6 months old should be treated as a
+   ran (latest pass: 2026-09-23, per `references/currency-log.md`). A banner more than ~6 months old should be treated as a
    prompt to re-verify before reliance, not as a fact.
 3. **`tech-law-radar` feeds the queue.** The sibling skill's periodic sweeps are the
-   designed intake for new instruments (a final Malaysian guideline, an SDF designation
+   designed intake for new instruments (the Malaysian guideline's text and effective date, an SDF designation
    wave in India, a CPPA enforcement action interpreting § 7152). Radar findings that touch
    a covered regime become module updates; findings that touch a screening-catalog regime
    are promotion candidates.

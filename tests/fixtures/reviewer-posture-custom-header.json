@@ -1,0 +1,17 @@
+{
+  "systemName": "Custom Header",
+  "date": "2026-09-01",
+  "counsel": "Jane Roe",
+  "headerText": "PUBLIC \u2014 PREPARED FOR PRODUCTION TO THE REGULATOR",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "para",
+      "text": "Narrative."
+    }
+  ]
+}

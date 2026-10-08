@@ -211,7 +211,7 @@ entries. This mode runs one-shot and produces the YAML, not a DPIA.
 
 ## Consuming the Profile in a DPIA Run
 
-**Locate (Step 0.5 timing).** An attached profile wins; otherwise scan any folder the user named,
+**Locate (Step 0.6 timing).** An attached profile wins; otherwise scan any folder the user named,
 then `conversation_search` for a prior indexing run. Absence of a profile is the pre-v4.1 world and
 changes nothing: §1.10 falls back to asking for the notice, or to the Appendix B open question.
 

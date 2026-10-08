@@ -1,0 +1,43 @@
+{
+  "systemName": "Multi Register",
+  "date": "2026-09-01",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "a",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls.",
+          "residualLikelihood": "Medium",
+          "residualSeverity": "High",
+          "mitigatedLikelihood": "Low",
+          "mitigatedSeverity": "High"
+        }
+      ]
+    },
+    {
+      "type": "riskRegister",
+      "id": "b",
+      "rows": [
+        {
+          "id": "R2",
+          "risk": "Risk R2",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls."
+        }
+      ]
+    }
+  ]
+}

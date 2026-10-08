@@ -3,9 +3,9 @@
 One-paragraph screening entries for regimes the skill can *name accurately* but has not built
 out. These have **no regime code in the builder** — a processing touching one of them takes
 the coverage fallback, upgraded by this catalog: instead of a bare "not covered", the DPIA's
-Section 6 may carry the paragraph below (tagged `[model knowledge — verify]`) plus the
-fallback sentence: *"Coverage of [regime] is limited to this screening note; its own
-assessment obligation has not been analyzed."* Promote an entry to a full module when demand
+Section 6 may carry the paragraph below (tagged `[model knowledge — verify]`) plus SKILL.md's
+coverage-fallback sentence, verbatim: *"This assessment applies Article 35 GDPR methodology;
+[regime] imposes its own assessment obligation which this document has not screened."* Promote an entry to a full module when demand
 arrives — never by patching prose here, but by the standard module build (fetch primary
 sources, crosswalk, privilege posture, registry code, fixtures).
 

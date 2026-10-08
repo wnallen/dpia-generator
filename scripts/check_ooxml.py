@@ -16,7 +16,8 @@ Checks, per file:
   * `[Content_Types].xml` is present;
   * every `*.xml` and `*.rels` part parses as XML 1.0 (expat rejects the
     characters XML forbids — C0 controls other than tab/CR/LF, U+FFFE/FFFF,
-    lone surrogates — and any unbalanced markup);
+    lone surrogates — and any unbalanced markup), is UTF-8 or UTF-16, and
+    carries no DOCTYPE (checked after decoding, so UTF-16 cannot hide one);
   * the main part is present (`word/document.xml` or `xl/workbook.xml`);
   * every internal relationship target names a part that exists.
 
@@ -28,6 +29,7 @@ problem on stderr); 2 usage.
 """
 
 import posixpath
+import re
 import sys
 import zipfile
 
@@ -44,7 +46,13 @@ RELS_NS = "{http://schemas.openxmlformats.org/package/2006/relationships}"
 # No OOXML part carries a document type declaration, and a DTD is the only
 # vehicle for entity expansion (billion laughs) or external entities (XXE),
 # so its presence is a malformed part whatever the parser would do with it.
-DOCTYPE = b"<!DOCTYPE"
+# Searched for in the DECODED text: a byte search for b"<!DOCTYPE" misses the
+# same declaration in a UTF-16 part, which expat reads just as happily.
+DOCTYPE = re.compile(r"<!\s*DOCTYPE", re.IGNORECASE)
+# OOXML parts are UTF-8 or UTF-16 (ECMA-376 Part 2); expat also honours other
+# declared encodings, so anything else is refused rather than half-checked.
+ENCODING_DECL = re.compile(r"""^﻿?<\?xml[^>]*?\bencoding\s*=\s*["']([A-Za-z0-9._-]+)["']""")
+ALLOWED_ENCODINGS = {"utf-8", "utf8", "utf-16", "utf16", "utf-16le", "utf-16be"}
 # Bound what one part may expand to in memory; a real document.xml is a few
 # megabytes at most.
 MAX_PART_BYTES = 64 * 1024 * 1024
@@ -54,6 +62,33 @@ def _rels_base(rels_name):
     """word/_rels/document.xml.rels -> word/ ; _rels/.rels -> (root)."""
     folder = posixpath.dirname(rels_name)  # word/_rels
     return posixpath.dirname(folder)       # word
+
+
+def _decode(data):
+    """Return the part's text, or raise ValueError naming why it is refused.
+
+    The encoding is detected the way an XML parser does (BOM, then the byte
+    pattern of "<" in UTF-16 without a BOM), decoded strictly, and a declared
+    encoding must be one OOXML allows.
+    """
+    if data[:4] in (b"\x00\x00\xfe\xff", b"\xff\xfe\x00\x00", b"\x00\x00\x00<", b"<\x00\x00\x00"):
+        raise ValueError("UTF-32 encoded part (OOXML parts are UTF-8 or UTF-16)")
+    if data.startswith(b"\xfe\xff") or data.startswith(b"\xff\xfe"):
+        enc = "utf-16"
+    elif data.startswith(b"\x00<"):
+        enc = "utf-16-be"
+    elif data.startswith(b"<\x00"):
+        enc = "utf-16-le"
+    else:
+        enc = "utf-8"
+    try:
+        text = data.decode(enc)
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"not valid {enc.upper()} (OOXML parts are UTF-8 or UTF-16): {exc}")
+    m = ENCODING_DECL.match(text)
+    if m and m.group(1).lower() not in ALLOWED_ENCODINGS:
+        raise ValueError(f"declares encoding {m.group(1)!r} (OOXML parts are UTF-8 or UTF-16)")
+    return text
 
 
 def check(path):
@@ -80,7 +115,12 @@ def check(path):
             except (zipfile.BadZipFile, OSError) as exc:
                 problems.append(f"{name}: cannot read part: {exc}")
                 continue
-            if DOCTYPE in data:
+            try:
+                text = _decode(data)
+            except ValueError as exc:
+                problems.append(f"{name}: not well-formed for OOXML: {exc}")
+                continue
+            if DOCTYPE.search(text):
                 problems.append(f"{name}: not well-formed for OOXML: carries a DOCTYPE "
                                 f"declaration (entity expansion / external entity vector)")
                 continue
