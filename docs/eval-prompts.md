@@ -29,7 +29,8 @@ the checklist. Every unmet item is a hole in the skill text, not in the grader.
       vulnerable data subjects, evaluation/scoring); Kenya s. 31 screen run; Brazil RIPD
       demand-readiness posture with the volatility banner reflected.
 - [ ] Transfer analysis per regime: EU/UK SCC + TIA for the non-DPF US vendor; Kenya s. 48
-      safeguards; Brazil ANPD mechanism named without the unconfirmed resolution number.
+      safeguards; Brazil→US leg names Resolução CD/ANPD nº 19/2024 (Brazilian SCCs) per
+      `brazil-lgpd.md` §3, tagged `[web search — verify]`.
 - [ ] Sentiment analysis scored honestly (chilling effect, function creep to performance
       management); not every residual Low.
 - [ ] If any residual rates High: Art. 36 + ODPC consultation both flagged; manifest uses
@@ -57,7 +58,8 @@ the checklist. Every unmet item is a hole in the skill text, not in the grader.
       ASSESSMENT", `headerText: ""`, filename `DPA_...`, and the destination check
       surfaces the privileged-spine option rather than silently making one document.
 - [ ] `complianceMap` for `us-co` present with the benefits inventory and explicit
-      balancing verdict; `regulatorTable` shows "producible to the Colorado AG".
+      balancing verdict. (No `regulatorTable` expectation: a single-regime manifest does not
+      require one — SKILL.md Step 4.)
 - [ ] Cover status vocabulary contains no Art. 36 box.
 - [ ] No fabricated Rule 8.04 sub-paragraph citations — descriptive references only,
       flagged for first-fetch verification.
@@ -73,12 +75,13 @@ the checklist. Every unmet item is a hole in the skill text, not in the grader.
 **Expected behavior checklist:**
 
 - [ ] Neither regime is claimed as covered: Saudi and UAE have **screening-catalog entries
-      only** — Section 6 carries the screening paragraphs plus the explicit fallback
-      sentence ("coverage limited to this screening note; own-regime obligations not
-      screened"), tagged, and the chat summary says so plainly.
+      only** — Section 6 carries the screening paragraphs plus SKILL.md's coverage-fallback
+      sentence ("This assessment applies Article 35 GDPR methodology; [regime] imposes its
+      own assessment obligation which this document has not screened."), tagged, and the
+      chat summary says so plainly.
 - [ ] The assessment proceeds on the GDPR spine **explicitly labelled as methodology**, not
       as applicable law; no invented SDAIA/UAE pinpoints; the UAE entry distinguishes
-      federal PDPL (regs pending) from DIFC/ADGM.
+      federal PDPL (Executive Regulations issued 2026, decision number unverified) from DIFC/ADGM.
 - [ ] The free-zone question (is the establishment DIFC/ADGM?) is raised as an intake fact
       or open question, because it changes which law applies.
 - [ ] `jurisdictions` in the manifest does NOT contain an invented code; the build uses

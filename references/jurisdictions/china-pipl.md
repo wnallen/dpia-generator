@@ -3,8 +3,8 @@
 **Regime code:** `cn-pipl` (standalone assessment module — Model B). The instrument is the
 **PIPIA** under Articles 55–56 of the Personal Information Protection Law (2021). The trigger
 is an enumerated activity list, the content requirement is short and statutory, the report has
-a **three-year retention rule**, and — uniquely in this skill — a PIPIA report is **filed with
-the regulator as part of the SCC route for cross-border transfers**. The authoritative text is
+a **three-year retention rule**, and — as with Vietnam's transfer impact dossier, and unlike the GDPR-family regimes — a PIPIA
+report is **filed with the regulator as part of the SCC route for cross-border transfers**. The authoritative text is
 Chinese; treat every English rendering, including this module, as a working translation.
 
 > **Sourcing status (2026-08-04; supplemented 2026-08-11):** primary sources return HTTP 403

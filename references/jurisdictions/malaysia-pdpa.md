@@ -11,14 +11,13 @@
 > PDP Commissioner launched the final **DPIA Guideline** — together with **Data Protection by
 > Design** and **Automated Decision-Making and Profiling** guidelines — dated ~2026-04-30 and
 > publicly launched 2026-05-08. `[web search — verify]` (issuance corroborated 2026-08-11
-> across multiple firm alerts; pdp.gov.my itself was not fetchable). Reported mandatory-DPIA
-> thresholds from the guideline: sensitive personal data of ≥10,000 individuals; ≥20,000
-> individuals for ADM processing; general personal data of ≥20,000 individuals — **threshold
-> figures re-corroborated 2026-09-23 across firm alerts as *more than* 20,000 data subjects (personal
-> data) or *more than* 10,000 (sensitive personal data, including financial information) — the
-> separate ADM-processing prong is not corroborated — but the effective/enforcement date remains
-> unconfirmed; fetch the guideline from
-> pdp.gov.my before relying on them. This module must be rebuilt from the final guideline
+> across multiple firm alerts; pdp.gov.my itself was not fetchable). Mandatory-DPIA
+> thresholds, per the latest corroboration (2026-09-23, firm alerts): processing of personal
+> data of **more than 20,000** data subjects, or of sensitive personal data (including
+> financial information) of **more than 10,000**. The 2026-08-11 reports also described a
+> separate ADM-processing prong (≥20,000 individuals) — not corroborated since `[verify]`.
+> **The effective/enforcement date remains unconfirmed; fetch the guideline from
+> pdp.gov.my before relying on any of these figures. This module must be rebuilt from the final guideline
 > text; until then treat everything below as provisional.**
 
 ## 1. Current position (guideline issued; text not yet read)

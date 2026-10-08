@@ -27,7 +27,7 @@ Run one-shot. Step 0 intake is the single permitted pause, it happens once, and 
 
 After that, work to completion without check-ins. Chat output is a start line, the file, and the compact Step 6 delivery summary — no plan restatements, no progress narration, no section-by-section drafts pasted into chat. The .docx is the deliverable and carries its own appendices; do not attach a cover memo or a companion summary document alongside it.
 
-Three things still stop the run, and only these: a blocking input problem (no workable processing description at all), a consequential-step gate (the destination check and the regulator filing gate below), and a nonzero builder exit code.
+Three things still stop the run, and only these: a blocking input problem (no workable processing description at all), a consequential-step gate (the destination check and the regulator filing gate below), and a nonzero builder exit code. Thin research is not a stop: No Silent Supplement (Step 1) flags the point and carries it to the delivery summary.
 
 ---
 
@@ -144,9 +144,9 @@ Pinpoint citations matter. Cite the specific Article, Recital, paragraph, or pag
 
 ### No Silent Supplement
 
-If a research query for a specific authority returns thin or nothing — particularly for newer regimes, state-specific rules, or recent enforcement — report what was found and stop. Do not quietly fill the gap from web search results or model knowledge while citing as if the original authority had been located.
+If a research query for a specific authority returns thin or nothing — particularly for newer regimes, state-specific rules, or recent enforcement — report what was found. Do not quietly fill the gap from web search results or model knowledge while citing as if the original authority had been located.
 
-The pattern to follow is: "The search for [authority / question] returned [N] relevant results. Coverage appears thin for [specific gap]. Options: (1) broaden the search query; (2) try a different research path (e.g., law firm client alerts citing the original); (3) flag the point as unverified and stop. Counsel's recommendation: [X]." Then let the user decide whether to accept a lower-confidence source or hold the point open.
+The run continues: carry the point as unverified (its `verify` tag, plus an Appendix B open question) and report it in the Step 6 delivery summary in this pattern: "The search for [authority / question] returned [N] relevant results. Coverage appears thin for [specific gap]. Options: (1) broaden the search query; (2) try a different research path (e.g., law firm client alerts citing the original); (3) hold the point open as unverified. Counsel's recommendation: [X]." The user then decides whether to accept a lower-confidence source or hold the point open.
 
 A DPIA that confidently cites a regulation the model half-remembers is worse than a DPIA that flags the gap and asks for verification.
 
@@ -205,7 +205,7 @@ For each risk that remains Medium or High after controls, recommend additional m
 
 ### Regulator-Engagement Flags (Article 36 and its analogs)
 
-If any residual risk rates **High**, the DPIA must trigger an Article 36 prior consultation flag: the controller cannot proceed with the processing without consulting the competent supervisory authority. The trigger is the rating, not the corner cell — a Medium likelihood × High severity residual rates High and engages Art. 36 exactly as High × High does. The builder marks every High-rated residual row with `*` and warns if the cover-page status does not reflect it. State the flag prominently in the executive summary. Note that the UK ICO's equivalent obligation under UK GDPR Art. 36 still applies even after the Data (Use and Access) Act 2025 — flag UK / EU divergence where the analysis would differ (see `references/jurisdictions/uk-gdpr.md`).
+If any residual risk rates **High**, the DPIA must trigger an Article 36 prior consultation flag: the controller cannot proceed with the processing without consulting the competent supervisory authority. The trigger is the rating, not the corner cell — a Medium likelihood × High severity residual rates High and engages Art. 36 exactly as High × High does. The builder marks every High-rated residual row with `*` and warns if the cover-page status does not reflect it. State the flag prominently in the executive summary. Note that the UK equivalent obligation under UK GDPR Art. 36 (consultation with the Information Commission, formerly the ICO) still applies even after the Data (Use and Access) Act 2025 — flag UK / EU divergence where the analysis would differ (see `references/jurisdictions/uk-gdpr.md`).
 
 **The conditional pathway (pragmatic default where available).** Art. 36(1) keys to high risk *in the absence of mitigating measures*. Where every High residual carries a post-mitigation score below High (Step 3, item 9), do not state consultation as unconditionally required — declare the conclusion `"conditional"` and say what it means: *"Prior consultation is required only if the controller proceeds without implementing the Section 5 mitigations; with those mitigations implemented before processing commences, consultation is not required."* The builder derives the tri-state answer (true / false / conditional) from the register and gates the declaration, so the conditional route is available exactly when the scores support it — never as a drafting preference. Where any High residual has no committed mitigation that brings it below High, the unconditional flag stands.
 
@@ -217,7 +217,7 @@ If residual risk is **Medium**, recommend internal DPO consultation and a define
 
 ## Step 5 — Produce the .docx
 
-Read `references/output-template.md` for the DPIA's exact section structure and its template → manifest mapping table. You are not writing document code, so do not read `/mnt/skills/public/docx/SKILL.md` as a matter of course — the builder already encodes the docx-js patterns and runs the validator itself. Read it only if the build exits 2 and you need the unpack-fix-repack procedure.
+Read `references/output-template.md` for the DPIA's exact section structure and its template → manifest mapping table. You are not writing document code, so do not read `/mnt/skills/public/docx/SKILL.md` as a matter of course — the builder already encodes the docx-js patterns and runs the validator itself. Not even on exit 2: the builder has removed the failed file, so there is nothing to repair by hand.
 
 The output is a Word document saved to `/mnt/user-data/outputs/`, named `[prefix]_[SystemName]_[YYYY-MM-DD].docx` where the prefix is the document title's initials — the default title yields the historical `DPIA_`, a Colorado "DATA PROTECTION ASSESSMENT" yields `DPA_`. The section structure (cover page, cover note with the applicable-regimes table, executive summary, Sections 1–7 including §1.10, Appendices A–C) is fixed by `references/output-template.md`, which you have already read for this step; it is not repeated here.
 
@@ -235,7 +235,7 @@ Everything the script owns — page geometry, fonts, header and footer, cover pa
 
 ### Two-Document Runs (producible record + privileged spine)
 
-When the destination check yields the two-document posture (a regime that collects the assessment by design — Colorado, California, China's SCC route, India's findings layer), author **two manifests and run the builder twice**:
+When the destination check yields the two-document posture (a regime that collects the assessment by design — Colorado, California, China's SCC route, India's findings layer, Brazil, Kenya, Vietnam, Korea's public-institution PIA), author **two manifests and run the builder twice**:
 
 1. **Producible record** — `jurisdictions` scoped to the producible regime(s); the regime's own `docTitle` (which also sets the filename prefix); `"headerText": ""`; the factual record only: description, register, matrices, `complianceMap`, `regulatorTable`, safeguards, the balancing/go-no-go statement. No counsel's strategic reasoning, no weaknesses framed for the privilege circle.
 2. **Privileged spine** — the full GDPR-spine DPIA with defaults intact (privileged header, `DPIA_` prefix), carrying counsel's candid analysis and the complete multi-regime picture, including the producible regimes' conclusions.
@@ -246,7 +246,7 @@ The two files land side by side in the outputs directory under different prefixe
 
 **Risk-rating gate (mandatory, exit 3).** The manifest states each risk's `likelihood` and `severity`; the script derives the rating from `references/risk-matrix.md`, plots the matrices from the same source, and keys the Article 36 mark to the derived residual rating. A stated `inherentRating` / `residualRating` that disagrees with the derived value stops the build with exit 3 and names the row. **Never resolve a gate failure by editing the stated rating to match** — the disagreement is a scoring error to re-examine against the rubric. The register is always a `riskRegister` block, never a `table` (the builder refuses a table that carries rating columns, because the gates never see it). Exit 1 is a manifest error; exit 2 is an OOXML validation failure. Never deliver on a nonzero exit.
 
-If validation fails (exit 2), unpack, fix, and repack per the docx skill's guidance, then re-run.
+If validation fails (exit 2), the builder has removed the failed file; fix the manifest content that caused it and rebuild.
 
 ---
 
@@ -259,7 +259,7 @@ If validation fails (exit 2), unpack, fix, and repack per the docx skill's guida
    - The published DPIA or DPA decision used as the reference analog
    - Top 3 residual risks and their ratings
    - Whether the DPIA recommends Art. 36 prior consultation — required, not required, or conditional (required only if the Section 5 mitigations are not implemented)
-   - Open questions the user should resolve before finalizing the DPIA
+   - Open questions the user should resolve before finalizing the DPIA, including any thin-authority point with its No Silent Supplement options
    - Whether jurisdictional divergence (UK/EU, or any other applicable regime) creates a meaningfully different answer, and any regime the assessment could not cover (the coverage fallback)
    - That the document is a draft for review — by counsel where one is in the loop, by the DPO otherwise (the footer names the applicable reviewer) — and is not legal advice until a qualified reviewer has reviewed and adopted it
    - The review posture the document shipped under, stated as a correctable assumption, never as a question: "No counsel was named, so this is framed as a DPO-reviewed confidential draft — if legal counsel will in fact review it, say so and it will be reissued under the work-product posture" (or the converse where counsel was named)
@@ -309,13 +309,14 @@ Do not silently apply the privileged header and then help the user paste it into
 
 Several covered regimes turn the assessment (or a layer of it) into a **submission to a regulator**, and submission is a consequential step that goes beyond producing the document: any material omission or error becomes enforcement exposure rather than a draft to revise. The gate applies to all of them, not only Art. 36:
 
-- **Art. 36 prior consultation** (EU/UK) — the DPIA filed with the ICO / CNIL / lead authority;
+- **Art. 36 prior consultation** (EU/UK) — the DPIA filed with the Information Commission (UK) / CNIL / lead authority;
 - **FDPIC consultation** (Switzerland, Art. 23) — the DPIA placed before the FDPIC;
 - **CPPA attestation and summary filing** (California) — the risk-assessment summary submitted on the filing calendar;
 - **CAC SCC filing** (China) — the PIPIA report included in the standard-contract filing package;
 - **Data Protection Board report** (India) — the SDF DPIA/audit significant-observations report;
 - **MPS dossier submission** (Vietnam) — the processing and transfer impact dossiers filed with the Ministry of Public Security within 60 days;
-- **ODPC consultation/submission** (Kenya) — the s. 31 DPIA placed before the Data Commissioner on high residual risk.
+- **ODPC consultation/submission** (Kenya) — the s. 31 DPIA placed before the Data Commissioner on high residual risk;
+- **PIPC submission** (South Korea) — the public-institution Art. 33 PIA result submitted to the PIPC.
 
 Before producing a "ready-to-file" version of any of these (as distinct from a draft for internal review), confirm:
 
