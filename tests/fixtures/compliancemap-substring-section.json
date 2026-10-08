@@ -1,0 +1,32 @@
+{
+  "systemName": "Compliance Map",
+  "date": "2026-09-01",
+  "jurisdictions": [
+    "us-co"
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 1 \u2014 OVERVIEW"
+    },
+    {
+      "type": "complianceMap",
+      "regime": "us-co",
+      "rows": [
+        {
+          "element": "Benefits/risks weighing",
+          "section": "e"
+        },
+        {
+          "element": "Overview",
+          "section": "1"
+        },
+        {
+          "element": "Other",
+          "section": "S 10"
+        }
+      ]
+    }
+  ]
+}

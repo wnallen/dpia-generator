@@ -1,0 +1,25 @@
+{
+  "systemName": "Status Overclaim",
+  "date": "2026-09-01",
+  "art36": false,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "Controls."
+        }
+      ]
+    }
+  ]
+}

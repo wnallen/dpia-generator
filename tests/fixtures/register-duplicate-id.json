@@ -1,0 +1,44 @@
+{
+  "systemName": "Duplicate Register",
+  "date": "2026-09-01",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls."
+        }
+      ]
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "Controls."
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "stage": "residual",
+      "source": "main"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "systemName": "Narrative Scan",
+  "date": "2026-09-01",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 6 \u2014 Article 36 prior consultation is not required"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls."
+        }
+      ]
+    },
+    {
+      "type": "regulatorTable",
+      "notes": {
+        "eu-gdpr": "Article 36 does not require consultation here."
+      }
+    }
+  ]
+}

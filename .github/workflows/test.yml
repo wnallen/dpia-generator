@@ -11,10 +11,24 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # .nvmrc is the version the skill runs on; 20 is the engines floor in
+        # package.json, so the floor is tested rather than merely declared.
+        node: [nvmrc, '20']
+    name: test (node ${{ matrix.node }})
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Actions pinned to full commit SHAs: a moved tag cannot change what runs.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version-file: ${{ matrix.node == 'nvmrc' && '.nvmrc' || '' }}
+          node-version: ${{ matrix.node != 'nvmrc' && matrix.node || '' }}
+      # The harness and the bundled OOXML check (scripts/check_ooxml.py) need
+      # python3; pin it rather than inherit whatever the runner image ships.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
       - run: npm ci
       - run: npm test

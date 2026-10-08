@@ -1,0 +1,20 @@
+{
+  "systemName": "Table Shape",
+  "date": "2026-09-01",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [
+        "A",
+        "B"
+      ],
+      "rows": [
+        [
+          "1",
+          "2"
+        ],
+        []
+      ]
+    }
+  ]
+}

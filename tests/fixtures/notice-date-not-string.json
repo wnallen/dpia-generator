@@ -1,0 +1,22 @@
+{
+  "systemName": "Notice Date",
+  "date": "2026-09-01",
+  "blocks": [
+    {
+      "type": "noticeCheck",
+      "notice": {
+        "source": "https://acme.example/privacy",
+        "date": [
+          "2026-01-01"
+        ]
+      },
+      "rows": [
+        {
+          "commitment": "c",
+          "processing": "p",
+          "verdict": "consistent"
+        }
+      ]
+    }
+  ]
+}

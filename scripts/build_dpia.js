@@ -102,8 +102,10 @@
  *             "section":"2.3","note":"optional"}]}                 //   if present
  *      -- renders the regime -> required element -> DPIA section cross-reference
  *         table for statutory-checklist regimes. Every "section" must match a
- *         heading in this manifest (leading "S"/section marks stripped,
- *         case-insensitive substring); a dangling reference is exit 1, because a
+ *         heading in this manifest: a numbered reference ("SECTION 4", "\u00a74",
+ *         "4.2") by the heading's section number, any other by the heading's
+ *         whole text, label or title (case-insensitive, never a substring);
+ *         a dangling reference is exit 1, because a
  *         compliance map pointing at sections that do not exist is the checklist
  *         version of a fabricated citation.
  *   {"type":"regulatorTable","title":"...",                         // all fields optional
@@ -197,6 +199,7 @@
  * and a producible record must not tell a regulator it is an attorney draft.
  */
 
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -296,13 +299,18 @@ const VERDICTS = {
 // added by their build phases) set derive to null: their conclusion is
 // declared and reviewed, not derived, and the gate checks only that the
 // declaration exists. highResidualNote is the register footnote fragment for
-// the regime; substantive analysis lives in references/jurisdictions/<code>.md.
+// the regime; substantive analysis lives in the regime's module in
+// references/jurisdictions/ (named descriptively, not by code: uk-gdpr.md,
+// brazil-lgpd.md, us-colorado.md, ...). highResidualNote and engagement may be
+// functions of the assessment date, for a regime whose authority changes
+// name on a fixed date (regimeText() below resolves them).
 // Cover-page vocabulary: the review status is uniformly "Under DPO Review"
 // (the review officer's exact statutory title varies by regime but the cover
 // checkbox does not need that detail); "statusOption" is a blocking lifecycle
 // state the regime contributes to the cover checkboxes when declared. Regimes
 // with no consultation-style stop contribute none — a Colorado-only assessment
 // must not offer an Art. 36 box.
+const UK_IC_FROM = '2026-09-30'; // YYYY-MM-DD strings compare chronologically
 const REGIMES = {
   'eu-gdpr': {
     label: 'EU GDPR',
@@ -317,9 +325,17 @@ const REGIMES = {
     label: 'UK GDPR',
     conclusionKey: 'priorConsultation',
     derive: (state) => state.consult,
-    highResidualNote: 'UK GDPR Article 36 prior consultation with the ICO',
+    // The Information Commission replaced the ICO on 2026-09-30. A document
+    // dated before then names the ICO; one dated on or after it names the
+    // successor — a filed record must not direct consultation to a body that
+    // no longer exists.
+    highResidualNote: (date) => date < UK_IC_FROM
+      ? 'UK GDPR Article 36 prior consultation with the ICO'
+      : 'UK GDPR Article 36 prior consultation with the Information Commission (the ICO before 2026-09-30)',
     statusOption: 'Requires Art. 36 Prior Consultation',
-    engagement: "UK GDPR Art. 36 prior consultation with the ICO (the Information Commission from 2026-09-30) on residual high risk",
+    engagement: (date) => date < UK_IC_FROM
+      ? "UK GDPR Art. 36 prior consultation with the ICO (the Information Commission from 2026-09-30) on residual high risk"
+      : "UK GDPR Art. 36 prior consultation with the Information Commission (the ICO before 2026-09-30) on residual high risk",
     conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   // Statutory-checklist regimes (Model B modules). derive: null — the
@@ -426,7 +442,7 @@ const REGIMES = {
     derive: (state) => state.consult,
     highResidualNote: 'prior consultation with the Kenyan Data Commissioner under s. 31 DPA 2019',
     statusOption: 'Requires ODPC Consultation',
-    engagement: "DPIA for high-risk processing (s. 31); Data Commissioner consultation on residual high risk; submission timeline per ODPC guidance",
+    engagement: "DPIA for high-risk processing (s. 31); Data Commissioner consultation on residual high risk; submission timeline per the Data Protection (General) Regulations 2021 (LN 263/2021)",
     conclusionLabels: ["Prior consultation required", "Prior consultation not required", "Prior consultation required unless the Section 5 mitigations are implemented"],
   },
   'vn-pdpl': {
@@ -440,10 +456,16 @@ const REGIMES = {
     label: 'Indonesia PDP Law',
     conclusionKey: 'dpiaRequired',
     derive: null,
-    engagement: "DPIA maintained for high-risk processing (Art. 34); production expectations pending the implementing regulation",
+    engagement: "DPIA maintained for high-risk processing (Art. 34; GR 33/2026); production expectations pending the supervisory authority's establishment",
     conclusionLabels: ["DPIA required", "DPIA not required"],
   },
 };
+
+// A registry text field that may depend on the assessment date (see UK_IC_FROM).
+function regimeText(def, key, date) {
+  const v = def[key];
+  return typeof v === 'function' ? v(date) : v;
+}
 
 // Calendar-date check for manifest-supplied YYYY-MM-DD fields. The regex alone
 // is not enough ("2026-13-99" passes it), and neither is isNaN(new Date(...)):
@@ -489,11 +511,27 @@ function scanNarrative(blocks) {
       else if (SAYS_YES.test(s)) hits.asserts.push(where);
     });
   };
+  // Every manifest-authored text field a reader sees: headings, para and
+  // bullet text, table cells, and the free-text fields of the computed blocks
+  // (regulatorTable notes, complianceMap rows, noticeCheck rows) — a denial
+  // in a regulator-table note reads exactly like one in the summary.
+  const str = (v) => (v === undefined || v === null || typeof v === 'object') ? '' : String(v);
+  const rowsOf = (b) => (Array.isArray(b.rows) ? b.rows : []).filter(r => r && typeof r === 'object');
   (blocks || []).forEach((b, i) => {
-    if (b.type === 'para' && b.text) visit(String(b.text), `block ${i + 1} (para)`);
-    if (b.type === 'bullets') (b.items || []).forEach((it, j) => visit(String(it), `block ${i + 1} bullet ${j + 1}`));
-    if (b.type === 'table') (b.rows || []).forEach((r, j) =>
-      (r || []).forEach(c => visit(String(c == null ? '' : c), `block ${i + 1} table row ${j + 1}`)));
+    if (!b || typeof b !== 'object') return;
+    const at = `block ${i + 1}`;
+    if (b.type === 'heading' && b.text) visit(str(b.text), `${at} (heading)`);
+    if (b.type === 'para' && b.text) visit(str(b.text), `${at} (para)`);
+    if (b.type === 'bullets') (b.items || []).forEach((it, j) => visit(str(it), `${at} bullet ${j + 1}`));
+    if (b.type === 'table') rowsOf(b).filter(Array.isArray).forEach((r, j) =>
+      r.forEach(c => visit(str(c), `${at} table row ${j + 1}`)));
+    if (b.type === 'regulatorTable' && b.notes && typeof b.notes === 'object') {
+      Object.keys(b.notes).forEach(k => visit(str(b.notes[k]), `${at} (regulatorTable) note ${k}`));
+    }
+    if (b.type === 'complianceMap') rowsOf(b).forEach((r, j) =>
+      ['element', 'note'].forEach(k => visit(str(r[k]), `${at} (complianceMap) row ${j + 1}`)));
+    if (b.type === 'noticeCheck') rowsOf(b).forEach((r, j) =>
+      ['commitment', 'processing', 'action'].forEach(k => visit(str(r[k]), `${at} (noticeCheck) row ${j + 1}`)));
   });
   return hits;
 }
@@ -549,15 +587,47 @@ function resolveRegister(rows) {
       violations.push(`${ctx}: stated mitigatedRating "${r.mitigatedRating}" != derived "${mitigated}" from (${mL} x ${mS})`);
     }
     return {
-      id: r.id || `R${i + 1}`, risk: r.risk || '', controls: r.controls || '',
+      id: r.id ? txt(r.id, `${ctx} "id"`) : `R${i + 1}`, risk: r.risk || '', controls: r.controls || '',
       iL, iS, inherent, rL, rS, residual, mL, mS, mitigated,
       art36: isArt36(rL, rS),
     };
+  });
+  // Row ids are what the matrix plots and the prose cites; two rows sharing
+  // one make "R1" in the grid ambiguous. Checked on the final id, so an
+  // explicit "R2" colliding with the second row's default is caught too.
+  const seen = new Set();
+  out.forEach((r, i) => {
+    if (seen.has(r.id)) fail(1, `riskRegister row ${i + 1}: risk id "${r.id}" is used by an earlier row in this register — each row needs a unique "id"`);
+    seen.add(r.id);
   });
   if (violations.length) {
     fail(3, 'RISK-RATING GATE FAILED (exit 3) — do not deliver:\n  ' + violations.join('\n  '));
   }
   return out;
+}
+
+// complianceMap section references. A substring match let "e" (or "1")
+// match any heading containing that letter (or "SECTION 10"), so the
+// dangling-reference gate passed references that pointed nowhere. A reference
+// now resolves only by section number ("SECTION 4", "Section 4", "\u00a74",
+// "s. 4.2", "4.2", "4(a)" -> 4) against a heading's own number — the number
+// itself or a subsection of it — or, for a non-numeric reference, by the
+// heading's full text, its label ("APPENDIX A") or its title
+// ("RISK ASSESSMENT"), compared whole and case-insensitively.
+const SECTION_PREFIX = /^(?:section|sect\.?|sec\.?|\u00a7+|s\.)?\s*/i;
+const SECTION_NUMBER = /^(?:section|sect\.?|sec\.?|\u00a7+|s\.?)?\s*(\d+(?:\.\d+)*)(?:\s*\([^)]*\)|[a-z])?\.?$/i;
+const squash = (t) => t.toLowerCase().replace(/\s+/g, ' ').trim();
+function headingRef(text) {
+  const t = squash(text);
+  const num = t.replace(SECTION_PREFIX, '').match(/^(\d+(?:\.\d+)*)(?![\d])/);
+  const parts = t.split(/\s+[\u2014\u2013:-]\s+|\s*:\s+/);
+  return { full: t, num: num ? num[1] : null, label: parts[0], title: parts.length > 1 ? parts.slice(1).join(' ') : null };
+}
+function sectionMatches(sec, h) {
+  const n = sec.trim().match(SECTION_NUMBER);
+  if (n) return h.num !== null && (h.num === n[1] || h.num.startsWith(n[1] + '.'));
+  const probe = squash(sec.replace(/^\u00a7+\s*/, ''));
+  return probe === h.full || probe === h.label || probe === h.title;
 }
 
 // ---------------------------------------------------------------- primitives
@@ -772,14 +842,13 @@ const GENERATION_NOTICE = 'AI-GENERATED DRAFT — produced by the dpia-generator
 // regulator production where any confidentiality banner would be falsified
 // by the disclosure itself; the per-regime privilege notes in
 // references/jurisdictions/ say when to do that.
+const WORK_PRODUCT_HEADER = 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT';
 function headerTextOf(m) {
   // null means "no override, use the derived default" — the schema documents
   // null as the field's default, so a manifest carrying it literally must not
   // render a page header reading "null". Only "" suppresses the header.
   if (m.headerText !== undefined && m.headerText !== null) return String(m.headerText);
-  return m.counsel
-    ? 'PRIVILEGED & CONFIDENTIAL \u2014 ATTORNEY WORK PRODUCT'
-    : 'CONFIDENTIAL \u2014 DRAFT FOR DPO REVIEW';
+  return m.counsel ? WORK_PRODUCT_HEADER : 'CONFIDENTIAL \u2014 DRAFT FOR DPO REVIEW';
 }
 function docTitleOf(m) {
   return m.docTitle ? String(m.docTitle) : 'DATA PROTECTION IMPACT ASSESSMENT';
@@ -791,13 +860,23 @@ function docTitleOf(m) {
 // DPO-led run (no counsel named) or a producible record (header suppressed)
 // gets "for DPO review" — the reviewing officer the cover already names
 // uniformly across regimes. The "AI-generated draft" half never varies.
+// "Keeps the work-product header" means the derived default (counsel named,
+// no override) or an explicit headerText that is itself a privilege marking;
+// a custom non-privilege header ("PREPARED FOR PRODUCTION TO THE REGULATOR")
+// is a producible-record posture, and its footer must not claim an attorney
+// draft any more than a suppressed header's may.
+const PRIVILEGE_MARKING = /\b(work[- ]product|privileged)\b/i;
+const PRIVILEGE_NEGATED = /\b(not|non)[- ]privileged\b/i;
 function reviewerTextOf(m) {
-  return headerTextOf(m) && m.counsel ? 'for attorney review' : 'for DPO review';
+  const h = headerTextOf(m);
+  const workProduct = h === WORK_PRODUCT_HEADER || (PRIVILEGE_MARKING.test(h) && !PRIVILEGE_NEGATED.test(h));
+  return m.counsel && workProduct ? 'for attorney review' : 'for DPO review';
 }
 
 // ---------------------------------------------------------------- build
 function build(manifest, state) {
   const registers = Object.create(null); // null-proto: register ids come from the manifest
+  const footnotes = []; // register footnote slots, worded after every register is resolved
   const children = coverPage(manifest, state.jurisdictions || ['eu-gdpr']);
 
   (manifest.blocks || []).forEach((b, i) => {
@@ -814,6 +893,11 @@ function build(manifest, state) {
         // A missing "text" would String(undefined) into a literal "undefined"
         // heading — the v4.2.1 "null" header defect class. "" stays legal.
         if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
+        // Only the three heading styles exist; any other level (7, "__proto__")
+        // silently fell back to level 2 and misplaced the section in the outline.
+        if (b.level !== undefined && b.level !== null && ![1, 2, 3].includes(b.level)) {
+          fail(1, `${ctx}: "level" must be 1, 2 or 3, got ${JSON.stringify(b.level)}`);
+        }
         children.push(heading(b.text, b.level || 2)); break;
       case 'para':
         if (b.text === undefined || b.text === null) fail(1, `${ctx}: needs "text"`);
@@ -829,13 +913,26 @@ function build(manifest, state) {
         }); break;
       case 'table':
         if (!Array.isArray(b.columns) || !Array.isArray(b.rows)) fail(1, `${ctx}: needs "columns" and "rows" arrays`);
-        b.rows.forEach((r, j) => rowArray(r, `${ctx} row ${j + 1}`));
+        // An empty "columns" divides the widths by zero, and a row with no
+        // cells (or a ragged one) writes a w:tr the schema rejects or a grid
+        // Word re-flows unpredictably — fail with the row named instead.
+        if (!b.columns.length) fail(1, `${ctx}: "columns" must name at least one column`);
+        b.rows.forEach((r, j) => {
+          rowArray(r, `${ctx} row ${j + 1}`);
+          if (r.length !== b.columns.length) {
+            fail(1, `${ctx} row ${j + 1}: has ${r.length} cell(s) but the table has ${b.columns.length} column(s)`);
+          }
+        });
         children.push(dataTable(b.columns, b.rows, b.widths));
         children.push(p('', { after: 120 })); break;
       case 'riskRegister': {
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
+        const regId = b.id === undefined || b.id === null || b.id === '' ? 'default' : txt(b.id, `${ctx} "id"`);
+        // A repeated register id silently replaced the earlier register, so a
+        // matrix "source" plotted whichever was authored last.
+        if (own(registers, regId)) fail(1, `${ctx}: riskRegister id "${regId}" is used by an earlier register — each register needs a unique "id"`);
         const resolved = resolveRegister(b.rows);
-        registers[b.id || 'default'] = resolved;
+        registers[regId] = resolved;
         children.push(registerTable(resolved));
         if (resolved.some(r => r.art36)) {
           state.highResidual = true;
@@ -845,26 +942,12 @@ function build(manifest, state) {
           // pathway available.
           const unmitigatedHigh = resolved.some(r => r.art36 && (!r.mitigated || r.mitigated === 'High'));
           if (unmitigatedHigh) state.highMitigated = true;
-          const conditionalHere = !unmitigatedHigh;
-          const consultNotes = (state.jurisdictions || ['eu-gdpr'])
-            .filter(c => REGIMES[c] && REGIMES[c].derive)
-            .map(c => REGIMES[c].highResidualNote);
-          // Prose list join: "a" / "a and b" / "a, b, and c" \u2014 three consultation
-          // regimes must not produce an "and ... and" run-on in the sentence a
-          // regulator reads first.
-          const joined = consultNotes.length <= 2
-            ? consultNotes.join(' and ')
-            : consultNotes.slice(0, -1).join(', ') + ', and ' + consultNotes[consultNotes.length - 1];
-          const verb = consultNotes.length > 1 ? 'are' : 'is';
-          let footnote;
-          if (!consultNotes.length) {
-            footnote = '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
-          } else if (conditionalHere) {
-            footnote = `* Residual risk rated High on existing and planned controls \u2014 ${joined} ${verb} engaged unless the Section 5 mitigations are implemented before processing commences; with those mitigations implemented, every High-rated residual falls below High and prior consultation is not required.`;
-          } else {
-            footnote = `* Residual risk rated High \u2014 ${joined} ${verb} engaged for this risk, and the processing may not commence until ${consultNotes.length > 1 ? 'those consultations have' : 'that consultation has'} concluded.`;
-          }
-          children.push(p(footnote, { italic: true, size: 18 }));
+          // The footnote is worded once every register is resolved (below the
+          // loop): whether consultation is avoidable is a document-wide fact,
+          // and one register must not say "not required once mitigated" while
+          // another's unmitigable High residual requires it.
+          footnotes.push({ at: children.length, unmitigatedHigh });
+          children.push(null);
         }
         children.push(p('', { after: 120 }));
         break;
@@ -876,7 +959,7 @@ function build(manifest, state) {
         }
         const headings = (manifest.blocks || [])
           .filter(x => x && x.type === 'heading')
-          .map(x => String(x.text || '').toLowerCase());
+          .map(x => headingRef(String(x.text || '')));
         const missing = [];
         const rows = b.rows.map((r, j) => {
           rowObject(r, `${ctx} row ${j + 1}`);
@@ -886,11 +969,9 @@ function build(manifest, state) {
           const sec = (r.section === undefined || r.section === null) ? '' : txt(r.section, `${ctx} row ${j + 1} "section"`).trim();
           const note = (r.note === undefined || r.note === null) ? '' : txt(r.note, `${ctx} row ${j + 1} "note"`);
           if (!el || !sec) fail(1, `${ctx}: row ${j + 1} needs "element" and "section"`);
-          const probe = sec.replace(/^[\u00a7Ss]\s*/, '').toLowerCase();
-          // A bare "\u00a7" strips to "", and "".includes matches every heading \u2014
-          // the dangling-reference gate below would never fire.
-          if (!probe) fail(1, `${ctx}: row ${j + 1} "section" (${JSON.stringify(sec)}) names no section`);
-          if (!headings.some(h => h.includes(probe))) missing.push(sec);
+          // A bare "\u00a7" names nothing; it must not reach the matcher.
+          if (!sec.replace(/^\u00a7+\s*/, '')) fail(1, `${ctx}: row ${j + 1} "section" (${JSON.stringify(sec)}) names no section`);
+          if (!headings.some(h => sectionMatches(sec, h))) missing.push(sec);
           return [el, sec + (note ? ` \u2014 ${note}` : '')];
         });
         if (missing.length) {
@@ -947,7 +1028,7 @@ function build(manifest, state) {
             : def.conclusionLabels[declared ? 0 : 1];
           const rawNote = b.notes ? own(b.notes, code) : undefined;
           const note = (rawNote === undefined || rawNote === null) ? '' : txt(rawNote, `${ctx} notes["${code}"]`);
-          return [def.label, def.engagement, label + (note ? ` — ${note}` : '')];
+          return [def.label, regimeText(def, 'engagement', manifest.date), label + (note ? ` — ${note}` : '')];
         });
         children.push(p(b.title || 'Regulator engagement — conclusions by jurisdiction', { bold: true, after: 100 }));
         children.push(dataTable(['Regime', 'Engagement mechanism', 'Conclusion'], rows, [18, 46, 36]));
@@ -972,14 +1053,14 @@ function build(manifest, state) {
         const nSource = noticeField('source'), nAudience = noticeField('audience'), nProfile = noticeField('profile');
         if (!Array.isArray(b.rows) || !b.rows.length) fail(1, `${ctx}: needs non-empty "rows"`);
         if (b.notice.date !== undefined && b.notice.date !== null) {
-          if (!isRealDate(String(b.notice.date))) {
+          if (typeof b.notice.date !== 'string' || !isRealDate(b.notice.date)) {
             fail(1, `${ctx}: "notice.date" must be a real YYYY-MM-DD calendar date, got ${JSON.stringify(b.notice.date)} — ` +
                     'a date that does not parse silently disables the staleness check.');
           }
           // Staleness is a check-by date, not a hard stop: the check still
           // renders, but a profile older than ~6 months may pass against
           // commitments the published notice no longer makes.
-          const ageDays = (new Date(manifest.date) - new Date(String(b.notice.date))) / 86400000;
+          const ageDays = (new Date(manifest.date) - new Date(b.notice.date)) / 86400000;
           if (ageDays > 183) {
             process.stderr.write(`build_dpia: WARNING — the notice behind ${ctx} was indexed ${b.notice.date}, ` +
               `more than six months before this assessment (${manifest.date}). Re-fetch the published notice and ` +
@@ -1059,6 +1140,34 @@ function build(manifest, state) {
     }
   });
 
+  // Register footnotes, worded on the document-wide consultation state.
+  const consultNotes = (state.jurisdictions || ['eu-gdpr'])
+    .filter(c => REGIMES[c] && REGIMES[c].derive)
+    .map(c => regimeText(REGIMES[c], 'highResidualNote', manifest.date));
+  // Prose list join: "a" / "a and b" / "a, b, and c" \u2014 three consultation
+  // regimes must not produce an "and ... and" run-on in the sentence a
+  // regulator reads first.
+  const joined = consultNotes.length <= 2
+    ? consultNotes.join(' and ')
+    : consultNotes.slice(0, -1).join(', ') + ', and ' + consultNotes[consultNotes.length - 1];
+  const verb = consultNotes.length > 1 ? 'are' : 'is';
+  const concluded = consultNotes.length > 1 ? 'those consultations have' : 'that consultation has';
+  const conditionalDoc = !state.highMitigated; // every High residual in every register is mitigable
+  footnotes.forEach(({ at, unmitigatedHigh }) => {
+    let footnote;
+    if (!consultNotes.length) {
+      footnote = '* Residual risk rated High \u2014 see the regulator-engagement analysis in Section 5 for the obligations this rating triggers in each applicable jurisdiction.';
+    } else if (conditionalDoc) {
+      footnote = `* Residual risk rated High on existing and planned controls \u2014 ${joined} ${verb} engaged unless the Section 5 mitigations are implemented before processing commences; with those mitigations implemented, every High-rated residual falls below High and prior consultation is not required.`;
+    } else if (!unmitigatedHigh) {
+      // Mitigable here, but another register keeps consultation unconditional.
+      footnote = `* Residual risk rated High \u2014 ${joined} ${verb} engaged. The Section 5 mitigations bring every High-rated residual in this register below High, but a High residual elsewhere in this assessment has no such pathway, so the processing may not commence until ${concluded} concluded.`;
+    } else {
+      footnote = `* Residual risk rated High \u2014 ${joined} ${verb} engaged for this risk, and the processing may not commence until ${concluded} concluded.`;
+    }
+    children[at] = p(footnote, { italic: true, size: 18 });
+  });
+
   return new Document({
     creator: 'dpia-generator (AI-generated draft)',
     title: txt(`DPIA \u2014 ${manifest.systemName}`),
@@ -1067,7 +1176,7 @@ function build(manifest, state) {
     sections: [{
       properties: {
         page: {
-          // A4 portrait — the DPIA's audience is EU/UK (DPO, ICO, CNIL, lead authority).
+          // A4 portrait — the DPIA's audience is EU/UK (DPO, Information Commission, CNIL, lead authority).
           size: { width: 11906, height: 16838 },
           margin: { top: 1100, bottom: 1100, left: 1100, right: 1100 },
         },
@@ -1405,6 +1514,94 @@ function main() {
       `"status" is "${m.status || 'Draft'}". Confirm the cover page and executive summary carry the ` +
       'consultation flag for every prior-consultation regime in scope.\n');
   }
+  // The reverse: a cover claiming a consultation the register does not derive
+  // overstates the obligation on the page a regulator reads first. Only a
+  // false derivation warns — on "conditional" the consultation status is one
+  // of the controller's two documented options.
+  const claimed = String(m.status || 'Draft').trim().toLowerCase();
+  if (state.consult === false && consultInScope && coherentStatuses.includes(claimed)) {
+    process.stderr.write(
+      `build_dpia: WARNING — manifest "status" is "${m.status}", but no register derives a prior-consultation ` +
+      'requirement (no residual risk rates High). Confirm the cover page and executive summary do not claim a ' +
+      'consultation the assessment does not support.\n');
+  }
+
+  // Where an open descriptor's file actually lives, from the kernel's own
+  // record (/proc/self/fd, Linux). readlink, not realpath: the link text is
+  // already the canonical path of the file's directory entry, and re-walking
+  // it component by component would reopen the very race being checked.
+  // null where /proc is unavailable (the lexical/lstat checks still run).
+  const HAS_PROC_FD = fs.existsSync('/proc/self/fd');
+  const fdLocation = (fd) => {
+    if (!HAS_PROC_FD) return null;
+    try {
+      const where = fs.readlinkSync(`/proc/self/fd/${fd}`);
+      return where.startsWith('/') && !where.endsWith(' (deleted)') ? where : '';
+    } catch (e) { return ''; } // '' = unresolvable: treated as an escape
+  };
+  const inRoots = (real) => realRoots.some(root => isInside(root, real));
+
+  // Write-then-rename. The document is written to a fresh temp file in
+  // outDir created with O_EXCL|O_NOFOLLOW (so it cannot be a pre-planted file,
+  // symlink or hardlink) and mode 0600, then renamed over the final name —
+  // rename replaces a directory entry planted there rather than writing
+  // through it. The directory itself can still be swapped for a symlink
+  // between any two path-based calls (outDir lives in the shared temp dir),
+  // so the descriptor is checked where the kernel says it is: before the
+  // rename (the temp file is inside the roots), and after it (still inside,
+  // and the final name is this inode). Any failure removes the file wherever
+  // it actually landed — but only while that entry is still this inode, and
+  // retried, because the directory may be swapped again mid-cleanup. The
+  // OOXML check (validate) runs on the temp file before the rename, so a
+  // rejected document never appears under the deliverable's name.
+  const writeOutput = (buf, validate) => {
+    // Ends in .docx: the full validator infers the file type from the suffix.
+    const tmpPath = path.join(outDir, `.${path.basename(outPath, '.docx')}.${process.pid}.${crypto.randomBytes(6).toString('hex')}.tmp.docx`);
+    const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL | (fs.constants.O_NOFOLLOW || 0);
+    let fd;
+    try { fd = fs.openSync(tmpPath, flags, 0o600); }
+    catch (e) { fail(1, `cannot write ${outPath}: ${e.message}`); }
+    let st = null;
+    let renamed = false;
+    const abort = (msg, code = 1) => {
+      for (let tries = 0; tries < 50 && st; tries++) {
+        const at = fdLocation(fd);
+        if (at === null ? false : !at) break; // unlinked already (" (deleted)")
+        [at, renamed ? outPath : tmpPath].filter(Boolean).forEach(c => {
+          try {
+            const l = fs.lstatSync(c);
+            if (l.ino === st.ino && l.dev === st.dev) fs.unlinkSync(c);
+          } catch (e) { /* best effort */ }
+        });
+        try { if (fs.fstatSync(fd).nlink === 0) break; } catch (e) { break; }
+      }
+      try { fs.closeSync(fd); } catch (e) { /* best effort */ }
+      fail(code, msg);
+    };
+    const moved = (detail) => `refusing to write ${outPath}: the output directory changed underneath the build ` +
+      `(${detail}); the written file was removed.`;
+    // Every step after the open runs under one catch, so no exception path
+    // can leave the temp file (or a renamed output) behind.
+    try {
+      st = fs.fstatSync(fd);
+      fs.fchmodSync(fd, 0o600); // the umask can only narrow the open mode; make it exact
+      fs.writeFileSync(fd, buf); // loops until the whole buffer is written
+      fs.fsyncSync(fd);
+      let at = fdLocation(fd);
+      if (at !== null && !(at && inRoots(at))) abort(moved(`the file was created at ${at || 'an unresolvable location'}`));
+      if (validate) validateOutput(tmpPath, outPath, (msg) => abort(msg, 2));
+      try { fs.renameSync(tmpPath, outPath); renamed = true; }
+      catch (e) { abort(moved(`rename failed: ${e.message}`)); }
+      let seen = null, real = null;
+      try { seen = fs.lstatSync(outPath); real = fs.realpathSync(outPath); } catch (e) { /* checked below */ }
+      if (!seen || !seen.isFile() || seen.ino !== st.ino || seen.dev !== st.dev) abort(moved('the output name is not the written file'));
+      if (!real || !inRoots(real)) abort(moved(`the output resolves to ${real || 'an unresolvable location'}`));
+      at = fdLocation(fd);
+      if (at !== null && !(at && inRoots(at))) abort(moved(`the file is at ${at || 'an unresolvable location'}`));
+      if (fs.fstatSync(fd).nlink !== 1) abort(moved('the written file gained a link'));
+    } catch (e) { abort(`cannot write ${outPath}: ${e.message}`); }
+    fs.closeSync(fd);
+  };
 
   Packer.toBuffer(doc).then(buf => {
     // The directory is created only now, after every manifest gate has passed
@@ -1412,29 +1609,13 @@ function main() {
     // behind. The lexical and realpath checks above ran before packing, which
     // can take seconds on a large manifest — long enough for a directory
     // component in the shared temp dir to be swapped for a symlink. Re-check
-    // before mkdir and immediately before the open, then confirm through the
-    // descriptor itself: fstat must show a single-link regular file at the
-    // same inode the (non-following) lstat sees, otherwise the path was
-    // redirected between the two calls. No O_TRUNC: the truncation happens
-    // only after the descriptor is proven.
+    // before mkdir and immediately before the write; writeOutput() then
+    // proves the result through the descriptor itself.
     checkReal(outDir);
     fs.mkdirSync(outDir, { recursive: true });
     checkReal(outDir);
     checkTarget();
-    const flags = fs.constants.O_WRONLY | fs.constants.O_CREAT | (fs.constants.O_NOFOLLOW || 0);
-    let fd;
-    try { fd = fs.openSync(outPath, flags, 0o644); }
-    catch (e) { fail(1, `cannot write ${outPath}: ${e.code === 'ELOOP' ? 'it is a symlink' : e.message}`); }
-    try {
-      const st = fs.fstatSync(fd);
-      const seen = fs.lstatSync(outPath);
-      if (!st.isFile() || st.nlink > 1 || st.ino !== seen.ino || st.dev !== seen.dev) {
-        fail(1, `refusing to write ${outPath}: the output path changed underneath the build.`);
-      }
-      fs.ftruncateSync(fd, 0);
-      fs.writeFileSync(fd, buf); // loops until the whole buffer is written
-    } finally { fs.closeSync(fd); }
-    if (!noValidate) validateOutput(outPath);
+    writeOutput(buf, !noValidate);
     process.stdout.write(outPath + '\n');
   }).catch(e => fail(1, 'build failed: ' + (e && e.message ? e.message : e)));
 }
@@ -1445,37 +1626,42 @@ function main() {
 // well-formedness check in scripts/check_ooxml.py runs instead — a document
 // with a stray control character shipped with exit 0 in CI for exactly as long
 // as "validator absent" meant "pass". Any other validator failure is the
-// document's, and the file is removed rather than left where a deliverable
-// belongs. --no-validate is the only way to skip.
-function validateOutput(outPath) {
+// document's, and the file is removed (reject: writeOutput's cleanup, then
+// exit 2) rather than left where a deliverable belongs. --no-validate is the
+// only way to skip. Either success is stated on stderr, so a caller (the
+// regression suite) can tell a validated build from one that skipped.
+function validateOutput(file, outPath, reject) {
   const full = '/mnt/skills/public/docx/scripts/office/validate.py';
   const bundled = path.join(__dirname, 'check_ooxml.py');
   const rejected = (r, label) => {
     process.stderr.write((r.stdout || '') + (r.stderr || ''));
-    try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
-    fail(2, `OOXML validation failed (${label}) for ${outPath} (file removed)`);
+    reject(`OOXML validation failed (${label}) for ${outPath} (file removed)`);
   };
   let fallbackReason = null;
   if (fs.existsSync(full)) {
-    const r = spawnSync('python3', [full, outPath], { encoding: 'utf8' });
-    if (!r.error && r.status === 0) return;
+    const r = spawnSync('python3', [full, file], { encoding: 'utf8' });
+    if (!r.error && r.status === 0) {
+      process.stderr.write('build_dpia: note — the full OOXML validator (validate.py) passed.\n');
+      return;
+    }
     // Only an environment failure falls back: python3 not launchable, or a
     // module the validator imports (lxml, defusedxml) missing. Any other
     // non-zero exit — including a traceback raised while reading the file —
     // is the validator rejecting the document.
-    // Anchored to the traceback's final line so document text echoed inside a
+    // Anchored to the traceback's final (non-empty) line, where Python puts
+    // the exception that ended the run, so document text echoed earlier in a
     // validator message cannot be mistaken for an environment failure.
-    const envFailure = r.error || /^(ModuleNotFoundError|ImportError): /m.test(r.stderr || '');
+    const lastLine = (r.stderr || '').split('\n').map(l => l.trim()).filter(Boolean).pop() || '';
+    const envFailure = r.error || /^(ModuleNotFoundError|ImportError): /.test(lastLine);
     if (!envFailure) rejected(r, 'validate.py');
     fallbackReason = r.error ? `python3: ${r.error.message}` : 'validate.py is missing a Python dependency';
   } else {
     fallbackReason = 'validate.py not present in this environment';
   }
-  const r = spawnSync('python3', [bundled, outPath], { encoding: 'utf8' });
+  const r = spawnSync('python3', [bundled, file], { encoding: 'utf8' });
   if (r.error) {
-    try { fs.unlinkSync(outPath); } catch (e) { /* best effort */ }
-    fail(2, `no OOXML check could run (${fallbackReason}; python3: ${r.error.message}) — the document ` +
-            'was not validated and has been removed; install python3 or pass --no-validate to accept an unchecked file');
+    reject(`no OOXML check could run (${fallbackReason}; python3: ${r.error.message}) — the document ` +
+           'was not validated and has been removed; install python3 or pass --no-validate to accept an unchecked file');
   }
   if (r.status !== 0) rejected(r, 'bundled well-formedness check');
   process.stderr.write(`build_dpia: note — ${fallbackReason}; the bundled well-formedness check ` +

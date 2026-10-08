@@ -1,0 +1,44 @@
+{
+  "systemName": "Regulator Text Currency",
+  "date": "2026-10-01",
+  "jurisdictions": [
+    "uk-gdpr",
+    "ke-dpa",
+    "id-pdp"
+  ],
+  "status": "Requires Art. 36 Prior Consultation",
+  "regulatorConclusions": {
+    "uk-gdpr": {
+      "priorConsultation": true
+    },
+    "ke-dpa": {
+      "priorConsultation": true
+    },
+    "id-pdp": {
+      "dpiaRequired": true
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls."
+        }
+      ]
+    },
+    {
+      "type": "regulatorTable"
+    }
+  ]
+}

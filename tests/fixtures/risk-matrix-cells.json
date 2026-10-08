@@ -1,0 +1,88 @@
+{
+  "systemName": "Matrix Cells",
+  "date": "2026-10-01",
+  "art36": true,
+  "status": "Requires Art. 36 Prior Consultation",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "id": "main",
+      "rows": [
+        {
+          "id": "LL",
+          "risk": "Low likelihood, Low severity",
+          "likelihood": "Low",
+          "severity": "Low",
+          "controls": "c"
+        },
+        {
+          "id": "LM",
+          "risk": "Low likelihood, Medium severity",
+          "likelihood": "Low",
+          "severity": "Medium",
+          "controls": "c"
+        },
+        {
+          "id": "LH",
+          "risk": "Low likelihood, High severity",
+          "likelihood": "Low",
+          "severity": "High",
+          "controls": "c"
+        },
+        {
+          "id": "ML",
+          "risk": "Medium likelihood, Low severity",
+          "likelihood": "Medium",
+          "severity": "Low",
+          "controls": "c"
+        },
+        {
+          "id": "MM",
+          "risk": "Medium likelihood, Medium severity",
+          "likelihood": "Medium",
+          "severity": "Medium",
+          "controls": "c"
+        },
+        {
+          "id": "MH",
+          "risk": "Medium likelihood, High severity",
+          "likelihood": "Medium",
+          "severity": "High",
+          "controls": "c"
+        },
+        {
+          "id": "HL",
+          "risk": "High likelihood, Low severity",
+          "likelihood": "High",
+          "severity": "Low",
+          "controls": "c"
+        },
+        {
+          "id": "HM",
+          "risk": "High likelihood, Medium severity",
+          "likelihood": "High",
+          "severity": "Medium",
+          "controls": "c"
+        },
+        {
+          "id": "HH",
+          "risk": "High likelihood, High severity",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "c"
+        }
+      ]
+    },
+    {
+      "type": "matrix",
+      "title": "Residual risk",
+      "stage": "residual",
+      "source": "main"
+    }
+  ]
+}

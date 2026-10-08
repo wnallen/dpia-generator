@@ -346,7 +346,7 @@ Read these as the task requires; the SKILL.md keeps the workflow lean by pushing
 
 ## Version
 
-Canonical version: **v4.4.6**. `CHANGELOG.md` is the long-form record of every release since v1.0
+Canonical version: **v4.4.7**. `CHANGELOG.md` is the long-form record of every release since v1.0
 and must not contradict this section; only the current release is summarized here, in a few lines.
 
-- **v4.4.6** — 2026-09-27 token-efficiency release, text layer only (no builder behaviour change; suite 75/75). The builder's header comment now ends after the manifest schema and block types (~135 lines); the gate rationale follows as a separate design-notes comment. `references/authorities.md` keeps the register only — the dated currency passes moved to `references/currency-log.md`. `references/published-dpias.md` opens with a classification index; Step 1 reads the index, then one section. SKILL.md: duplicated rule statements collapsed to pointers; the Reference Files list and this section compressed. The README changelog moved to `CHANGELOG.md`.
+- **v4.4.7** — 2026-10-08 audit-fix release (suite 89/89). UK documents dated on or after 2026-09-30 name the Information Commission; Indonesia and Kenya regulator-table text corrected. New exit-1 refusals: duplicate register or risk ids, heading level outside 1–3, empty or ragged tables, non-string `notice.date`, compliance-map references that match no heading exactly. Multi-register footnotes follow the document-wide consultation answer; the cover-status warning fires both ways; attorney-review footer only under a privilege header. Output written 0600 via temp file + rename, with a directory-swap check. Text: thin research no longer stops the run (No Silent Supplement flags and reports it); exit 2 means rebuild, not repair; South Korea joins the filing gate. See `CHANGELOG.md`.
