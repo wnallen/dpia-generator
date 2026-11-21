@@ -55,9 +55,11 @@ Run the Art. 55 list as a category screen. Practical notes:
   assessment obligation.
 - **Small-handler simplified regime (from 2026-09-01):** under the CAC + MPS Provisions on
   Simplified Measures for Personal Information Protection by Small-Scale Personal
-  Information Handlers (issued 2026-07-22), handlers processing PI of **fewer than 100,000
-  individuals** may use a **simplified standardized PIPIA form** (the Provisions' appendix
-  template, retained ≥3 years) instead of a full report; no separate PIPIA or compliance
+  Information Handlers (**CAC & MPS Order No. 25**, adopted 2026-07-22, published
+  2026-07-24), handlers processing PI of **fewer than 100,000 individuals** may use a
+  **simplified standardized PIPIA form** — the Provisions' annexed 《小型个人信息处理者个人
+  信息保护影响评估表》 (PI protection impact assessment table), alongside a compliance-audit
+  self-check table; retained ≥3 years — instead of a full report; no separate PIPIA or compliance
   audit is needed where a platform's own audit/PIPIA already covers platform-conducted
   processing; a five-yearly self-assessment checklist substitutes for full audits, with a
   certification-based audit exemption. The Art. 55 trigger still fires — what changes is
@@ -131,8 +133,14 @@ the SCC route, filed**. Hard rules:
 - **Tiered-administration overlay:** the small-handler simplified-PIPIA Provisions (§2 above;
   issued 2026-07-22, **effective 2026-09-01**) are the bottom tier; the top tier is the CAC's
   **draft Provisions on PI Protection for Large-Scale PI Handlers (>10 million individuals)**,
-  published for comment 2026-08-07 (consultation closed 2026-09-07) — **draft only, do not
-  assert**; watch status for handlers at that scale.
+  published for comment 2026-08-07 (consultation closed 2026-09-07) — **still a draft as of
+  2026-11-21, do not assert**; watch status for handlers at that scale.
+- **Standards and lists since September 2026 (corroborated 2026-11-21):** **GB/T 47469-2026**
+  (management guide for App personal-information processing on mobile terminals) effective
+  2026-11-01; batches of national cybersecurity standards effective 2026-11-01 and
+  2026-12-01; a TC260 revision plan for **GB/T 39335-2020** is listed without dates. New FTZ
+  data-export negative lists posted on cac.gov.cn for **Zhejiang (2026-11-10)** and
+  **Anhui (2026-11-11)**. No PIPL amendment and no new national cross-border measures.
 - **GB/T 45574-2025** — Security Requirements for Processing of Sensitive Personal
   Information (recommended standard, **effective 2025-11-01**); narrows the working sensitive
   list vs. GB/T 35273-2020 (removes ID-card number per se, marital status,

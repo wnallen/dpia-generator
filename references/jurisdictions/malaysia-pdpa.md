@@ -12,13 +12,19 @@
 > Design** and **Automated Decision-Making and Profiling** guidelines — dated ~2026-04-30 and
 > publicly launched 2026-05-08. `[web search — verify]` (issuance corroborated 2026-08-11
 > across multiple firm alerts; pdp.gov.my itself was not fetchable). Mandatory-DPIA
-> thresholds, per the latest corroboration (2026-09-23, firm alerts): processing of personal
-> data of **more than 20,000** data subjects, or of sensitive personal data (including
-> financial information) of **more than 10,000**. The 2026-08-11 reports also described a
-> separate ADM-processing prong (≥20,000 individuals) — not corroborated since `[verify]`.
-> **The effective/enforcement date remains unconfirmed; fetch the guideline from
-> pdp.gov.my before relying on any of these figures. This module must be rebuilt from the final guideline
-> text; until then treat everything below as provisional.**
+> thresholds, per the latest corroboration (2026-11-21, several firm alerts agreeing): a
+> **quantitative tier** — processing of personal data of **more than 20,000** data subjects,
+> or of sensitive personal data (including financial information) of **more than 10,000** —
+> and a **qualitative tier** assessed by the DPO **regardless of scale**: automated
+> decision-making and profiling, systematic monitoring, new technologies, vulnerable data
+> subjects. The "separate ADM prong at ≥20,000 individuals" recorded on 2026-08-11 is
+> **withdrawn**: the final guideline treats ADM/profiling as a qualitative trigger with no
+> volume threshold (the 2025 consultation paper's 10,000 ADM figure did not survive). A DPIA
+> is reported valid for two years. **No guideline number and no effective date have been
+> found in any source — one practitioner read says the text carries no effective-date field
+> — so fetch the guideline from pdp.gov.my before relying on any of these figures. This
+> module must be rebuilt from the final guideline text; until then treat everything below as
+> provisional.**
 
 ## 1. Current position (guideline issued; text not yet read)
 

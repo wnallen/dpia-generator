@@ -4,7 +4,8 @@
   "jurisdictions": [
     "uk-gdpr",
     "ke-dpa",
-    "id-pdp"
+    "id-pdp",
+    "my-pdpa"
   ],
   "status": "Requires Art. 36 Prior Consultation",
   "regulatorConclusions": {
@@ -16,13 +17,16 @@
     },
     "id-pdp": {
       "dpiaRequired": true
+    },
+    "my-pdpa": {
+      "assessmentRequired": true
     }
   },
   "blocks": [
     {
       "type": "heading",
       "level": 1,
-      "text": "SECTION 4 \u2014 RISK ASSESSMENT"
+      "text": "SECTION 4 — RISK ASSESSMENT"
     },
     {
       "type": "riskRegister",

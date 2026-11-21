@@ -447,7 +447,7 @@ const REGIMES = {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    engagement: "DPIA under the JPDP DPIA Guideline (issued 2026-04-30) where its mandatory thresholds are met; retained and producible to the Commissioner on request \u2014 verify thresholds and effective date against the guideline text",
+    engagement: "DPIA under the JPDP DPIA Guideline (issued 2026-04-30: more than 20,000 data subjects, or sensitive personal data incl. financial of more than 10,000; ADM/profiling and other qualitative triggers regardless of scale); retained and producible to the Commissioner on request \u2014 the guideline states no effective date; verify against its text",
     conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'au-privacy': {

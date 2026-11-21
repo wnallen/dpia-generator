@@ -112,10 +112,12 @@ The skill's coverage is only as good as its most stale module. Four standing rul
    run that touches them**, and rebuilt from the final instrument when it lands, never
    patched by prose. Vietnam's module carries a re-verify-every-run sourcing note (Decree
    356/2025 landed; its dossier forms not yet read), and Australia's tranche-two reforms are
-   the same class. The UAE's executive regulations were issued in 2026 (decision number
-   still unverified), tracked in the screening catalog.
+   the same class. The UAE's executive regulations are **still unissued** (an earlier note
+   that they had issued was withdrawn on 2026-11-21) and Chile's Ley 21.719 has an entry
+   into force that depends on whether a postponement is published before 2026-12-01 — both
+   tracked in the screening catalog.
 2. **Dates are check-by dates.** Every sourcing banner records when its corroboration pass
-   ran (latest pass: 2026-09-23, per `references/currency-log.md`). A banner more than ~6 months old should be treated as a
+   ran (latest pass: 2026-11-21, per `references/currency-log.md`). A banner more than ~6 months old should be treated as a
    prompt to re-verify before reliance, not as a fact.
 3. **`tech-law-radar` feeds the queue.** The sibling skill's periodic sweeps are the
    designed intake for new instruments (the Malaysian guideline's text and effective date, an SDF designation

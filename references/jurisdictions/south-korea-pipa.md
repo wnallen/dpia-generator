@@ -9,16 +9,24 @@ required, but PIPA's other obligations bite hard and belong in Section 6.
 > **Sourcing status (2026-08-04; supplemented 2026-09-12):** pipc.go.kr / law.go.kr not
 > fetched at build time; provisions below are `[model knowledge — verify]` unless tagged
 > otherwise. Korean authoritative text; record translation reliance. No change to the
-> Art. 33 public-institution PIA regime, but the **major PIPA amendment promulgated
-> 2026-03-10 is now IN FORCE (since 2026-09-11)** — fines up to 10% of total (global)
-> turnover in high-severity scenarios, personal supervisory liability for the CEO /
-> representative director, earlier breach notification, and mandatory ISMS-P certification
-> for large controllers from 2027-07-01. The same amendment package opens a
-> **pseudonymized-data exemption for AI training** (widely covered as the first
-> AI-training-data law of its kind), and a further bill allowing **raw, non-pseudonymized
-> personal data for AI development subject to PIPC approval** passed the National
-> Assembly's Political Affairs Committee in May 2026 — a bill, not law; do not assert it.
-> `[web search — verify]` Cite the amendment as current law on every Korea-scope run.
+> Art. 33 public-institution PIA regime, but the **major PIPA amendment (Act No. 21445)
+> promulgated 2026-03-10 is now IN FORCE (since 2026-09-11)** — a baseline fine of up to 3%
+> of violation-related revenue with an **aggravated tier of up to 10% of total (전체)
+> turnover** (repeat violation within three years, intentional or grossly negligent harm to
+> ≥10M data subjects, or breach after non-compliance with a corrective order — whether
+> "total" is global is set by the Enforcement Decree; confirm before quoting "global"),
+> personal supervisory liability for the CEO / representative director, earlier breach
+> notification, and mandatory ISMS-P certification for large controllers from 2027-07-01.
+> The same amendment package opens a **pseudonymized-data exemption for AI training**. The
+> further bill allowing **raw, non-pseudonymized personal data for AI development subject to
+> PIPC deliberation** is now law: **passed 2026-08-20, promulgated 2026-09-08 as Act No.
+> 21910, in force 2027-03-09** (new Arts. 28-12 to 28-15 — PIPC deliberation and resolution,
+> a prior risk-factor assessment where sensitive data or unique identifiers are involved,
+> privacy-policy disclosure; subordinate decree pending). Cite it as incoming law, not yet
+> applicable. An Enforcement Decree amendment (reported as Presidential Decree No. 36671,
+> 2026-09-10) sets the fine base and a reduction for preventive investment — secondary only.
+> `[web search — verify]` (corroborated 2026-09-12; Act No. 21910 and fine tiers 2026-11-21)
+> Cite the amendment as current law on every Korea-scope run.
 
 ## 1. Instrument and statute
 

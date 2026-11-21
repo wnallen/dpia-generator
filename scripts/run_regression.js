@@ -610,7 +610,7 @@ const CASES = [
     exit: 0,
     noWarn: true,
     check: (t) => [
-      [/JPDP DPIA Guideline \(issued 2026-04-30\)/.test(t), 'Malaysia row names the issued guideline'],
+      [/JPDP DPIA Guideline \(issued 2026-04-30:/.test(t), 'Malaysia row names the issued guideline'],
       [!/in consultation \(watch status\)/.test(t), 'stale watch-status wording gone'],
       [/Information Commission from 2026-09-30/.test(t), 'UK row names the Information Commission successor'],
     ],
@@ -732,7 +732,7 @@ const CASES = [
   },
   {
     name: 'regulator-text-currency',
-    why: 'v4.4.7: the UK footnote named the ICO after the Information Commission replaced it (2026-09-30); the Indonesia row still awaited an implementing regulation GR 33/2026 had supplied; the Kenya row cited "ODPC guidance" for a timeline the 2021 General Regulations set. UK wording now follows the assessment date.',
+    why: 'v4.4.7: the UK footnote named the ICO after the Information Commission replaced it (2026-09-30); the Indonesia row still awaited an implementing regulation GR 33/2026 had supplied; the Kenya row cited "ODPC guidance" for a timeline the 2021 General Regulations set. UK wording now follows the assessment date. v4.5.0: the Malaysia row no longer carries an ADM volume prong the final guideline does not have.',
     exit: 0,
     noWarn: true,
     check: (t) => [
@@ -742,6 +742,11 @@ const CASES = [
       [/Data Protection \(General\) Regulations 2021 \(LN 263\/2021\)/.test(t), 'Kenya row cites LN 263/2021 for the timeline'],
       [/GR 33\/2026\); production expectations pending the supervisory authority(?:'|&apos;)s establishment/.test(t), 'Indonesia row reflects GR 33/2026'],
       [!/pending the implementing regulation/.test(t), 'stale Indonesia wording gone'],
+      // v4.5.0: the Malaysian row carries the final guideline's two tiers and no
+      // ADM volume prong (the 2026-08-11 "ADM at 20,000" figure was uncorroborated).
+      [/ADM\/profiling and other qualitative triggers regardless of scale/.test(t), 'Malaysia row states ADM/profiling as a qualitative trigger'],
+      [!/ADM[^;)]*20,000/.test(t), 'no ADM volume prong in the Malaysia row'],
+      [/the guideline states no effective date/.test(t), 'Malaysia row says the guideline states no effective date'],
     ],
   },
   {

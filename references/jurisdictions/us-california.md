@@ -46,11 +46,18 @@ privacy**, enumerated in the regulations (descriptive):
 4. Certain **training** of ADMT / facial-recognition / identity-verification technology on
    personal information. `[model knowledge — verify]`
 
-A 2026-09-12 corroboration pass suggests the final regulations may enumerate a **fifth
-trigger — automated processing to infer traits in employment/education contexts** — beyond
-the four above; consistent with this module's descriptive-not-verbatim caveat, verify the
-§ 7150 list against the regulation text before asserting the count either way.
-`[web search — verify]`
+**Count corrected 2026-11-21: § 7150(b) enumerates six activities**, not four. Beyond
+(1)–(4) above, the final text adds two **systematic-observation inference triggers** —
+(4) using automated processing to infer or extrapolate a consumer's intelligence, ability,
+aptitude, performance at work, economic situation, health, preferences, reliability,
+behaviour, location or movements from **systematic observation of the consumer as an
+educational-programme applicant, job applicant, student, employee or independent
+contractor**, and (5) the same kind of inference from systematic observation in a
+**sensitive location** — with the training trigger as (6) ("systematic observation" is
+defined as methodical and regular or continuous observation). The employment trigger means
+most workplace monitoring and performance analytics is in scope on its own, independent of
+the ADMT trigger. Subsection numbering taken from a practitioner issue brief on the final
+text; read § 7150(b) before citing a sub-paragraph. `[web search — verify]`
 
 Note "consumer" includes employees and job applicants in California — the CCPA has **no**
 HR carve-out (unlike Colorado and the other states). A workplace ADMT deployment can be
@@ -109,16 +116,37 @@ record and counsel's candid analysis as separate documents, per the destination 
 producible record with `"headerText": ""`; privileged strategic analysis in the GDPR-spine
 DPIA or a separate memo. `[model knowledge — verify]`
 
-## 6a. Watch items — passed 2026 session, not yet law (checked 2026-09-12)
+## 6a. 2026 session outcomes (checked 2026-11-21) and CPPA activity
 
-The California legislature closed its 2026 session on 2026-08-31 with a privacy/AI package
-**awaiting the Governor's signature** (typical deadline ~mid-October 2026) — none of these
-is law; do not assert them, but check signature status on any California run after October
-2026: **SB 923** (CPPA-sponsored expansion of the deletion right to all non-exempt PI);
-**AB 1542** (would prohibit sale/sharing of sensitive PI from 2027-01-01 — would directly
-interact with the §2 selling/sharing and SPI triggers); **SB 690** (CIPA reform); **SB 947**
-(employer ADS restrictions, from 2027-07-01); **SB 420** (developer impact assessments for
-high-risk automated decision systems). `[web search — verify]`
+The Governor acted on the 2026 privacy/AI package in late September 2026
+(`[web search — verify]`; SB 923 confirmed on privacy.ca.gov):
+
+- **SB 947 — signed 2026-09-30 (Ch. 859, Stats. 2026), effective 2027-07-01.** Employer
+  automated decision systems: no sole reliance on an ADS for discipline, termination or
+  deactivation decisions; human review; worker notice. A §5 divergence row for any workplace
+  ADMT — it layers a substantive limit on top of the CPPA regs' notice/opt-out architecture.
+- **SB 923 — signed 2026-09-27 (Ch. 482), effective 2027-01-01.** Deletion right extended to
+  personal information obtained from third parties; suppression-list duty; a mandatory online
+  request method. Feeds §2.7's rights-feasibility analysis.
+- **SB 690 — signed 2026-09-30, effective 2027-01-01** (reaching claims filed in the prior two
+  years). CIPA reform — narrows the private-litigation exposure that drove many
+  website-tracking DPIAs; still cite CIPA for pre-2027 conduct.
+- **AB 1542 — vetoed (2026-09-27/28).** No ban on selling or sharing sensitive PI; the
+  opt-out and right-to-limit regime stands and the §2 selling/sharing and SPI triggers are
+  unaffected.
+- **SB 420** (developer/deployer impact assessments for high-risk ADS): **status
+  unconfirmed** — one aggregator lists it chaptered 2026-09-29 (Ch. 750); no reliable
+  roundup names it as signed or vetoed. Check leginfo before asserting either way.
+
+Also signed: SB 813 / AB 1405 (independent AI-auditing framework, 2026-09-09).
+
+**CPPA (Oct–Nov 2026):** at its 5–6 November board meeting the agency voted to open formal
+rulemaking on opt-out-preference-signal amendments touching §§ 7025, 7026, 7060, 7102, 7122,
+7124, **7157**, 7221 and 7222 (45-day comment period) — check the § 7157 submission text for
+conforming changes once the notice posts; no change to §§ 7150–7156 content. Enforcement
+decisions (all on ad-tech sharing and ignored opt-out signals): Tractor Supply $1.35M (Sept);
+FedEx $2.975M (6 Nov); Hertz $1.55M and Filson $218k (17 Nov); Polaris $911k (Nov).
+`[web search — verify]`
 
 ## 7. Source notes
 
