@@ -1,0 +1,11 @@
+{
+  "systemName": "Notice Date Future",
+  "date": "2026-11-21",
+  "blocks": [
+    { "type": "noticeCheck",
+      "notice": { "source": "https://acme.example/privacy", "date": "2027-03-01" },
+      "rows": [
+        { "commitment": "We retain support records for 24 months", "processing": "Transcripts are deleted at 18 months", "verdict": "consistent" }
+      ] }
+  ]
+}

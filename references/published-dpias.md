@@ -42,7 +42,7 @@ Best for: triggering analysis (Step 0), criteria for an acceptable DPIA (the WP2
 
 ### EDPB Harmonised DPIA Template (v1.0, 2026) `[web search — verify]`
 
-Adopted 10 March 2026, published 14 April 2026 with an Explainer (consultation closed 9 June 2026); surfaced by web search 2026-08-11, not fetched. Standardises DPIA documentation structure across SAs (methodology stays free choice); national templates are expected to converge on it.
+Adopted 10 March 2026, published 14 April 2026 with an Explainer (consultation closed 9 June 2026; final not issued and no SA adoption found as of 2026-11-21); surfaced by web search 2026-08-11, not fetched. Standardises DPIA documentation structure across SAs (methodology stays free choice); national templates are expected to converge on it.
 
 Best for: checking whether the competent SA has adopted the template before finalising an EU-scope DPIA, and mapping this skill's output sections to the harmonised structure in the cover note. Entry point: edpb.europa.eu.
 
@@ -118,6 +118,8 @@ There is no single canonical published DPIA for AI hiring (most are confidential
 
 **WP29 / EDPB Guidelines on Automated Decision-Making and Profiling (WP251rev.01)** — required reading for any DPIA where the processing produces automated decisions with legal or similarly significant effect on data subjects.
 
+**EDPB 2027 Coordinated Enforcement Framework — ADM including AI in recruitment** `[web search — verify]` — topic adopted 10 November 2026: the supervisory authorities' 2027 coordinated action targets Art. 22 and Art. 15(1)(h) compliance in recruitment automated decision-making. Not an analog, but the enforcement-posture fact every AI-in-HR DPIA written from 2027 should state (edpb.europa.eu news, 11 November 2026). California's **SB 947** (employer ADS, effective 2027-07-01) is the US counterpart — see `us-california.md` §6a.
+
 Best for: AI in hiring, AI in performance evaluation, AI in promotion/termination decisions, AI-driven workforce management.
 
 ### EU-to-US Cross-Border Transfer with US Sub-processor
@@ -168,6 +170,8 @@ All UK entries are Crown-copyright publications on government domains; surfaced 
 **UK Home Office "Migrant Help" DPIA (partial, FOI-released)** — a real DPIA for asylum-seeker support processing, useful as a structural model for public-sector DPIAs touching vulnerable populations. URL: https://privacyinternational.org/sites/default/files/2022-02/FOI%2067544%20Annex%202%20-%20Redacted%20Migrant%20Help%20v0.3.pdf
 
 Best for: public-sector DPIAs, processing of vulnerable populations, processing where the data subject cannot meaningfully consent.
+
+**CNIL simplified-procedure sanctions for missing DPIAs (9 November 2026)** `[web search — verify]` — ten decisions (EUR 3,000–20,000) against local authorities and a public body for security failings, several expressly finding **no DPIA had been carried out under Art. 35** for school and extracurricular-activity portals and public-space CCTV. The first clustered enforcement of the DPIA duty as such; cite the délibération for any public-sector portal or CCTV DPIA once fetched from cnil.fr (surfaced via French press 2026-11-21, decisions not fetched). Best for: showing a public body what "we did not do a DPIA" costs; the Art. 35 triggering analysis for municipal services.
 
 **UK police published DPIAs beyond the Met RFR** `[web search — verify]` — **NPCC Police National Database DPIA v8** (https://www.npcc.police.uk/SysSiteAssets/media/downloads/publications/publications-log/national-crime-coordination-committee/2025/dpia-pnd-v8.pdf), the **Met Violence Harm Assessment DPIA** (https://www.met.police.uk/SysSiteAssets/media/downloads/met/about-us/violence-harm-index/violence-harm-assessment-data-protection-impact-assessment.pdf), the **Scottish Police Authority DESC (Digital Evidence Sharing Capability) DPIA, FOI-released** (https://www.spa.police.uk/publication-library/foi-2023-015-desc-dpia-and-supporting-information/), and force publication schemes that list DPIAs as a class (e.g. Dyfed-Powys: https://www.dyfed-powys.police.uk/foi-ai/dyfed-powys-police/publication-scheme/data-protection-impact-assessments/). Best for: national database processing, algorithmic risk-scoring of individuals, evidence-sharing platforms, LED-context structure.
 
@@ -224,11 +228,12 @@ federal institutions.
 ### Brazil — ANPD RIPD FAQ and resolutions
 
 gov.br/anpd. The April 2023 FAQ page is preliminary (the RIPD regulation is still pending as
-of 2026-08-11 — see the volatility banner in the `br-lgpd` module). **Correction (aligned
-2026-08-11):** the small-agents resolution (CD/ANPD nº 2/2022) does **not** carry the high-risk
-criteria — the ANPD's high-risk indicators are non-exhaustive guidance, not a numbered list;
-the transfer regulation and Brazilian SCCs are Resolução CD/ANPD nº 19/2024. Best for: the
-`br-lgpd` trigger screen and demand-readiness posture.
+of 2026-11-21, and the board rejected the draft high-risk orientation guide in September
+2026 — see the volatility banner in the `br-lgpd` module). **Characterisation (aligned
+2026-11-21):** the small-agents resolution (CD/ANPD nº 2/2022) defines high risk in its Art. 4
+for its own regime, and the ANPD reuses those criteria as non-exhaustive guidance — not a
+binding general list; the transfer regulation and Brazilian SCCs are Resolução CD/ANPD nº
+19/2024. Best for: the `br-lgpd` trigger screen and demand-readiness posture.
 
 ### China — GB/T 39335-2020 and CAC cross-border materials
 

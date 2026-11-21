@@ -65,7 +65,12 @@ paragraph where they change the answer:
 - **AI processing:** the FDPIC stated (2025-05-08) that the FADP **applies directly to
   AI-supported data processing** — no Swiss AI-specific statute is needed for the DPIA
   duty to bite on AI systems; cite the statement for any Swiss-scope AI DPIA.
-  `[web search — verify]` (corroborated 2026-09-12)
+  `[web search — verify]` (corroborated 2026-09-12) The Federal Council's AI bill
+  (implementing the Council of Europe AI Convention, signed March 2025) is still in
+  preparation — interim progress noted 2026-10-28, consultation draft due end-2026, dispatch
+  to Parliament expected 2027; a proposal, not law. The FDPIC's DSFA guidance is unchanged
+  (August 2023) and the adequacy list (DPO Annex 1) carries no 2026 change.
+  `[web search — verify]` (corroborated 2026-11-21)
 - **Sanctions are personal:** fines (up to CHF 250,000) target the responsible **individual**,
   not the undertaking — worth a line in the executive summary; it changes who cares.
 - **Exemption:** a DPIA can be waived where a certified system/product is used or a code of

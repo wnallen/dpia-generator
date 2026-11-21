@@ -4,16 +4,17 @@
 
 > **VOLATILITY BANNER — re-verify before relying.** The long-pending implementing
 > regulation has landed: **Government Regulation No. 33 of 2026** on the Implementation of
-> the PDP Law, enacted and promulgated **2026-07-16** (225 articles), **in force six months
-> after promulgation — ~2027-01-16**. This module was rebuilt from secondary coverage of
-> GR 33/2026 on 2026-09-12; the regulation's Indonesian gazette text has **not** been
-> fetched, so every GR 33/2026 statement below is `[web search — verify]` and the Art.
-> 120–121 lists must be checked against the official text before any sub-article is cited.
-> The supervisory authority (Lembaga PDP) **has still not been established** — the draft
-> Presidential Regulation remained unsigned as of the rebuild, with interim enforcement
-> sitting with Komdigi's Directorate General of Digital Space Supervision. Verify both the
-> authority and the regulation's in-force status per run, especially either side of the
-> ~2027-01-16 commencement.
+> the PDP Law, enacted and promulgated **2026-07-16** (12 chapters, 225 articles), **in force
+> 2027-01-16** (six months after promulgation; date confirmed 2026-11-21). This module was
+> rebuilt from secondary coverage of GR 33/2026 on 2026-09-12; the regulation's Indonesian
+> gazette text has **not** been fetched, so every GR 33/2026 statement below is
+> `[web search — verify]` and the Art. 120–121 lists must be checked against the official
+> text before any sub-article is cited. The supervisory authority (Lembaga PDP) **has still
+> not been established** — Komdigi said on 2026-11-04 that the draft Presidential Regulation
+> is at the final stage awaiting the President's signature; interim enforcement sits with
+> Komdigi's Directorate General of Digital Space Supervision. Verify both the authority and
+> the regulation's in-force status per run, especially either side of the 2027-01-16
+> commencement.
 
 ## 1. Instrument and statute
 
@@ -66,4 +67,4 @@ privileged spine, especially while the authority's production powers are undefin
 
 - Law No. 27/2022 (UU PDP), Art. 34 — peraturan.go.id / official gazette (Indonesian authoritative text). `[web search — verify]`.
 - **GR No. 33/2026** (Peraturan Pemerintah No. 33 Tahun 2026), promulgated 2026-07-16, in force ~2027-01-16; DPIA at Arts. 120–121 — peraturan.go.id. `[web search — verify]`; rebuild-from-text pass still owed once the gazette text is fetched.
-- Lembaga PDP Presidential Regulation — draft, unsigned as of 2026-09-12; check status every Indonesia-scope run.
+- Lembaga PDP Presidential Regulation — draft, unsigned as of 2026-11-21 (Komdigi statement of 2026-11-04: with the President for signature); check status every Indonesia-scope run.

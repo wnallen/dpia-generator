@@ -32,3 +32,27 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm test
+
+  # The skill image has no node_modules: build_dpia.js falls through to the
+  # npm global prefix (loadDocx). The job above never takes that branch, so
+  # this one does — no `npm ci`, the pinned docx installed globally, NODE_PATH
+  # unset — and the suite must pass on the version the builder reports loading.
+  test-global-prefix:
+    runs-on: ubuntu-latest
+    name: test (docx from the global prefix)
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install the pinned docx globally
+        run: npm install -g "docx@$(node -p "require('./package.json').dependencies.docx")"
+      - name: Run the suite with no node_modules
+        env:
+          NODE_PATH: ''
+        run: |
+          test ! -d node_modules
+          npm test

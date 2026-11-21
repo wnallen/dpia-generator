@@ -36,14 +36,19 @@ threshold; the operative reality is twofold:
 
 1. **High-risk processing should have an RIPD ready** — the ANPD's preliminary guidance takes
    the position that high-risk processing calls for one. **Correction from the 2026-08-04
-   verification pass:** Resolução CD/ANPD **nº 2, de 27 de janeiro de 2022** is the
-   **small-agents** regulation (agentes de tratamento de pequeno porte) — an earlier draft of
-   this module wrongly attributed a binding high-risk-criteria list to it. The ANPD does
-   describe high-risk indicators (a "large-scale" factor combined with a "significant-harm"
-   factor: emerging technologies; surveillance of publicly accessible areas; decisions
-   affecting rights; sensitive data; vulnerable subjects including children and the elderly),
-   but these indicators are **expressly non-exhaustive guidance**, not a closed statutory
-   list — do not cite them as binding. `[web search — verify]`
+   verification pass, refined 2026-11-21:** Resolução CD/ANPD **nº 2, de 27 de janeiro de
+   2022** is the **small-agents** regulation (agentes de tratamento de pequeno porte) — an
+   earlier draft of this module cited it as a binding general high-risk list, which it is
+   not. Its **Art. 4 does define "tratamento de alto risco"** — a "large-scale" factor
+   combined with a "significant-harm" factor (emerging technologies; surveillance of publicly
+   accessible areas; decisions affecting rights; sensitive data; vulnerable subjects including
+   children and the elderly) — but **for the purposes of that regime** (a small agent carrying
+   out high-risk processing loses the simplified treatment). The ANPD reuses the same criteria
+   as **expressly non-exhaustive guidance** generally, so cite Res. 2/2022 Art. 4 as the source
+   of the criteria and the FAQ as the guidance applying them, never as a closed statutory list.
+   The board **rejected the draft orientation guide on high-risk processing (~2026-09-24,
+   Voto nº 11/2025/DIR-MW/CD)** as over-complex and routed the high-risk analysis into the
+   pending RIPD regulation. `[web search — verify]`
 2. **The ANPD can demand it** — the RIPD is producible on regulatory order regardless of any
    self-assessment.
 
@@ -71,9 +76,11 @@ spine**; nothing in it is surplus for Brazil. Additions:
   identify the mechanism. **EU–Brazil mutual adequacy adopted 2026-01-26** (announced
   2026-01-27; coordinated unilateral decisions — the Brazilian leg is **Resolução CD/ANPD
   nº 32, de 26 de janeiro de 2026**, the ANPD's first adequacy decision, recognizing the
-  EU): the EU limb's transfer to Brazil no longer needs SCCs + TIA, and the Brazil→EU leg
-  has an adequacy route — check each direction's instrument before citing.
-  `[web search — verify]` (corroborated 2026-09-12)
+  EU; the EU leg is **Commission Implementing Decision (EU) 2026/179**, C(2026) 373, in
+  force 2026-01-28, reviewed within four years): the EU limb's transfer to Brazil no longer
+  needs SCCs + TIA, and the Brazil→EU leg has an adequacy route — check each direction's
+  instrument before citing. `[web search — verify]` (corroborated 2026-09-12; decision
+  number 2026-11-21)
 - **Children (Art. 14):** best-interests standard; processing of children's data was loosened
   from consent-only by later amendment/interpretation — verify before relying.
 
@@ -106,8 +113,8 @@ delivery may be expected on an ANPD demand; record translation status.
 ## 7. Source notes
 
 - Lei nº 13.709/2018 — planalto.gov.br. UNVERIFIED; stable statutory identifier, capture URL on first fetch.
-- ANPD RIPD FAQ page (April 2023) — gov.br/anpd. UNVERIFIED; preliminary, superseded when the RIPD regulation lands. **Status re-checked 2026-08-11: the RIPD regulation is still on the ANPD's regulatory agenda ("under analysis"), unfinalized — the volatility banner stands.** A guide on "high risk and large scale" definitions was reported pending board approval.
-- Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**, `[web search — verify]` (confirmed 2026-08-04; **not** a high-risk-criteria instrument — see §2).
+- ANPD RIPD FAQ page (April 2023) — gov.br/anpd. UNVERIFIED; preliminary, superseded when the RIPD regulation lands. **Status re-checked 2026-11-21: the RIPD regulation is still on the ANPD's regulatory agenda, unfinalized — the volatility banner stands.** The "high risk and large scale" guide once reported pending board approval was rejected by the board in September 2026 (see the 2026-11-21 note below).
+- Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 — **small agents (agentes de pequeno porte)**; its Art. 4 high-risk definition is reused by the ANPD as guidance, `[web search — verify]` (confirmed 2026-08-04; characterisation refined 2026-11-21 — see §2).
 - **Resolução CD/ANPD nº 19, de 23 de agosto de 2024** — the international-transfer regulation and Brazilian SCCs. `[web search — verify]` (number/date confirmed 2026-08-11 against the gov.br listing surfaced by search; the earlier "unconfirmed" flag is resolved). Official page: `gov.br/anpd/.../resolucao-cd-anpd-no-19-de-23-de-agosto-de-2024`.
 - 2025–2026 watch items (`[web search — verify]`, corroborated 2026-08-11): Resoluções CD/ANPD nº 30 e 31/2025 (December 2025 — regulatory-agenda update and the 2026–2027 inspection priority themes: data-subject rights incl. biometrics, children/ECA Digital, public sector, AI); the **ECA Digital** children's statute with an ANPD enforcement role and the ANPD's preliminary guide on age-assurance mechanisms (2026-03-20). Flag on any Brazil-scope DPIA touching children or AI.
-- 2026-09-12 additions (`[web search — verify]`): the ANPD opened a **tomada de subsídios on high-risk processing (2026-08-29 → 2026-09-28; closed, outcome not yet checked — next currency pass)** feeding the pending orientation guide on evaluating high-risk processing for small-scale agents — directly relevant to §2's high-risk indicators; check whether the guide has issued on any Brazil-scope run after Q4 2026. **PL 2338/2023** (the AI bill): Senate-passed 2024-12-10, stuck in a Chamber special committee — the rapporteur postponed the vote until after the October 2026 elections. A bill, not law; a one-line watch item for AI-scope DPIAs, never a citation.
+- 2026-09-12 additions, resolved 2026-11-21 (`[web search — verify]`): the high-risk orientation guide the 2026-09-12 pass expected **will not issue** — the Conselho Diretor declined to approve the draft (~2026-09-24, Voto nº 11/2025/DIR-MW/CD) and folded high-risk criteria into the pending **RIPD regulation (Tema 2 of the 2025–2026 Regulatory Agenda), still in elaboration; no RIPD resolution published**. The tomada de subsídios recorded on 2026-09-12 could not be re-found; what did run was **Tomada de Subsídios 04/2026 on the 2027–2028 Regulatory Agenda** (2026-09-01 → 2026-10-16). Resolutions since: **nº 33 (2026-04-06)** — staffing/structure alongside Decreto 12.881/2026 completing the ANPD's conversion into an agência reguladora; **nº 34 (2026-11-16, DOU 2026-11-17)** — internal rules for distributing cases when only one director is qualified (a board-quorum signal; no substantive change). Nothing new on transfers (Res. 19/2024), DPOs, incidents or AI. **PL 2338/2023** (the AI bill): Senate-passed 2024-12-10; the Chamber special committee was still **awaiting the rapporteur's parecer as of 2026-11-07**, with the government seeking a vote by December 2026 and no date set. A bill, not law; a one-line watch item for AI-scope DPIAs, never a citation.

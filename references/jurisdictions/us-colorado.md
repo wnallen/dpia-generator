@@ -84,9 +84,13 @@ date was delayed to 2026-06-30 (special session, Aug 2025), enforcement was then
 the federal district court in the xAI litigation (2026-04-27, DOJ intervening), and the Act
 was **repealed by SB 26-189, signed 2026-05-14**, before commencement. Its replacement, the
 Colorado **Automated Decision-Making Technology Act** (effective 2027-01-01), is a
-transparency/disclosure regime with **no impact-assessment obligation**. The CPA's Rule 8
-data protection assessment duty is unchanged and remains the only Colorado assessment
-instrument. `[web search — verify]` (signing date corroborated 2026-09-12).
+transparency/disclosure regime with **no impact-assessment obligation** (disclosure, notice,
+correction and appeal; AG-only enforcement). The AG's implementing **ADMT and conversational-AI
+rules (4 CCR 904-6)** — proposed 2026-08-11, revised 2026-10-06, hearing 2026-10-26 — were
+**not yet adopted as of 2026-11-21**; they must be in place by 2027-01-01, and nothing in the
+drafts adds an assessment duty. The CPA's Rule 8 data protection assessment duty is unchanged
+and remains the only Colorado assessment instrument. `[web search — verify]` (signing date
+corroborated 2026-09-12; replacement regime and rulemaking status 2026-11-21).
 
 **Rendering:** produce the register and 3×3 matrix as usual — they satisfy the risk element —
 and add a `complianceMap` block (`"regime": "us-co"`) mapping each Rule 8.04 element to the

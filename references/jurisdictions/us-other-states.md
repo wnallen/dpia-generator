@@ -35,9 +35,19 @@ rules; the states here have statutes but (as of build) no equivalent rulemaking.
 >   Connecticut against the amended text on every run; the harmonized screen alone
 >   under-states it.
 > - **New Jersey:** the NJDPA was amended by **A5328 (signed 2026-06-30)** — a data
->   broker/data collector **registration** framework (registry launching spring 2027)
->   layered onto the law; the June 2025 proposed NJDPA regulations **expired unadopted
->   2026-06-02**, so the no-equivalent-rulemaking premise of this module still holds for NJ.
+>   broker/data collector **registration** framework (registry provisions inoperative for
+>   270 days, so launching ~late March 2027, with the AG deferring enforcement until it is
+>   live) and a **ban on the sale of sensitive data with no volume threshold**; the June
+>   2025 proposed NJDPA regulations **expired unadopted 2026-06-02**, so the
+>   no-equivalent-rulemaking premise of this module still holds for NJ. (detail
+>   corroborated 2026-11-21)
+> - **Kentucky's 2026-06-01 assessment date is confirmed against the statute**
+>   (KRS 367.3621(8): "processing activities created or generated on or after June 1,
+>   2026"; the Act itself took effect 2026-01-01) — official text seen 2026-11-21.
+> - **No new comprehensive state privacy law was enacted between 2026-09-23 and
+>   2026-11-21** (24 states incl. Florida; MA, PA, MI, WI, GA all still without one). No
+>   federal comprehensive privacy law or AI-law moratorium has been enacted (the SECURE
+>   Data Act, H.R. 8413, had a June 2026 subcommittee hearing and no markup).
 > - **Enacted 2026, not yet effective:** Oklahoma (SB 546, eff. 2027-01-01, requires DPAs);
 >   Louisiana (SB 386, eff. 2027-01-01, requires DPAs); Vermont (S.71/Act 145, eff.
 >   2028-01-01, requires DPAs **plus** a content-prescribed profiling impact assessment);
@@ -137,3 +147,19 @@ Manifest conclusion key: `regulatorConclusions["us-state"].assessmentRequired`.
 Same as Colorado: drafted expecting production under a CID, with statutory non-waiver
 language in most states (UNVERIFIED per state); keep candid strategic analysis in the
 privileged spine document.
+
+## 4. Adjacent state AI/ADM statutes (flag in Section 6; none adds a privacy assessment duty)
+
+Where the processing involves automated decisions about residents of these states, name
+the statute in the applicable-regimes table even though it carries no data-protection
+assessment of its own (all `[web search — verify]`, corroborated 2026-11-21): **Texas
+TRAIGA** (HB 149, in force 2026-01-01 — intent-based discrimination standard, AG
+enforcement, no impact-assessment duty); **Illinois HB 3773** (Human Rights Act AI
+amendment, in force 2026-01-01 — the IDHR's proposed notice rules were withdrawn in June
+2026, so notice content is unsettled); **New York City Local Law 144** (bias audits);
+**New York RAISE Act** (effective 2027-01-01, frontier developers only); **California SB
+947** (employer ADS, effective 2027-07-01 — see `us-california.md` §6a) and the CPPA ADMT
+regulations (compliance from 2027-01-01); **Colorado's ADMT Act** (effective 2027-01-01 —
+see `us-colorado.md`). Connecticut's profiling impact assessment (processing created on or
+after 2026-08-01) is the one state-law *assessment* duty in this group and is carried in
+the roster note above.

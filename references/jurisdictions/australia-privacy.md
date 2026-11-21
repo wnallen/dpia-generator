@@ -31,14 +31,24 @@ that the PIA is the prudential accountability record.
   (corroborated 2026-08-11)
 - **APP 1.7 ADM transparency** — from **2026-12-10**, privacy policies must disclose
   computer programs used to make (or substantially and directly assist in making) decisions
-  significantly affecting individuals — feed §1.10's policy consistency check. `[web search — verify]`
+  significantly affecting individuals — feed §1.10's policy consistency check. The OAIC's
+  **final guidance issued 2026-09-30**: APP Guidelines Chapter 1 v2.0 ("September 2026"), an
+  APP 1.7–1.9 transparency fact sheet, an agency supplement and a flowchart; the OAIC reads
+  "arranged for" to cover vendor-operated programs and human-reviewed outputs, with no duty
+  to disclose trade secrets. `[web search — verify]` (corroborated 2026-11-21; OAIC PDF
+  `APP-Guidelines-APP-1-...-September-2026-v2.pdf`)
 - **Children's Online Privacy Code** — OAIC must register by **2026-12-10**; the OAIC's
-  **exposure draft** was consulted on to 2026-06-05 (on track); child-directed services get a
-  placeholder row until the code is registered. `[web search — verify]` (corroborated 2026-08-11)
+  **exposure draft** was consulted on to 2026-06-05; **not yet registered as of 2026-11-21**
+  (commencement will be set in the Code and may post-date registration); child-directed
+  services get a placeholder row until the code is registered. `[web search — verify]`
+  (corroborated 2026-08-11; re-checked 2026-11-21)
+- **OAIC, *Facial Recognition Technology: a guide to assessing the privacy risks* (July
+  2026)** — the regulator's own FRT risk method; cite for any Australia-scope biometric
+  DPIA. `[web search — verify]` (corroborated 2026-11-21)
 - **Tranche-two reforms — exposure draft out (2026-08-31):** the AG's Department released
   the exposure-draft **Privacy Amendment (Personal Data Protection) Bill 2026** with a
   consultation paper on 2026-08-31 (submissions closed 2026-09-18; the Government has signalled
-  introduction before the end of 2026 — still not introduced as of 2026-09-23). Contents: a
+  introduction before the end of 2026 — still not introduced as of 2026-11-21). Contents: a
   **"fair and reasonable" test** (rewritten APP 3), a **controller/processor framework**,
   and a **right to erasure for large digital platforms**. Still an exposure draft — not an
   introduced bill, not law; characterize it as proposed reform, do not assert its rules.

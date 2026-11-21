@@ -1,0 +1,9 @@
+{
+  "systemName": "評価システム",
+  "date": "2026-11-21",
+  "docTitle": "DATA PROTECTION IMPACT ASSESSMENT (DPIA) — Quebec Law 25",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "A non-Latin system name and a subtitled document title." }
+  ]
+}

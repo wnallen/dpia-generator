@@ -66,13 +66,19 @@ producible in inspections; MPS may order transfer suspension."* Producing a
 "ready-to-file" dossier is a consequential step under the regulator filing gate in
 SKILL.md — confirm before finalizing, and do not file on the user's behalf.
 
-Enforcement context (all `[web search — verify]`, corroborated 2026-09-12): the Law's
-statutory caps run to **VND 3 billion generally and up to 5% of prior-year revenue for
-cross-border violations**; a **draft administrative-sanctions decree** for
-cybersecurity/personal-data violations went to public comment in March 2026 (draft — do
-not cite as law; check status per run). Decree 356 also sets a **72-hour breach
-notification for location and biometric data** — a Section 6 delta where those categories
-are processed.
+Enforcement context (all `[web search — verify]`, corroborated 2026-09-12; sanctions decree
+2026-11-21): the Law's statutory caps run to **VND 3 billion generally and up to 5% of
+prior-year revenue for cross-border violations**. The administrative-sanctions decree is now
+law: **Decree 330/2026/NĐ-CP of 19 August 2026, effective the same day** (no transition
+period; 82 articles, 33 on personal data; implements Law 91/2025 and Decree 356/2025).
+Against the March 2026 draft, DPIA/DTIA fines were reduced and the per-affected-subject
+multiplier removed: processing **without a DPIA dossier** draws a fine (reported VND 20–30
+million for organisations) **plus suspension of processing until the dossier is filed**;
+consent violations VND 30–70 million; cross-border violations VND 50–100 million, or
+revenue-based where data leaks; ancillary measures include suspension, deletion and
+disgorgement. Cite the Decree for the consequence of a missing dossier in Section 5. Decree
+356 also sets a **72-hour breach notification for location and biometric data** — a Section
+6 delta where those categories are processed.
 
 ## 5. Privilege posture
 
@@ -85,4 +91,5 @@ requirements verified before submission.
 
 - Law No. 91/2025/QH15 — Official Gazette / MPS. `[web search — verify]`; capture article numbers for both dossiers on first fetch.
 - Decree 13/2023/ND-CP (replaced; structure persists) — Arts. 24–25. `[model knowledge — verify]`.
-- Decree No. 356/2025/ND-CP (promulgated 2025-12-31, effective 2026-01-01) — the implementing decree and its dossier form templates. `[web search — verify]` (corroborated 2026-08-11 / 2026-09-12); capture the form numbers on first fetch. Further implementing instruments (incl. the draft administrative-sanctions decree, §4) — verify per run.
+- Decree No. 356/2025/ND-CP (promulgated 2025-12-31, effective 2026-01-01) — the implementing decree and its dossier form templates. `[web search — verify]` (corroborated 2026-08-11 / 2026-09-12); capture the form numbers on first fetch. No MPS circular on the dossier forms found as of 2026-11-21 — the Decree 356 templates stand.
+- **Decree No. 330/2026/NĐ-CP (19 August 2026, effective 19 August 2026)** — administrative sanctions for cybersecurity and personal-data violations (§4). Official record: vanban.chinhphu.vn, docid 219266. `[web search — verify]` (corroborated 2026-11-21; capture the article numbers for the DPIA/DTIA-dossier offences on first fetch).

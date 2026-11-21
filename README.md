@@ -99,7 +99,7 @@ node scripts/run_regression.js          # exit 0 if all pass; --keep to inspect 
 
 Each case is a defect that shipped or a gate that exists to stop one, and each carries a one-line note saying which; the runner fails on a fixture with no case, so the fixture directory cannot silently drift from the suite. Run it after any change to the builder, to `references/risk-matrix.md`, or to the manifest schema — the matrix mapping and the Article 36 flag are the two things in this skill a reader cannot check by eye. The suite is mutation-tested: reintroducing the v1.1 Article 36 bug, or corrupting a single matrix cell, turns it red.
 
-The builder validates its own OOXML output via the public docx skill's `validate.py` where that skill is installed (`/mnt/skills/public/docx`). The validator is a Python script requiring the `defusedxml` and `lxml` packages. Where it is absent, or cannot start because a Python module is missing, the builder runs the bundled `scripts/check_ooxml.py` instead — a stdlib check that every XML part is well-formed (which is what catches the control-character class of defect) and that relationship targets exist — and says so in a stderr note; validation is never skipped, and a file that fails either check is removed with exit 2. `pip install defusedxml lxml` upgrades the fallback to the full validator. `--no-validate` disables the validation step entirely. CI runs on Node 22 (`.nvmrc`); the pinned `docx` tree needs Node ≥ 20.
+The builder validates its own OOXML output via the public docx skill's `validate.py` where that skill is installed (`/mnt/skills/public/docx`). The validator is a Python script requiring the `defusedxml` and `lxml` packages. Where it is absent, or cannot start because a Python module is missing, the builder runs the bundled `scripts/check_ooxml.py` instead — a stdlib check that every XML part is well-formed (which is what catches the control-character class of defect) and that relationship targets exist — and says so in a stderr note; validation is never skipped, and a file that fails either check is removed with exit 2. `pip install defusedxml lxml` upgrades the fallback to the full validator. `--no-validate` disables the validation step entirely. CI runs on Node 22 (`.nvmrc`); the pinned `docx` tree needs Node ≥ 20. The builder resolves `docx` from the repo's `node_modules` where present and otherwise from the npm global prefix (the skill image has no `node_modules`), and names the version it loaded in its validation note; CI runs the suite on both paths, the second with no `node_modules` and the pinned version installed globally, so a global copy that drifts from the pin is caught rather than assumed.
 
 ## Maintenance — keeping the regime modules honest
 
@@ -112,10 +112,12 @@ The skill's coverage is only as good as its most stale module. Four standing rul
    run that touches them**, and rebuilt from the final instrument when it lands, never
    patched by prose. Vietnam's module carries a re-verify-every-run sourcing note (Decree
    356/2025 landed; its dossier forms not yet read), and Australia's tranche-two reforms are
-   the same class. The UAE's executive regulations were issued in 2026 (decision number
-   still unverified), tracked in the screening catalog.
+   the same class. The UAE's executive regulations are **still unissued** (an earlier note
+   that they had issued was withdrawn on 2026-11-21) and Chile's Ley 21.719 has an entry
+   into force that depends on whether a postponement is published before 2026-12-01 — both
+   tracked in the screening catalog.
 2. **Dates are check-by dates.** Every sourcing banner records when its corroboration pass
-   ran (latest pass: 2026-09-23, per `references/currency-log.md`). A banner more than ~6 months old should be treated as a
+   ran (latest pass: 2026-11-21, per `references/currency-log.md`). A banner more than ~6 months old should be treated as a
    prompt to re-verify before reliance, not as a fact.
 3. **`tech-law-radar` feeds the queue.** The sibling skill's periodic sweeps are the
    designed intake for new instruments (the Malaysian guideline's text and effective date, an SDF designation

@@ -134,6 +134,10 @@
  *         the assessment date warns on stderr. Rows come from the controller's
  *         notice profile (references/notice-profile.md) where one exists.
  *   {"type":"signature","rows":[["Data Protection Officer","______","Date"]]}
+ *      -- exactly three cells per row (role, signature, date).
+ *
+ *   Text is one paragraph per block: a "\n" inside "text" is written through
+ *   and Word shows it as a space, not a line break — use separate blocks.
  */
 
 /**
@@ -206,13 +210,41 @@ const path = require('path');
 const { execFileSync, spawnSync } = require('child_process');
 
 // Resolve docx from the global prefix; it is installed globally in this image.
+// The version actually loaded is reported in the validation note, because the
+// two resolution paths can load different versions: a checkout with
+// node_modules gets the pinned one, the skill image gets whatever is global.
+let DOCX_VERSION = 'unknown';
+function versionOf(pkgJsonPath) {
+  try { return JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8')).version || 'unknown'; } catch (e) { return 'unknown'; }
+}
+// The package's own package.json is found by walking up from the resolved
+// entry file: newer docx releases restrict "exports", so
+// require.resolve('docx/package.json') throws. Never inside the require()'s
+// try — a failed version lookup must not fall through to a different module.
+function versionNear(entryFile) {
+  try {
+    let dir = path.dirname(entryFile);
+    while (dir !== path.dirname(dir)) {
+      const pj = path.join(dir, 'package.json');
+      if (fs.existsSync(pj) && JSON.parse(fs.readFileSync(pj, 'utf8')).name === 'docx') return versionOf(pj);
+      dir = path.dirname(dir);
+    }
+  } catch (e) { /* unknown */ }
+  return 'unknown';
+}
 function loadDocx() {
-  try { return require('docx'); } catch (e) { /* fall through */ }
+  let mod = null;
+  try { mod = require('docx'); } catch (e) { /* fall through */ }
+  if (mod) {
+    try { DOCX_VERSION = versionNear(require.resolve('docx')); } catch (e) { /* unknown */ }
+    return mod;
+  }
   let prefix;
   try { prefix = execFileSync('npm', ['prefix', '-g'], { encoding: 'utf8' }).trim(); }
   catch (e) { fail(1, 'cannot locate npm global prefix: ' + e.message); }
   const p = path.join(prefix, 'lib', 'node_modules', 'docx');
   if (!fs.existsSync(p)) fail(1, 'docx package not found; run: npm install -g docx');
+  DOCX_VERSION = versionOf(path.join(p, 'package.json'));
   return require(p);
 }
 
@@ -415,7 +447,7 @@ const REGIMES = {
     label: 'Malaysia PDPA',
     conclusionKey: 'assessmentRequired',
     derive: null,
-    engagement: "DPIA under the JPDP DPIA Guideline (issued 2026-04-30) where its mandatory thresholds are met; retained and producible to the Commissioner on request \u2014 verify thresholds and effective date against the guideline text",
+    engagement: "DPIA under the JPDP DPIA Guideline (issued 2026-04-30: more than 20,000 data subjects, or sensitive personal data incl. financial of more than 10,000; ADM/profiling and other qualitative triggers regardless of scale); retained and producible to the Commissioner on request \u2014 the guideline states no effective date; verify against its text",
     conclusionLabels: ["Assessment required", "Assessment not required"],
   },
   'au-privacy': {
@@ -547,8 +579,9 @@ function resolveRegister(rows) {
     const ctx = `riskRegister row ${i + 1} (${r.id || 'no id'})`;
     const iL = norm(r.likelihood, 'likelihood', ctx);
     const iS = norm(r.severity, 'severity', ctx);
-    const rL = norm(r.residualLikelihood !== undefined ? r.residualLikelihood : r.likelihood, 'residualLikelihood', ctx);
-    const rS = norm(r.residualSeverity !== undefined ? r.residualSeverity : r.severity, 'residualSeverity', ctx);
+    // Optional fields: null, like undefined, means "same as inherent".
+    const rL = norm(r.residualLikelihood ?? r.likelihood, 'residualLikelihood', ctx);
+    const rS = norm(r.residualSeverity ?? r.severity, 'residualSeverity', ctx);
     const inherent = rate(iL, iS);
     const residual = rate(rL, rS);
     // Optional post-mitigation scoring: the residual expected once Section 5's
@@ -563,6 +596,11 @@ function resolveRegister(rows) {
     const mL = hasML ? norm(r.mitigatedLikelihood, 'mitigatedLikelihood', ctx) : null;
     const mS = hasMS ? norm(r.mitigatedSeverity, 'mitigatedSeverity', ctx) : null;
     const mitigated = mL ? rate(mL, mS) : null;
+    // Mitigations lower risk. A post-mitigation score above the residual is a
+    // scoring error the gates cannot see (nothing is contradicted), so warn.
+    if (mitigated && LEVELS.indexOf(mitigated) > LEVELS.indexOf(residual)) {
+      process.stderr.write(`build_dpia: WARNING — ${ctx}: post-mitigation rating "${mitigated}" (${mL} x ${mS}) is higher than the residual "${residual}" (${rL} x ${rS}). Mitigations lower risk; re-examine the scores.\n`);
+    }
     // A stated mitigatedRating with no scores to derive from is a manifest
     // error (exit 1), not a rating-gate contradiction: comparing it against a
     // null derivation produced an exit 3 telling the user to re-examine
@@ -688,8 +726,12 @@ function dataTable(columns, bodyRows, widths) {
       !widths.every(x => typeof x === 'number' && Number.isFinite(x) && x >= 1 && x <= 100))) {
     fail(1, 'table "widths" must be an array of percentages between 1 and 100');
   }
-  const w = widths && widths.length === columns.length
-    ? widths : columns.map(() => Math.floor(100 / columns.length));
+  // A widths list of the wrong length was silently ignored; the author who
+  // wrote it meant something, so say so instead of guessing.
+  if (widths !== undefined && widths.length !== columns.length) {
+    fail(1, `table "widths" has ${widths.length} entr${widths.length === 1 ? 'y' : 'ies'} but the table has ${columns.length} column(s)`);
+  }
+  const w = widths || columns.map(() => Math.floor(100 / columns.length));
   const head = new TableRow({
     tableHeader: true,
     children: columns.map((c, i) => cell(c, { bold: true, fill: 'D9E2F3', width: w[i] })),
@@ -917,6 +959,10 @@ function build(manifest, state) {
         // cells (or a ragged one) writes a w:tr the schema rejects or a grid
         // Word re-flows unpredictably — fail with the row named instead.
         if (!b.columns.length) fail(1, `${ctx}: "columns" must name at least one column`);
+        // Body cells render null as empty; a null header rendered the word "null".
+        b.columns.forEach((c, i) => {
+          if (c === undefined || c === null) fail(1, `${ctx}: column ${i + 1} must be text, got ${c === null ? 'null' : 'undefined'}`);
+        });
         b.rows.forEach((r, j) => {
           rowArray(r, `${ctx} row ${j + 1}`);
           if (r.length !== b.columns.length) {
@@ -1065,6 +1111,9 @@ function build(manifest, state) {
             process.stderr.write(`build_dpia: WARNING — the notice behind ${ctx} was indexed ${b.notice.date}, ` +
               `more than six months before this assessment (${manifest.date}). Re-fetch the published notice and ` +
               're-verify the profile before relying on the consistency check.\n');
+          } else if (ageDays < 0) {
+            process.stderr.write(`build_dpia: WARNING — the notice behind ${ctx} carries an index date (${b.notice.date}) ` +
+              `after the assessment date (${manifest.date}). One of the two dates is wrong; the staleness check cannot run on it.\n`);
           }
         }
         let unresolved = false;
@@ -1129,8 +1178,14 @@ function build(manifest, state) {
         // A null cell renders empty, matching dataTable's contract — never the
         // literal word "null" in a signature line.
         if (b.rows !== undefined && !Array.isArray(b.rows)) fail(1, `${ctx}: "rows" must be an array of rows`);
-        const rows = (b.rows || []).map((r, j) => rowArray(r, `${ctx} row ${j + 1}`)
-          .map((v, k) => (v === undefined || v === null) ? '' : txt(v, `${ctx} row ${j + 1} cell ${k + 1}`)));
+        // Three cells per row, like the table block (v4.4.7): a row with no
+        // cells wrote a bare w:tr Word cannot open, and both validators passed
+        // it — "validated" is well-formedness, not openability.
+        const rows = (b.rows || []).map((r, j) => {
+          rowArray(r, `${ctx} row ${j + 1}`);
+          if (r.length !== 3) fail(1, `${ctx} row ${j + 1}: has ${r.length} cell(s) but the signature table has 3 column(s) (role, signature, date)`);
+          return r.map((v, k) => (v === undefined || v === null) ? '' : txt(v, `${ctx} row ${j + 1} cell ${k + 1}`));
+        });
         children.push(dataTable(['Role', 'Signature', 'Date'], rows, [34, 40, 26]));
         children.push(p('', { after: 120 }));
         break;
@@ -1170,7 +1225,9 @@ function build(manifest, state) {
 
   return new Document({
     creator: 'dpia-generator (AI-generated draft)',
-    title: txt(`DPIA \u2014 ${manifest.systemName}`),
+    // The core-properties title follows docTitle like the filename does: a
+    // producible record named DPA_... must not carry "DPIA" in its metadata.
+    title: txt(`${docTitleOf(manifest)} \u2014 ${manifest.systemName}`),
     description: txt((headerTextOf(manifest) ? headerTextOf(manifest) + ' | ' : '') + GENERATION_NOTICE),
     styles: { default: { document: { run: { font: FONT, size: 22 } } } },
     sections: [{
@@ -1250,6 +1307,9 @@ function main() {
         fail(1, `manifest: "${k}" must be a string, got ${Array.isArray(v) ? 'an array' : typeof v === 'object' ? 'an object' : typeof v}`);
       }
     });
+  // "counsel" gates the privilege posture by truthiness; a whitespace-only
+  // value turned the work-product header on with no one named. Blank is absent.
+  if (typeof m.counsel === 'string') m.counsel = m.counsel.trim();
   if (m.statusOptions !== undefined && m.statusOptions !== null &&
       (!Array.isArray(m.statusOptions) || m.statusOptions.some(s => typeof s !== 'string'))) {
     fail(1, 'manifest: "statusOptions" must be an array of strings');
@@ -1283,11 +1343,16 @@ function main() {
 
   // Capped: a long systemName must not pack the whole document and then fail
   // at open with ENAMETOOLONG.
-  const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 80);
+  // A name with no Latin letters or digits ("評価システム") would leave an
+  // empty segment and a double underscore; fall back to a neutral word.
+  const safe = String(m.systemName).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 80) || 'Document';
   // Filename prefix follows the document title's initials, so the default title
   // yields the historical "DPIA_" and a Colorado "DATA PROTECTION ASSESSMENT"
   // yields "DPA_" — a producible record must not ship under a DPIA filename.
-  const prefix = ((docTitleOf(m).match(/[A-Za-z]+/g) || [])
+  // Only the title proper counts: a parenthetical or a subtitle after a dash
+  // or colon ("... (DPIA) — Quebec Law 25") must not inflate the initials.
+  const titleProper = docTitleOf(m).replace(/\([^)]*\)/g, '').split(/\s[—–-]\s|:/)[0];
+  const prefix = ((titleProper.match(/[A-Za-z]+/g) || [])
     .map(w => w[0].toUpperCase()).join('').slice(0, 8)) || 'DPIA';
   // basename() so a manifest "outputFilename" cannot write outside outputDir via "../".
   // basename(".."|".") returns the reference itself, so reject those (and empty)
@@ -1402,7 +1467,9 @@ function main() {
               'Declare regulatorConclusions["<code>"] for each regime instead.');
     }
     consultRegimes.forEach(c => {
-      if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined) {
+      // null means "use the default" everywhere else in the manifest; here the
+      // default is the alias, so a null entry is filled like a missing one.
+      if (!rc[c] || rc[c][REGIMES[c].conclusionKey] === undefined || rc[c][REGIMES[c].conclusionKey] === null) {
         rc[c] = Object.assign(Object.create(null), rc[c], { [REGIMES[c].conclusionKey]: m.art36 });
       }
     });
@@ -1451,7 +1518,7 @@ function main() {
       if (declared === undefined || declared === null) {
         if (def.derive) {
           fail(1, `manifest: "art36" is required when the DPIA contains a riskRegister ` +
-                  `(or declare regulatorConclusions["${code}"].${def.conclusionKey}). Declare the ` +
+                  `(or declare regulatorConclusions["${code}"].${def.conclusionKey}, which is ${declared === null ? 'null' : 'missing'}). Declare the ` +
                   'prior-consultation conclusion as true or false; the script checks it against the register.');
         }
         fail(1, `manifest: regulatorConclusions["${code}"].${def.conclusionKey} is required when the DPIA ` +
@@ -1641,7 +1708,7 @@ function validateOutput(file, outPath, reject) {
   if (fs.existsSync(full)) {
     const r = spawnSync('python3', [full, file], { encoding: 'utf8' });
     if (!r.error && r.status === 0) {
-      process.stderr.write('build_dpia: note — the full OOXML validator (validate.py) passed.\n');
+      process.stderr.write(`build_dpia: note — the full OOXML validator (validate.py) passed (docx ${DOCX_VERSION}).\n`);
       return;
     }
     // Only an environment failure falls back: python3 not launchable, or a
@@ -1665,7 +1732,7 @@ function validateOutput(file, outPath, reject) {
   }
   if (r.status !== 0) rejected(r, 'bundled well-formedness check');
   process.stderr.write(`build_dpia: note — ${fallbackReason}; the bundled well-formedness check ` +
-    '(scripts/check_ooxml.py) passed instead of the full OOXML validator.\n');
+    `(scripts/check_ooxml.py) passed instead of the full OOXML validator (docx ${DOCX_VERSION}).\n`);
 }
 
 // Last line of the fail-cleanly contract: whatever shape of manifest slips

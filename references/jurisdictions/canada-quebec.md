@@ -76,13 +76,16 @@ failures before quoting either number in a deliverable.
   introduced at first reading **2026-06-15** — privacy-only (no bundled AI act), AMPs up to
   the greater of **$10M or 3%** of gross global revenue and offences up to the greater of
   **$25M or 5%** (the ceiling is percentage-of-revenue, not a flat $25M), enforcement via a
-  new Digital Safety and Data Protection Commission. Still at first reading as of 2026-09-23;
-  Parliament resumed 2026-09-21 and second reading is expected this sitting. **Not law**; do not assert
-  its obligations, but flag it as incoming for long-lived processing. Also note the OPC's
-  joint **OpenAI/ChatGPT findings (PIPEDA #2026-002, ~May 2026, joint with the CAI,
-  OIPC-BC and OIPC-AB — the CAI's participation makes it citable on the Quebec limb too)**
-  as persuasive guidance for AI-training assessments. `[web search — verify]`
-  (corroborated 2026-09-12)
+  new Digital Safety and Data Protection Commission. **At second reading in the House of
+  Commons** (debate under way; reported 2026-09-30 and 2026-11-16), not yet referred to
+  committee, no amendments. **Not law**; do not assert its obligations, but flag it as
+  incoming for long-lived processing. Also note the OPC's joint **OpenAI/ChatGPT findings
+  (PIPEDA #2026-002, final, published 2026-05-06, joint with the CAI, OIPC-BC and OIPC-AB —
+  the CAI's participation makes it citable on the Quebec limb too; initial ChatGPT training
+  found non-compliant, complaint "well-founded and conditionally resolved")** as persuasive
+  guidance for AI-training assessments, and the OPC's **draft guidance on third-party
+  service providers (2026-09-10; comments to 2026-12-04)** for processor-heavy flows.
+  `[web search — verify]` (corroborated 2026-09-12; stage and dates 2026-11-21)
 - **Federal public sector:** the Treasury Board **Directive on Privacy Impact Assessment**
   makes PIAs mandatory for government institutions; relevant only when the client is or
   serves a federal institution.
@@ -113,7 +116,10 @@ analysis, per the destination check.
 - CAI, companion guide on PIAs (EFVP) — cai.gouv.qc.ca (`CAI_GU_EFVP.pdf`). `[web search — verify]`.
   The CAI released a reorganized, more user-friendly edition (2024, refreshed 2025) that
   **keeps the same orientations as the September 2023 guide**, plus a non-mandatory generic
-  PIA report template — cite the current edition, substance unchanged. (corroborated 2026-08-11)
+  PIA report template — cite the current edition (v3.1, 2024), substance unchanged; no 2026
+  revision found. (corroborated 2026-08-11; re-checked 2026-11-21) The CAI's **five-year
+  report** (rapport quinquennal, tabled 2026-06-11, `CAI_RQ_2026_Res.pdf`) recommends that
+  the legislature define the EFVP process further — a watch item, not a change.
 - Quebec **anonymization regulation** (adopted May 2024): the anonymization-register duty
   applies from **2025-01-01** — a Section 6 line where the processing relies on
   anonymization. `[web search — verify]` (corroborated 2026-08-11)
