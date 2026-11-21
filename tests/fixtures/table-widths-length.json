@@ -1,0 +1,7 @@
+{
+  "systemName": "Table Widths Length",
+  "date": "2026-11-21",
+  "blocks": [
+    { "type": "table", "columns": ["A", "B", "C"], "widths": [10, 90], "rows": [["1", "2", "3"]] }
+  ]
+}

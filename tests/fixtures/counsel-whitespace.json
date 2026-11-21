@@ -1,0 +1,9 @@
+{
+  "systemName": "Counsel Whitespace",
+  "date": "2026-11-21",
+  "counsel": "   ",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "No counsel is named; a blank value must not turn the work-product posture on." }
+  ]
+}

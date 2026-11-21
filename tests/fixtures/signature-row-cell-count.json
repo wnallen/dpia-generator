@@ -1,0 +1,8 @@
+{
+  "systemName": "Signature Row Cell Count",
+  "date": "2026-11-21",
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 7 — SIGN-OFF" },
+    { "type": "signature", "rows": [["Data Protection Officer", "______", "Date"], []] }
+  ]
+}

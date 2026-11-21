@@ -1,0 +1,30 @@
+{
+  "systemName": "Alias Null Conclusion",
+  "date": "2026-11-21",
+  "status": "Requires Art. 36 Prior Consultation",
+  "art36": true,
+  "regulatorConclusions": {
+    "eu-gdpr": {
+      "priorConsultation": null
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "SECTION 4 — RISK ASSESSMENT"
+    },
+    {
+      "type": "riskRegister",
+      "rows": [
+        {
+          "id": "R1",
+          "risk": "Risk R1",
+          "likelihood": "High",
+          "severity": "High",
+          "controls": "Controls."
+        }
+      ]
+    }
+  ]
+}

@@ -75,7 +75,19 @@ sys.stdout.write(' \\u2016 '.join(r.strip() for r in out if r.strip()))`;
   return execFileSync('python3', ['-c', py, docxPath], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 }
 
+// coreXml(doc) -> docProps/core.xml. The file metadata is posture-derived too
+// (title follows docTitle), and docText/rawXml never see it.
+function coreXml(docxPath) {
+  const py = `
+import sys, zipfile
+sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read('docProps/core.xml').decode())`;
+  return execFileSync('python3', ['-c', py, docxPath], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+}
+
 const VALIDATED = /note — (the full OOXML validator \(validate\.py\) passed|.*the bundled well-formedness check \(scripts\/check_ooxml\.py\) passed)/;
+// v4.4.8: the builder names the docx version it loaded, because the checkout
+// (node_modules) and the skill image (global prefix) can resolve different ones.
+const DOCX_VERSION = /\(docx \d+\.\d+\.\d+\)/;
 const STAR = /‖\s*High \*\s*‖/;          // a starred rating cell in the register
 const FOOTNOTE = /Article 36 prior consultation .* (is|are) engaged/;
 
@@ -825,6 +837,105 @@ const CASES = [
     exit: 0,
     stderr: /assert the opposite at: block 1 \(heading\); block 3 \(regulatorTable\) note eu-gdpr/,
   },
+  {
+    name: 'signature-row-cell-count',
+    why: 'v4.4.8: a signature row with no cells (or a ragged one) wrote a bare w:tr Word cannot open, with exit 0 — and both validators passed it. The table block had this check since v4.4.7; the signature block did not.',
+    exit: 1,
+    stderr: /block 2 \(signature\) row 2: has 0 cell\(s\) but the signature table has 3 column\(s\)/,
+  },
+  {
+    name: 'doctitle-core-properties',
+    why: 'v4.4.8: the file metadata title was hardcoded "DPIA — <system>", so a Colorado producible record named DPA_... still said DPIA in docProps/core.xml.',
+    exit: 0,
+    noWarn: true,
+    checkCore: (x) => [
+      [x.includes('<dc:title>DATA PROTECTION ASSESSMENT — Core Title</dc:title>'), 'core title follows docTitle'],
+      [!x.includes('DPIA'), 'no "DPIA" in the producible record\'s metadata'],
+    ],
+    checkPath: (out) => [
+      [path.basename(out) === 'DPA_Core_Title_2026-11-21.docx', `filename prefix follows docTitle (got ${path.basename(out)})`],
+    ],
+  },
+  {
+    name: 'table-column-null',
+    why: 'v4.4.8: a null table column header rendered the literal word "null" with exit 0 — body cells were guarded (v4.3.3), headers were not.',
+    exit: 1,
+    stderr: /block 1 \(table\): column 2 must be text, got null/,
+  },
+  {
+    name: 'table-widths-length',
+    why: 'v4.4.8: a "widths" list of the wrong length was silently ignored and equal widths used instead.',
+    exit: 1,
+    stderr: /table "widths" has 2 entries but the table has 3 column\(s\)/,
+  },
+  {
+    name: 'art36-alias-null-conclusion',
+    why: 'v4.4.8: the legacy "art36" alias filled only an undefined conclusion, so a null priorConsultation beside art36:true failed with "art36 is required" although it was present.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [STAR.test(t), 'register row is starred'],
+      [FOOTNOTE.test(t), 'Art. 36 footnote rendered from the alias-filled conclusion'],
+    ],
+  },
+  {
+    name: 'residual-null-defaults',
+    why: 'v4.4.8: residualLikelihood/residualSeverity are optional, but a null value failed as "missing" where undefined defaulted to the inherent score.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/‖ R1 ‖/.test(t), 'R1 present in register'],
+      [!STAR.test(t), 'Low x Medium residual is not starred'],
+    ],
+  },
+  {
+    name: 'mitigated-above-residual',
+    why: 'v4.4.8: a post-mitigation score above the residual rendered a Post-mitigation column of High on a Low residual with no comment — nothing contradicted, so no gate saw it.',
+    exit: 0,
+    stderr: /WARNING — riskRegister row 1 \(R1\): post-mitigation rating "High" \(High x High\) is higher than the residual "Low" \(Low x Low\)/,
+  },
+  {
+    name: 'counsel-whitespace',
+    why: 'v4.4.8: "counsel" gated the privilege posture by truthiness, so a whitespace-only value turned the work-product header and the "for attorney review" footer on with no one named.',
+    exit: 0,
+    noWarn: true,
+    checkXml: (x) => [
+      [!x.includes('Counsel of Record'), 'no Counsel of Record line for a blank counsel'],
+      [!x.includes('ATTORNEY WORK PRODUCT'), 'work-product header off for a blank counsel'],
+      [x.includes('DRAFT FOR DPO REVIEW'), 'DPO-review header derived'],
+    ],
+    checkFooter: (f) => [
+      [f.includes('for DPO review'), 'footer reads "for DPO review"'],
+    ],
+  },
+  {
+    name: 'notice-date-future',
+    why: 'v4.4.8: a notice index date after the assessment date drew no comment; the staleness check only looked for a notice more than six months old.',
+    exit: 0,
+    stderr: /WARNING — the notice behind block 1 \(noticeCheck\) carries an index date \(2027-03-01\) after the assessment date \(2026-11-21\)/,
+    check: (t) => [
+      [/Privacy policy consistency check/.test(t), 'check still renders — a warning, not a stop'],
+    ],
+  },
+  {
+    name: 'uk-switch-date-exact',
+    why: 'v4.4.8: the Information Commission replaced the ICO on 2026-09-30; a document dated that day must name the Commission (the switch is "on or after", not "after"). Pinned on the boundary itself — the other UK cases sit either side of it.',
+    exit: 0,
+    noWarn: true,
+    check: (t) => [
+      [/UK GDPR Article 36 prior consultation with the Information Commission \(the ICO before 2026-09-30\)/.test(t), 'footnote names the Information Commission on the switch date'],
+      [!/consultation with the ICO(?! before)/.test(t), 'the ICO is never named as the consultee'],
+    ],
+  },
+  {
+    name: 'filename-derivation',
+    why: 'v4.4.8: a system name with no Latin characters left an empty filename segment (DPIA__<date>.docx), and a document title with a parenthetical or subtitle inflated the prefix to its initials too ("DPIADQL_").',
+    exit: 0,
+    noWarn: true,
+    checkPath: (out) => [
+      [path.basename(out) === 'DPIA_Document_2026-11-21.docx', `neutral segment and title-proper prefix (got ${path.basename(out)})`],
+    ],
+  },
 ];
 
 // Per-run scratch shared between a case's setup and its checks.
@@ -914,8 +1025,11 @@ function run() {
     if (r.status === 0 && !VALIDATED.test(err)) {
       problems.push('no evidence that OOXML validation ran on the built file');
     }
+    if (r.status === 0 && !DOCX_VERSION.test(err)) {
+      problems.push('the builder did not report which docx version it loaded');
+    }
 
-    if (r.status === 0 && (c.check || c.checkXml || c.checkFooter || c.checkPath)) {
+    if (r.status === 0 && (c.check || c.checkXml || c.checkFooter || c.checkPath || c.checkCore)) {
       const outPath = (r.stdout || '').trim().split('\n').pop();
       if (!outPath || !fs.existsSync(outPath)) {
         problems.push('builder reported success but no output file');
@@ -925,6 +1039,7 @@ function run() {
           .concat(c.check ? c.check(docText(outPath)) : [])
           .concat(c.checkXml ? c.checkXml(rawXml(outPath)) : [])
           .concat(c.checkFooter ? c.checkFooter(footerText(outPath)) : [])
+          .concat(c.checkCore ? c.checkCore(coreXml(outPath)) : [])
           .concat(c.checkPath ? c.checkPath(outPath, tmp) : []);
         asserts.forEach(([ok, label]) => { if (!ok) problems.push(label); });
       }

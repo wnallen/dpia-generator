@@ -1,0 +1,14 @@
+{
+  "systemName": "UK Switch Date",
+  "date": "2026-09-30",
+  "jurisdictions": ["uk-gdpr"],
+  "status": "Requires Art. 36 Prior Consultation",
+  "regulatorConclusions": { "uk-gdpr": { "priorConsultation": true } },
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    { "type": "riskRegister", "rows": [
+      { "id": "R1", "risk": "Risk R1", "likelihood": "High", "severity": "High", "controls": "Controls." }
+    ] },
+    { "type": "regulatorTable" }
+  ]
+}

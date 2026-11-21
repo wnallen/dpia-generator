@@ -1,0 +1,11 @@
+{
+  "systemName": "Core Title",
+  "date": "2026-11-21",
+  "docTitle": "DATA PROTECTION ASSESSMENT",
+  "headerText": "",
+  "jurisdictions": ["us-co"],
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 1 — DESCRIPTION" },
+    { "type": "para", "text": "A Colorado producible record: the filename prefix and the file metadata must both follow the document title." }
+  ]
+}

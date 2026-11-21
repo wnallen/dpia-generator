@@ -1,0 +1,7 @@
+{
+  "systemName": "Table Column Null",
+  "date": "2026-11-21",
+  "blocks": [
+    { "type": "table", "columns": ["Element", null], "rows": [["a", "b"]] }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "systemName": "Mitigated Above Residual",
+  "date": "2026-11-21",
+  "art36": false,
+  "blocks": [
+    { "type": "heading", "level": 1, "text": "SECTION 4 — RISK ASSESSMENT" },
+    { "type": "riskRegister", "rows": [
+      { "id": "R1", "risk": "Risk R1", "likelihood": "Low", "severity": "Low", "controls": "Controls.",
+        "mitigatedLikelihood": "High", "mitigatedSeverity": "High" }
+    ] }
+  ]
+}
